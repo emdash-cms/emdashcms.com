@@ -7,6 +7,9 @@ dist/
 # Astro
 .astro/
 
+# Wrangler / Miniflare local state
+.wrangler/
+
 # Data
 data.db
 data.db-shm
@@ -17,6 +20,9 @@ uploads/
 .env
 .env.*
 !.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
 
 # IDE
 .vscode/
