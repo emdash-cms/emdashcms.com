@@ -5,6 +5,12 @@
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
 	"account_id": "1f74638c495bc9f0330ce5c8e64c1b6b",
+	"routes": [
+		{
+			"pattern": "beta.emdashcms.com",
+			"custom_domain": true,
+		},
+	],
 	"placement": {
 		// Pin the Worker to a CF data center near the D1 primary (ENAM / us-east-1).
 		"region": "aws:us-east-1",
