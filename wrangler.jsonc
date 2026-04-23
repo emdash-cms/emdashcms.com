@@ -1,21 +1,25 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "my-marketing-site",
+	"name": "emdashcms-com",
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
+	"account_id": "1f74638c495bc9f0330ce5c8e64c1b6b",
+	"placement": {
+		// Pin the Worker to a CF data center near the D1 primary (ENAM / us-east-1).
+		"region": "aws:us-east-1",
+	},
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "my-marketing-site",
-			// Run `wrangler d1 create my-marketing-site` and paste the real ID here for deploy
-			"database_id": "local",
+			"database_name": "emdashcms-com",
+			"database_id": "bf5bdaf9-ea37-45b1-bca4-b40e4e8e729f",
 		},
 	],
 	"r2_buckets": [
 		{
 			"binding": "MEDIA",
-			"bucket_name": "my-marketing-media",
+			"bucket_name": "emdashcms-com-media",
 		},
 	],
 	// Worker Loader for plugin sandboxing
