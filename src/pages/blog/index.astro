@@ -1,0 +1,152 @@
+---
+import { getEmDashCollection } from "emdash";
+import Base from "../../layouts/Base.astro";
+
+const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
+	orderBy: { published_at: "desc" },
+});
+
+try {
+	Astro.cache.set(cacheHint);
+} catch {}
+
+const sortedPosts = posts.toSorted((a, b) => {
+	const dateA = a.data.publishedAt?.getTime() ?? 0;
+	const dateB = b.data.publishedAt?.getTime() ?? 0;
+	return dateB - dateA;
+});
+
+function formatDate(date?: Date | null) {
+	if (!date) return null;
+	return date.toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+}
+---
+
+<Base title="Blog" description="Release announcements and product updates for EmDash CMS.">
+	<section class="blog-index">
+		<div class="blog-header">
+			<p class="eyebrow">Blog</p>
+			<h1>Release notes and product updates</h1>
+			<p>
+				This is where we announce new releases, notable improvements, and major changes
+				to EmDash CMS.
+			</p>
+		</div>
+
+		{sortedPosts.length === 0 ? (
+			<div class="empty-state">
+				<h2>No posts yet</h2>
+				<p>Publish your first release post in the admin.</p>
+				<a href="/_emdash/admin/content/posts/new" class="btn btn-primary">Write a post</a>
+			</div>
+		) : (
+			<div class="post-list">
+				{sortedPosts.map((post) => (
+					<article class="post-card">
+						<a href={`/blog/${post.id}`} class="post-link">
+							<div class="post-meta">
+								{formatDate(post.data.publishedAt) && <time>{formatDate(post.data.publishedAt)}</time>}
+							</div>
+							<h2>{post.data.title}</h2>
+							{post.data.excerpt && <p>{post.data.excerpt}</p>}
+							<span class="read-more">Read update</span>
+						</a>
+					</article>
+				))}
+			</div>
+		)}
+	</section>
+</Base>
+
+<style>
+	.blog-index {
+		max-width: var(--max-width);
+		margin: 0 auto;
+		padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-5xl);
+	}
+
+	.blog-header {
+		margin-bottom: var(--spacing-3xl);
+	}
+
+	.eyebrow {
+		font-size: var(--font-size-sm);
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-primary);
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.blog-header h1 {
+		margin-bottom: var(--spacing-md);
+	}
+
+	.blog-header p {
+		font-size: var(--font-size-lg);
+		color: var(--color-muted);
+	}
+
+	.post-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-lg);
+	}
+
+	.post-card {
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		background: var(--color-surface);
+		transition: transform var(--transition-base), box-shadow var(--transition-base);
+	}
+
+	.post-card:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-lg);
+	}
+
+	.post-link {
+		display: block;
+		padding: var(--spacing-xl);
+	}
+
+	.post-meta {
+		font-size: var(--font-size-sm);
+		color: var(--color-muted);
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.post-link h2 {
+		font-size: var(--font-size-2xl);
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.post-link p {
+		color: var(--color-muted);
+		margin-bottom: var(--spacing-md);
+	}
+
+	.read-more {
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		color: var(--color-primary);
+	}
+
+	.empty-state {
+		text-align: center;
+		padding: var(--spacing-4xl) 0;
+	}
+
+	.empty-state h2 {
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.empty-state p {
+		color: var(--color-muted);
+		margin-bottom: var(--spacing-lg);
+	}
+</style>

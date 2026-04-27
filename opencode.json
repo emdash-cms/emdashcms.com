@@ -1,0 +1,10 @@
+{
+	"$schema": "https://opencode.ai/config.json",
+	"mcp": {
+		"emdash_beta": {
+			"type": "remote",
+			"url": "https://beta.emdashcms.com/_emdash/api/mcp",
+			"enabled": true
+		}
+	}
+}

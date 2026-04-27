@@ -2,14 +2,14 @@
 	"$schema": "https://emdashcms.com/seed.schema.json",
 	"version": "1",
 	"meta": {
-		"name": "Marketing Starter",
-		"description": "A conversion-focused marketing site with landing pages",
+		"name": "EmDash CMS Site",
+		"description": "Landing page and release blog for EmDash CMS",
 		"author": "EmDash"
 	},
 
 	"settings": {
-		"title": "Acme",
-		"tagline": "Build products people actually want"
+		"title": "EmDash CMS",
+		"tagline": "An open source Astro CMS built for humans and agents."
 	},
 
 	"collections": [
@@ -31,6 +31,32 @@
 					"type": "portableText"
 				}
 			]
+		},
+		{
+			"slug": "posts",
+			"label": "Posts",
+			"labelSingular": "Post",
+			"supports": ["drafts", "revisions", "search", "seo"],
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "excerpt",
+					"label": "Excerpt",
+					"type": "text"
+				},
+				{
+					"slug": "content",
+					"label": "Content",
+					"type": "portableText",
+					"searchable": true
+				}
+			]
 		}
 	],
 
@@ -39,9 +65,9 @@
 			"name": "primary",
 			"label": "Primary Navigation",
 			"items": [
-				{ "type": "custom", "label": "Features", "url": "/#features" },
-				{ "type": "custom", "label": "Pricing", "url": "/pricing" },
-				{ "type": "custom", "label": "Contact", "url": "/contact" }
+				{ "type": "custom", "label": "Docs", "url": "https://docs.emdashcms.com" },
+				{ "type": "custom", "label": "Blog", "url": "/blog" },
+				{ "type": "custom", "label": "Discord", "url": "https://discord.gg/4QH8P4mZ" }
 			]
 		}
 	],
@@ -58,71 +84,70 @@
 						{
 							"_type": "marketing.hero",
 							"_key": "hero",
-							"headline": "Build products people actually want",
-							"subheadline": "The all-in-one platform for modern teams. Ship faster, collaborate better, and focus on what matters.",
-							"primaryCta": { "label": "Start Free Trial", "url": "/signup" },
-							"secondaryCta": { "label": "Watch Demo", "url": "/demo" }
+							"headline": "A CMS for humans and agents",
+							"subheadline": "EmDash is an open source CMS for Astro and Cloudflare. Define content in code, edit it in a polished admin, and let agents work with it through the same APIs you do.",
+							"primaryCta": { "label": "Try the playground", "url": "https://try.emdashcms.com" },
+							"secondaryCta": { "label": "Read the docs", "url": "https://docs.emdashcms.com" }
 						},
 						{
 							"_type": "marketing.features",
 							"_key": "features",
-							"headline": "Everything you need to ship",
-							"subheadline": "Powerful features that help your team move faster without sacrificing quality.",
+							"headline": "Built for the way you actually ship",
+							"subheadline": "Type-safe content, server-rendered Astro pages, and a single binary deploy on Cloudflare. No SaaS dashboard between you and your data.",
 							"features": [
 								{
-									"icon": "zap",
-									"title": "Lightning Fast",
-									"description": "Built for speed from the ground up. Your team will notice the difference from day one."
+									"icon": "code",
+									"title": "Schema as code",
+									"description": "Define collections, fields, and relationships in a seed file. Get generated TypeScript types and a fully migrated database every time you run dev."
 								},
 								{
-									"icon": "shield",
-									"title": "Enterprise Security",
-									"description": "SOC 2 compliant with end-to-end encryption. Your data stays yours."
+									"icon": "zap",
+									"title": "Astro-native",
+									"description": "First-class Astro integration. Server-rendered pages, content loaders, image components, and Portable Text rendering with no glue code."
+								},
+								{
+									"icon": "cloud",
+									"title": "Runs on Cloudflare",
+									"description": "D1 for content, R2 for media, Workers for serving. One stack, global by default, deployed from a single command."
 								},
 								{
 									"icon": "users",
-									"title": "Team Collaboration",
-									"description": "Real-time collaboration features that make working together feel effortless."
+									"title": "Admin humans love",
+									"description": "Drafts, revisions, scheduling, full-text search, taxonomies, menus, and live preview, all in a fast modern editor."
 								},
 								{
-									"icon": "chart",
-									"title": "Powerful Analytics",
-									"description": "Understand how your team works with detailed insights and reporting."
-								},
-								{
-									"icon": "code",
-									"title": "Developer Friendly",
-									"description": "A robust API and CLI tools that integrate with your existing workflow."
+									"icon": "shield",
+									"title": "Built for agents",
+									"description": "Every CMS operation is exposed over MCP. Agents read schema, edit content, and publish through the same typed APIs the admin uses."
 								},
 								{
 									"icon": "globe",
-									"title": "Global Scale",
-									"description": "Deployed to edge locations worldwide. Fast for everyone, everywhere."
+									"title": "Extensible by design",
+									"description": "Plugins add custom block types, admin pages, hooks, and storage. Bring your own auth, payments, comments, or analytics."
 								}
 							]
 						},
 						{
 							"_type": "marketing.testimonials",
 							"_key": "testimonials",
-							"headline": "Trusted by teams everywhere",
 							"testimonials": [
 								{
-									"quote": "We cut our deployment time by 80%. The team actually enjoys shipping now.",
-									"author": "Sarah Chen",
-									"role": "CTO",
-									"company": "Streamline"
+									"quote": "The entire functionality of WordPress, and then some.",
+									"author": "Matt Mullenweg",
+									"role": "Co-founder",
+									"company": "WordPress"
 								},
 								{
-									"quote": "The best developer experience I've used. Everything just works the way you'd expect.",
-									"author": "Marcus Johnson",
-									"role": "Lead Engineer",
-									"company": "Volt Labs"
+									"quote": "The most interesting thing to happen to content management in years.",
+									"author": "Joost de Valk",
+									"role": "Founder",
+									"company": "Yoast"
 								},
 								{
-									"quote": "Finally, a tool that doesn't get in the way. Our team is more productive than ever.",
-									"author": "Elena Rodriguez",
-									"role": "VP Engineering",
-									"company": "Nexus"
+									"quote": "Getting from zero to a basic design is fast. I mean, really fast.",
+									"author": "Brian Coords",
+									"role": "Developer Advocate",
+									"company": "Automattic"
 								}
 							]
 						},
@@ -132,125 +157,59 @@
 							"headline": "Frequently asked questions",
 							"items": [
 								{
-									"question": "How long does setup take?",
-									"answer": "Most teams are up and running in under 15 minutes. Our onboarding wizard guides you through connecting your existing tools and inviting your team."
+									"question": "What is EmDash?",
+									"answer": "EmDash is an open source CMS built on Astro and Cloudflare. It gives you a typed schema, a polished admin, and an MCP server so both humans and AI agents can manage your content."
 								},
 								{
-									"question": "Can I migrate from my current tool?",
-									"answer": "Yes. We have built-in importers for all major platforms, and our support team can help with custom migrations for larger teams."
+									"question": "How is it different from other CMSes?",
+									"answer": "EmDash is Astro-native and self-hosted on your own Cloudflare account. Your schema lives in code, your data lives in D1 and R2, and there is no SaaS backend between you and your content."
 								},
 								{
-									"question": "What kind of support do you offer?",
-									"answer": "All plans include email support with a 24-hour response time. Pro and Enterprise plans include priority support with dedicated account managers."
+									"question": "Can AI agents really edit content?",
+									"answer": "Yes. EmDash ships a Model Context Protocol server that exposes content, schema, media, taxonomies, menus, and revisions. Drop it into Claude, OpenCode, or any MCP-aware tool and it just works."
 								},
 								{
-									"question": "Is there a free trial?",
-									"answer": "Yes, all plans come with a 14-day free trial. No credit card required. You can upgrade, downgrade, or cancel at any time."
+									"question": "How do I get started?",
+									"answer": "Open the playground for an instant sandbox, or run npx emdash dev in a fresh Astro project to spin up a local instance with the admin at /_emdash/admin."
+								},
+								{
+									"question": "Where can I ask questions?",
+									"answer": "Join the Discord to chat with the team and community, or open an issue on GitHub. The docs cover setup, architecture, and the full API reference."
 								}
 							]
 						}
 					]
 				}
-			},
+			}
+		],
+		"posts": [
 			{
-				"id": "pricing",
-				"slug": "pricing",
+				"id": "emdash-is-live",
+				"slug": "emdash-is-live",
 				"status": "published",
 				"data": {
-					"title": "Pricing",
+					"title": "EmDash is live",
+					"excerpt": "A quick look at what EmDash is, what shipped in the first public release, and where to go next.",
 					"content": [
 						{
-							"_type": "marketing.hero",
-							"_key": "pricing-hero",
-							"headline": "Simple, transparent pricing",
-							"subheadline": "No hidden fees. No surprises. Start free and scale as you grow.",
-							"centered": true
-						},
-						{
-							"_type": "marketing.pricing",
-							"_key": "pricing-plans",
-							"plans": [
+							"_type": "block",
+							"style": "normal",
+							"children": [
 								{
-									"name": "Starter",
-									"price": "$0",
-									"period": "/month",
-									"description": "Perfect for trying things out",
-									"features": [
-										"Up to 3 team members",
-										"5 projects",
-										"Basic analytics",
-										"Community support",
-										"1GB storage"
-									],
-									"cta": { "label": "Get Started", "url": "/signup" }
-								},
-								{
-									"name": "Pro",
-									"price": "$29",
-									"period": "/user/month",
-									"description": "For growing teams",
-									"features": [
-										"Unlimited team members",
-										"Unlimited projects",
-										"Advanced analytics",
-										"Priority support",
-										"100GB storage",
-										"Custom integrations",
-										"API access"
-									],
-									"cta": { "label": "Start Free Trial", "url": "/signup?plan=pro" },
-									"highlighted": true
-								},
-								{
-									"name": "Enterprise",
-									"price": "Custom",
-									"description": "For large organizations",
-									"features": [
-										"Everything in Pro",
-										"Dedicated support",
-										"Custom contracts",
-										"SLA guarantee",
-										"Unlimited storage"
-									],
-									"cta": { "label": "Contact Sales", "url": "/contact" }
+									"_type": "span",
+									"text": "EmDash is an open source CMS built on Astro. It combines a full admin UI, structured content, and a real site codebase without splitting editing and development into separate systems."
 								}
 							]
 						},
 						{
-							"_type": "marketing.faq",
-							"_key": "pricing-faq",
-							"headline": "Pricing FAQ",
-							"items": [
+							"_type": "block",
+							"style": "normal",
+							"children": [
 								{
-									"question": "Can I change plans later?",
-									"answer": "Yes, you can upgrade or downgrade at any time. Changes take effect immediately and we'll prorate your billing."
-								},
-								{
-									"question": "What payment methods do you accept?",
-									"answer": "We accept all major credit cards, and Enterprise customers can pay via invoice with NET 30 terms."
-								},
-								{
-									"question": "Is there a discount for annual billing?",
-									"answer": "Yes, annual plans receive a 20% discount compared to monthly billing."
+									"_type": "span",
+									"text": "This site will be used for release announcements, product updates, and major changes to the project. If you want to explore EmDash right now, head to the playground or read through the docs."
 								}
 							]
-						}
-					]
-				}
-			},
-			{
-				"id": "contact",
-				"slug": "contact",
-				"status": "published",
-				"data": {
-					"title": "Contact",
-					"content": [
-						{
-							"_type": "marketing.hero",
-							"_key": "contact-hero",
-							"headline": "Get in touch",
-							"subheadline": "Have questions? Want a demo? We'd love to hear from you.",
-							"centered": true
 						}
 					]
 				}

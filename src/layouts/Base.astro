@@ -12,16 +12,24 @@ interface Props {
 }
 
 const { title, description, image } = Astro.props;
+const DOCS_URL = "https://docs.emdashcms.com";
+const DISCORD_URL = "https://discord.gg/4QH8P4mZ";
+const PLAYGROUND_URL = "https://try.emdashcms.com";
+
 const settings = await getSiteSettings();
-const siteTitle = settings?.title || "Acme";
+const siteTitle = settings?.title || "EmDash CMS";
 const fullTitle = title ? `${title} — ${siteTitle}` : siteTitle;
 const siteDescription =
-	settings?.tagline || "Build products people actually want";
+	settings?.tagline || "An open source Astro CMS built for humans and agents.";
 const siteLogo = (settings?.logo as any)?.url ? settings.logo as
 	{ mediaId: string; alt?: string; url: string } : null;
 const siteFavicon = (settings?.favicon as any)?.url ?? null;
 
 const menu = await getMenu("primary");
+
+function isExternalUrl(url?: string | null) {
+	return typeof url === "string" && /^https?:\/\//.test(url);
+}
 
 const pageCtx = createPublicPageContext({
 	Astro,
@@ -72,7 +80,11 @@ const pageCtx = createPublicPageContext({
 				<div class="nav-links">
 					{
 						menu?.items.map((item) => (
-							<a href={item.url} target={item.target}>
+							<a
+								href={item.url}
+								target={item.target || (isExternalUrl(item.url) ? "_blank" : undefined)}
+								rel={isExternalUrl(item.url) ? "noreferrer" : undefined}
+							>
 								{item.label}
 							</a>
 						))
@@ -80,7 +92,7 @@ const pageCtx = createPublicPageContext({
 				</div>
 				<div class="nav-actions">
 					<a href="/_emdash/admin" class="nav-admin">Admin</a>
-					<a href="/signup" class="nav-cta">Get Started</a>
+					<a href={PLAYGROUND_URL} class="nav-cta" target="_blank" rel="noreferrer">Try it</a>
 				</div>
 			</nav>
 		</header>
@@ -105,28 +117,28 @@ const pageCtx = createPublicPageContext({
 				<div class="footer-links">
 					<div class="footer-col">
 						<h4>Product</h4>
-						<a href="/#features">Features</a>
-						<a href="/pricing">Pricing</a>
-						<a href="/changelog">Changelog</a>
-					</div>
-					<div class="footer-col">
-						<h4>Company</h4>
-						<a href="/about">About</a>
+						<a href={PLAYGROUND_URL} target="_blank" rel="noreferrer">Try it</a>
+						<a href={DOCS_URL} target="_blank" rel="noreferrer">Docs</a>
 						<a href="/blog">Blog</a>
-						<a href="/careers">Careers</a>
 					</div>
 					<div class="footer-col">
-						<h4>Support</h4>
-						<a href="/docs">Documentation</a>
-						<a href="/contact">Contact</a>
-						<a href="/status">Status</a>
+						<h4>Community</h4>
+						<a href={DISCORD_URL} target="_blank" rel="noreferrer">Discord</a>
+						<a href="https://github.com/emdash-cms/emdash" target="_blank" rel="noreferrer">GitHub</a>
+						<a href="/_emdash/admin">Admin</a>
+					</div>
+					<div class="footer-col">
+						<h4>Resources</h4>
+						<a href="/blog">Release notes</a>
+						<a href={DOCS_URL} target="_blank" rel="noreferrer">Documentation</a>
+						<a href={PLAYGROUND_URL} target="_blank" rel="noreferrer">Playground</a>
 					</div>
 				</div>
 			</div>
 			<div class="footer-bottom">
 				<p>
 					&copy; {new Date().getFullYear()}
-					{siteTitle}. All rights reserved.
+					{siteTitle}.
 				</p>
 				<div class="theme-switcher">
 					<button
@@ -149,7 +161,7 @@ const pageCtx = createPublicPageContext({
 					>
 				</div>
 				<p class="footer-powered">
-					Powered by <a href="https://emdashcms.com">EmDash</a>
+					Open source CMS for Astro and Cloudflare.
 				</p>
 			</div>
 		</footer>
