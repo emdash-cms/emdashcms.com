@@ -51,7 +51,9 @@ const pageCtx = createPublicPageContext({
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>{fullTitle}</title>
-		{siteFavicon && <link rel="icon" href={siteFavicon} />}
+		<link rel="icon" type="image/svg+xml" href={siteFavicon ?? "/brand/favicon.svg"} />
+		<link rel="icon" type="image/png" sizes="any" href="/brand/favicon.png" />
+		<link rel="apple-touch-icon" href="/brand/favicon.png" />
 		<EmDashHead page={pageCtx} />
 		<Font cssVariable="--font-sans" preload />
 		<script is:inline>
@@ -71,10 +73,13 @@ const pageCtx = createPublicPageContext({
 	<body>
 		<header class="site-header">
 			<nav class="nav">
-				<a href="/" class="site-logo">
+				<a href="/" class="site-logo" aria-label={siteTitle}>
 					{siteLogo
 						? <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="site-logo-img" />
-						: siteTitle
+						: <>
+								<img src="/brand/logo-dark-text.svg" alt={siteTitle} class="site-logo-img site-logo-img--light" />
+								<img src="/brand/logo-light-text.svg" alt={siteTitle} class="site-logo-img site-logo-img--dark" />
+							</>
 					}
 				</a>
 				<div class="nav-links">
@@ -107,7 +112,10 @@ const pageCtx = createPublicPageContext({
 					<span class="footer-logo">
 						{siteLogo
 							? <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="footer-logo-img" />
-							: siteTitle
+							: <>
+									<img src="/brand/logo-dark-text.svg" alt={siteTitle} class="footer-logo-img footer-logo-img--light" />
+									<img src="/brand/logo-light-text.svg" alt={siteTitle} class="footer-logo-img footer-logo-img--dark" />
+								</>
 						}
 					</span>
 					<p class="footer-tagline">
@@ -474,24 +482,44 @@ const pageCtx = createPublicPageContext({
 			}
 
 			.site-logo {
-				font-size: var(--font-size-xl);
-				font-weight: 800;
-				letter-spacing: -0.03em;
-				background: linear-gradient(
-					135deg,
-					var(--color-primary),
-					var(--color-accent)
-				);
-				-webkit-background-clip: text;
-				-webkit-text-fill-color: transparent;
-				background-clip: text;
+				display: inline-flex;
+				align-items: center;
+				line-height: 0;
 			}
 
 			.site-logo-img {
-				height: 48px;
+				height: 36px;
 				width: auto;
 				display: block;
-				margin: -8px 0;
+			}
+
+			/* Light/dark logo swap. Default to the dark-text lockup and hide
+			   the light-text variant; the swap rules below flip them. */
+			.site-logo-img--dark,
+			.footer-logo-img--dark {
+				display: none;
+			}
+
+			:root.dark .site-logo-img--light,
+			:root.dark .footer-logo-img--light {
+				display: none;
+			}
+
+			:root.dark .site-logo-img--dark,
+			:root.dark .footer-logo-img--dark {
+				display: block;
+			}
+
+			@media (prefers-color-scheme: dark) {
+				:root:not(.light) .site-logo-img--light,
+				:root:not(.light) .footer-logo-img--light {
+					display: none;
+				}
+
+				:root:not(.light) .site-logo-img--dark,
+				:root:not(.light) .footer-logo-img--dark {
+					display: block;
+				}
 			}
 
 			.nav-links {
@@ -568,13 +596,13 @@ const pageCtx = createPublicPageContext({
 			}
 
 			.footer-logo {
-				font-size: var(--font-size-xl);
-				font-weight: 800;
-				letter-spacing: -0.03em;
+				display: inline-flex;
+				align-items: center;
+				line-height: 0;
 			}
 
 			.footer-logo-img {
-				height: 24px;
+				height: 28px;
 				width: auto;
 			}
 

@@ -65,9 +65,10 @@
 			"name": "primary",
 			"label": "Primary Navigation",
 			"items": [
-				{ "type": "custom", "label": "Docs", "url": "https://docs.emdashcms.com" },
+				{ "type": "custom", "label": "Docs", "url": "https://docs.emdashcms.com", "target": "_blank" },
 				{ "type": "custom", "label": "Blog", "url": "/blog" },
-				{ "type": "custom", "label": "Discord", "url": "https://discord.gg/4QH8P4mZ" }
+				{ "type": "custom", "label": "Discord", "url": "https://discord.gg/4QH8P4mZ", "target": "_blank" },
+				{ "type": "custom", "label": "GitHub", "url": "https://github.com/emdash-cms/emdash", "target": "_blank" }
 			]
 		}
 	],
