@@ -86,8 +86,10 @@
 							"_key": "hero",
 							"headline": "A CMS for humans and agents",
 							"subheadline": "EmDash is an open source CMS for Astro and Cloudflare. Define content in code, edit it in a polished admin, and let agents work with it through the same APIs you do.",
-							"primaryCta": { "label": "Try the playground", "url": "https://try.emdashcms.com" },
-							"secondaryCta": { "label": "Read the docs", "url": "https://docs.emdashcms.com" }
+							"primaryCtaLabel": "Try the playground",
+							"primaryCtaUrl": "https://try.emdashcms.com",
+							"secondaryCtaLabel": "Read the docs",
+							"secondaryCtaUrl": "https://docs.emdashcms.com"
 						},
 						{
 							"_type": "marketing.features",
