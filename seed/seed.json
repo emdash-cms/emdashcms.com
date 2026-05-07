@@ -67,8 +67,35 @@
 			"items": [
 				{ "type": "custom", "label": "Docs", "url": "https://docs.emdashcms.com", "target": "_blank" },
 				{ "type": "custom", "label": "Blog", "url": "/blog" },
-				{ "type": "custom", "label": "Discord", "url": "https://discord.gg/4QH8P4mZ", "target": "_blank" },
+				{ "type": "custom", "label": "Discord", "url": "https://discord.gg/YY9vBaQRYt", "target": "_blank" },
 				{ "type": "custom", "label": "GitHub", "url": "https://github.com/emdash-cms/emdash", "target": "_blank" }
+			]
+		},
+		{
+			"name": "footer_product",
+			"label": "Footer: Product",
+			"items": [
+				{ "type": "custom", "label": "Try it", "url": "https://try.emdashcms.com", "target": "_blank" },
+				{ "type": "custom", "label": "Docs", "url": "https://docs.emdashcms.com", "target": "_blank" },
+				{ "type": "custom", "label": "Blog", "url": "/blog" }
+			]
+		},
+		{
+			"name": "footer_community",
+			"label": "Footer: Community",
+			"items": [
+				{ "type": "custom", "label": "Discord", "url": "https://discord.gg/YY9vBaQRYt", "target": "_blank" },
+				{ "type": "custom", "label": "GitHub", "url": "https://github.com/emdash-cms/emdash", "target": "_blank" },
+				{ "type": "custom", "label": "Admin", "url": "/_emdash/admin" }
+			]
+		},
+		{
+			"name": "footer_resources",
+			"label": "Footer: Resources",
+			"items": [
+				{ "type": "custom", "label": "Release notes", "url": "/blog" },
+				{ "type": "custom", "label": "Documentation", "url": "https://docs.emdashcms.com", "target": "_blank" },
+				{ "type": "custom", "label": "Playground", "url": "https://try.emdashcms.com", "target": "_blank" }
 			]
 		}
 	],
