@@ -13,13 +13,13 @@
     "seed": "emdash seed"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "https://pkg.pr.new/@astrojs/cloudflare@94d342d",
+    "@astrojs/cloudflare": "https://pkg.pr.new/@astrojs/cloudflare@a9949197bd",
     "@astrojs/react": "^5.0.0",
-    "@emdash-cms/cloudflare": "^0.10.0",
+    "@emdash-cms/cloudflare": "^0.11.0",
     "@iconify-json/ph": "^1.2.2",
-    "astro": "https://pkg.pr.new/astro@94d342d",
+    "astro": "https://pkg.pr.new/astro@a9949197bd",
     "astro-iconset": "^0.0.4",
-    "emdash": "^0.10.0",
+    "emdash": "^0.11.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
