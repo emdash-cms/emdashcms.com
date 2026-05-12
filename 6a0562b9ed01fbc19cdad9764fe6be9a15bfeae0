@@ -1,0 +1,39 @@
+AGENTS.md
+  f5c7cda29995b206 31-35
+.mcp.json
+  f5c7cda29995b206 1-8
+package.json
+  f5c7cda29995b206 11,16,20,27
+src/pages/index.astro
+  f5c7cda29995b206 8
+.cursor/mcp.json
+  f5c7cda29995b206 1-8
+.vscode/mcp.json
+  f5c7cda29995b206 1-8
+src/pages/blog/[slug].astro
+  f5c7cda29995b206 18
+src/pages/blog/index.astro
+  f5c7cda29995b206 9
+.gitignore
+  f5c7cda29995b206 28-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "6a0562b9ed01fbc19cdad9764fe6be9a15bfeae0",
+  "prompts": {
+    "f5c7cda29995b206": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1e30b4769ffeV8s0MyZ15XZPW9",
+        "model": "anthropic/claude-opus-4-7"
+      },
+      "human_author": "Matt Kane",
+      "messages": [],
+      "total_additions": 39,
+      "total_deletions": 15,
+      "accepted_lines": 39,
+      "overriden_lines": 0
+    }
+  }
+}
