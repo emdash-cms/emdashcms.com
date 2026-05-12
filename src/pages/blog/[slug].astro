@@ -15,9 +15,7 @@ if (!post) {
 	return Astro.redirect("/404");
 }
 
-try {
-	Astro.cache.set(cacheHint);
-} catch {}
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const published = post.data.publishedAt?.toLocaleDateString("en-US", {
 	year: "numeric",

@@ -6,9 +6,7 @@ const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
 	orderBy: { published_at: "desc" },
 });
 
-try {
-	Astro.cache.set(cacheHint);
-} catch {}
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const sortedPosts = posts.toSorted((a, b) => {
 	const dateA = a.data.publishedAt?.getTime() ?? 0;
