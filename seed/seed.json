@@ -85,8 +85,7 @@
 			"label": "Footer: Community",
 			"items": [
 				{ "type": "custom", "label": "Discord", "url": "https://discord.gg/YY9vBaQRYt", "target": "_blank" },
-				{ "type": "custom", "label": "GitHub", "url": "https://github.com/emdash-cms/emdash", "target": "_blank" },
-				{ "type": "custom", "label": "Admin", "url": "/_emdash/admin" }
+				{ "type": "custom", "label": "GitHub", "url": "https://github.com/emdash-cms/emdash", "target": "_blank" }
 			]
 		},
 		{
