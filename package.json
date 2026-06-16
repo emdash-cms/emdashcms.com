@@ -11,11 +11,11 @@
     "typecheck": "astro check"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.7.0",
+    "@astrojs/cloudflare": "https://pkg.pr.new/@astrojs/cloudflare@16335",
     "@astrojs/react": "^5.0.0",
     "@emdash-cms/cloudflare": "^0.20.0",
     "@iconify-json/ph": "^1.2.2",
-    "astro": "^6.4.7",
+    "astro": "https://pkg.pr.new/astro@16335",
     "astro-iconset": "^0.0.4",
     "emdash": "^0.20.0",
     "react": "19.2.4",

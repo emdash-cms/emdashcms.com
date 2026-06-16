@@ -1,8 +1,9 @@
 import cloudflare from "@astrojs/cloudflare";
+import { cacheCloudflare } from "@astrojs/cloudflare/cache";
 import react from "@astrojs/react";
 import { access, d1, r2 } from "@emdash-cms/cloudflare";
 import icon from "astro-iconset";
-import { defineConfig, fontProviders, memoryCache } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
 
 export default defineConfig({
@@ -10,7 +11,13 @@ export default defineConfig({
 	adapter: cloudflare(),
 	experimental: {
 		cache: {
-			provider: memoryCache(),
+			// Route Caching backed by native Cloudflare Workers Caching.
+			// `cacheCloudflare()` emits `Cloudflare-CDN-Cache-Control` + `Cache-Tag`
+			// headers so the edge caches rendered pages, auto-tags responses by
+			// path, and purges via the Worker cache API on publish. The adapter
+			// auto-enables `cache: { enabled: true }` in the generated wrangler
+			// config when this provider is detected.
+			provider: cacheCloudflare(),
 		},
 	},
 	image: {

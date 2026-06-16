@@ -6,6 +6,10 @@
 	"compatibility_flags": [
 		"nodejs_compat"
 	],
+	// Native Workers Caching is enabled automatically by the @astrojs/cloudflare
+	// adapter when the `cacheCloudflare()` route-cache provider is configured
+	// (see astro.config.mjs). It injects `cache: { enabled: true }` into the
+	// generated deploy config. https://developers.cloudflare.com/workers/cache/
 	"account_id": "1f74638c495bc9f0330ce5c8e64c1b6b",
 	"routes": [
 		{
