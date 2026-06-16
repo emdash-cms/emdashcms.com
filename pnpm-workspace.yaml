@@ -1,8 +1,21 @@
+# Single-package repo (not a monorepo). The empty `packages` list is required
+# so pnpm 10 (the default in Cloudflare Workers Builds) doesn't treat this file
+# as a workspace root and error with "packages field missing or empty".
+packages: []
+
+# Native deps whose install/build scripts are allowed to run (pnpm 11 syntax).
+# Mirrored in package.json#pnpm.onlyBuiltDependencies for pnpm 10 on CI.
+# - better-sqlite3: local `emdash dev` database (not used in the D1 deploy)
+# - esbuild / workerd: build + wrangler runtime
+# - sharp: image processing during build
 allowBuilds:
   better-sqlite3: true
   esbuild: true
   sharp: true
   workerd: true
+
+# Packages allowed past pnpm 11's minimum-release-age supply-chain holdback
+# (freshly published EmDash 0.20 + Cloudflare tooling). Ignored by pnpm 10 on CI.
 minimumReleaseAgeExclude:
   - '@emdash-cms/admin@0.20.0'
   - '@emdash-cms/auth@0.20.0'
