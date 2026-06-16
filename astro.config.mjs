@@ -1,9 +1,8 @@
 import cloudflare from "@astrojs/cloudflare";
-import { cacheCloudflare } from "@astrojs/cloudflare/cache";
 import react from "@astrojs/react";
 import { access, d1, r2 } from "@emdash-cms/cloudflare";
 import icon from "astro-iconset";
-import { defineConfig, fontProviders } from "astro/config";
+import { defineConfig, fontProviders, memoryCache } from "astro/config";
 import emdash from "emdash/astro";
 
 export default defineConfig({
@@ -11,7 +10,7 @@ export default defineConfig({
 	adapter: cloudflare(),
 	experimental: {
 		cache: {
-			provider: cacheCloudflare(),
+			provider: memoryCache(),
 		},
 	},
 	image: {
@@ -21,10 +20,22 @@ export default defineConfig({
 	vite: {
 		ssr: {
 			optimizeDeps: {
-				// Pre-bundle so it isn't discovered mid-render, which would trigger
-				// a Vite dep re-optimization and break in-flight worker imports
-				// under the Cloudflare dev runner (workerd).
-				include: ["astro-iconset/components"],
+				// Pre-bundle so these aren't discovered mid-render, which would
+				// trigger a Vite dep re-optimization and break in-flight worker
+				// imports under the Cloudflare dev runner (workerd).
+				include: [
+					"astro-iconset/components",
+					"astro/cache/memory",
+					"emdash/middleware",
+					"emdash/middleware/redirect",
+					"emdash/middleware/setup",
+					"emdash/middleware/auth",
+					"emdash/middleware/request-context",
+					"emdash/media/local-runtime",
+					"@emdash-cms/cloudflare/db/d1",
+					"@emdash-cms/cloudflare/storage/r2",
+					"@emdash-cms/cloudflare/auth",
+				],
 			},
 		},
 	},

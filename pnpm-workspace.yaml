@@ -1,0 +1,24 @@
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true
+  sharp: true
+  workerd: true
+minimumReleaseAgeExclude:
+  - '@emdash-cms/admin@0.20.0'
+  - '@emdash-cms/auth@0.20.0'
+  - '@emdash-cms/blocks@0.20.0'
+  - '@emdash-cms/cloudflare@0.20.0'
+  - '@emdash-cms/gutenberg-to-portable-text@0.20.0'
+  - '@emdash-cms/plugin-types@0.1.0'
+  - '@emdash-cms/registry-client@0.3.2'
+  - '@emdash-cms/registry-lexicons@0.1.1'
+  - emdash@0.20.0
+  - '@cloudflare/workerd-darwin-64@1.20260616.1'
+  - '@cloudflare/workerd-darwin-arm64@1.20260616.1'
+  - '@cloudflare/workerd-linux-64@1.20260616.1'
+  - '@cloudflare/workerd-linux-arm64@1.20260616.1'
+  - '@cloudflare/workerd-windows-64@1.20260616.1'
+  - miniflare@4.20260616.0
+  - workerd@1.20260616.1
+  - wrangler@4.101.0
+  - '@cloudflare/workers-types@4.20260616.1'
