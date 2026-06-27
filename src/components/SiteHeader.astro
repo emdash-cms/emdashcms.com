@@ -125,10 +125,10 @@ const navItems = menuItems.filter((item) => !isGitHubItem(item));
 								href={githubItem.url}
 								class="nav-action nav-action--github"
 								target={githubItem.target || (isExternalUrl(githubItem.url) ? "_blank" : undefined)}
-					rel={isExternalUrl(githubItem.url) ? "noreferrer" : undefined}
-					aria-label={`EmDash GitHub repository, ${githubStarsLabel} stars`}
-					data-menu-close
-				>
+								rel={isExternalUrl(githubItem.url) ? "noreferrer" : undefined}
+								aria-label={`EmDash GitHub repository, ${githubStarsLabel} stars`}
+								data-menu-close
+							>
 								<svg viewBox="0 0 20 20" aria-hidden="true" class="github-icon">
 									<path
 										fill="currentColor"
@@ -194,7 +194,6 @@ const navItems = menuItems.filter((item) => !isGitHubItem(item));
 		left: 0;
 		right: 0;
 		z-index: 100;
-		padding: 0 8px;
 		pointer-events: none;
 	}
 
@@ -203,6 +202,7 @@ const navItems = menuItems.filter((item) => !isGitHubItem(item));
 	}
 
 	.site-nav-shell {
+		width: 100%;
 		max-width: var(--wide-width);
 		margin: 8px auto 0;
 		padding: 0 var(--spacing-lg);
@@ -220,6 +220,7 @@ const navItems = menuItems.filter((item) => !isGitHubItem(item));
 
 	.site-header[data-scrolled="true"] .site-nav-shell,
 	.site-nav[data-state="active"] .site-nav-shell {
+		width: calc(100% - 16px);
 		max-width: 920px;
 		padding: 0 var(--spacing-md);
 		border-color: var(--color-border);

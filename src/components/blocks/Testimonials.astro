@@ -61,19 +61,21 @@ const { headline, testimonials } = node;
 	}
 
 	.testimonials-header {
-		text-align: center;
-		margin-bottom: var(--spacing-4xl);
+		max-width: 44rem;
+		margin-bottom: var(--spacing-3xl);
 	}
 
 	.testimonials-headline {
 		font-size: var(--font-size-3xl);
-		font-weight: 800;
+		font-weight: 700;
+		line-height: 1.08;
+		letter-spacing: -0.035em;
 	}
 
 	.testimonials-grid {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
-		gap: var(--spacing-xl);
+		gap: var(--spacing-lg);
 	}
 
 	.testimonial-card {
@@ -128,6 +130,10 @@ const { headline, testimonials } = node;
 	}
 
 	@media (max-width: 600px) {
+		.testimonials-header {
+			margin-bottom: var(--spacing-2xl);
+		}
+
 		.testimonials-grid {
 			grid-template-columns: 1fr;
 		}

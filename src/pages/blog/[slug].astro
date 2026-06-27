@@ -17,30 +17,58 @@ if (!post) {
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-const published = post.data.publishedAt?.toLocaleDateString("en-US", {
-	year: "numeric",
-	month: "long",
-	day: "numeric",
-});
+const published = post.data.publishedAt
+	? {
+		datetime: post.data.publishedAt.toISOString(),
+		label: post.data.publishedAt.toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		}),
+	}
+	: null;
 ---
 
 <Base title={post.data.title} description={post.data.excerpt || "Release announcement from EmDash CMS."}>
 	<article class="post-page">
-		<p class="eyebrow"><a href="/blog">Blog</a></p>
-		<h1>{post.data.title}</h1>
-		{published && <p class="post-date">{published}</p>}
-		{post.data.excerpt && <p class="post-excerpt">{post.data.excerpt}</p>}
-		<div class="post-content">
-			<PortableText value={post.data.content} />
+		<div class="post-container">
+			<div class="post-rail">
+				<header class="post-header">
+					<p class="eyebrow"><a href="/blog">Blog</a></p>
+					<h1>{post.data.title}</h1>
+					{published && (
+						<p class="post-date">
+							<time datetime={published.datetime}>{published.label}</time>
+						</p>
+					)}
+					{post.data.excerpt && <p class="post-excerpt">{post.data.excerpt}</p>}
+				</header>
+				<div class="post-content">
+					<PortableText value={post.data.content} />
+				</div>
+			</div>
 		</div>
 	</article>
 </Base>
 
 <style>
 	.post-page {
-		max-width: var(--max-width);
+		overflow: hidden;
+		background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+	}
+
+	.post-container {
+		max-width: var(--wide-width);
 		margin: 0 auto;
-		padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-5xl);
+		padding: 8.5rem var(--spacing-lg) var(--spacing-5xl);
+	}
+
+	.post-rail {
+		max-width: 46rem;
+	}
+
+	.post-header {
+		margin-bottom: var(--spacing-2xl);
 	}
 
 	.eyebrow {
@@ -48,33 +76,47 @@ const published = post.data.publishedAt?.toLocaleDateString("en-US", {
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		margin-bottom: var(--spacing-md);
+		margin-bottom: 1.5rem;
 	}
 
 	.eyebrow a {
-		color: var(--color-primary);
+		color: color-mix(in srgb, var(--color-text) 52%, transparent);
+		transition: color var(--transition-fast);
+	}
+
+	.eyebrow a:hover {
+		color: var(--color-text);
 	}
 
 	.post-page h1 {
-		margin-bottom: var(--spacing-sm);
+		max-width: 44rem;
+		font-size: var(--font-size-4xl);
+		font-weight: 700;
+		line-height: 1.03;
+		letter-spacing: -0.045em;
+		text-wrap: balance;
 	}
 
 	.post-date {
+		margin-top: var(--spacing-md);
+		margin-bottom: 0;
 		font-size: var(--font-size-sm);
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-lg);
+		color: color-mix(in srgb, var(--color-text) 56%, transparent);
 	}
 
 	.post-excerpt {
-		font-size: var(--font-size-xl);
-		line-height: 1.6;
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-2xl);
+		max-width: 40rem;
+		margin-top: var(--spacing-md);
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		color: color-mix(in srgb, var(--color-text) 62%, transparent);
+		text-wrap: balance;
 	}
 
 	.post-content {
-		font-size: var(--font-size-lg);
-		line-height: 1.8;
+		font-size: var(--font-size-base);
+		line-height: 1.75;
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
 	}
 
 	.post-content :global(p) {
@@ -83,7 +125,9 @@ const published = post.data.publishedAt?.toLocaleDateString("en-US", {
 
 	.post-content :global(h2) {
 		font-size: var(--font-size-2xl);
-		margin: 2em 0 0.75em;
+		line-height: 1.12;
+		letter-spacing: -0.035em;
+		margin: 2.25em 0 0.75em;
 	}
 
 	.post-content :global(h3) {
@@ -111,6 +155,7 @@ const published = post.data.publishedAt?.toLocaleDateString("en-US", {
 		font-family: var(--font-mono);
 		font-size: 0.9em;
 		background: var(--color-surface);
+		border: 1px solid var(--color-border);
 		padding: 0.15em 0.35em;
 		border-radius: var(--radius-sm);
 	}
@@ -124,10 +169,44 @@ const published = post.data.publishedAt?.toLocaleDateString("en-US", {
 		margin-bottom: 1.5em;
 	}
 
+	.post-content :global(pre code) {
+		display: block;
+		padding: 0;
+		color: inherit;
+		font-size: inherit;
+		background: transparent;
+		border: 0;
+		border-radius: 0;
+	}
+
 	.post-content :global(blockquote) {
-		border-left: 3px solid var(--color-primary);
+		border-left: 3px solid var(--heat-40);
 		padding-left: var(--spacing-lg);
 		color: var(--color-muted);
 		margin: 1.5em 0;
+	}
+
+	@media (min-width: 1024px) {
+		.post-container {
+			padding-top: 10rem;
+		}
+
+		.post-page h1 {
+			font-size: 3.25rem;
+		}
+
+		.post-excerpt {
+			font-size: var(--font-size-lg);
+		}
+	}
+
+	@media (max-width: 640px) {
+		.post-container {
+			padding-top: 7.5rem;
+		}
+
+		.post-page h1 {
+			font-size: var(--font-size-3xl);
+		}
 	}
 </style>

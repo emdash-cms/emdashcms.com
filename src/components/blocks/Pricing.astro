@@ -82,19 +82,21 @@ const plans = rawPlans.map((plan) => ({
 
 <style>
 	.pricing-header {
-		text-align: center;
-		margin-bottom: var(--spacing-2xl);
+		max-width: 44rem;
+		margin-bottom: var(--spacing-3xl);
 	}
 
 	.pricing-headline {
 		font-size: var(--font-size-3xl);
-		font-weight: 800;
+		font-weight: 700;
+		line-height: 1.08;
+		letter-spacing: -0.035em;
 	}
 
 	.pricing-grid {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
-		gap: var(--spacing-xl);
+		gap: var(--spacing-lg);
 		align-items: start;
 	}
 
@@ -195,12 +197,18 @@ const plans = rawPlans.map((plan) => ({
 	@media (max-width: 900px) {
 		.pricing-grid {
 			grid-template-columns: 1fr;
-			max-width: 400px;
-			margin: 0 auto;
+			max-width: none;
+			margin: 0;
 		}
 
 		.pricing-highlighted {
 			transform: none;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.pricing-header {
+			margin-bottom: var(--spacing-2xl);
 		}
 	}
 </style>

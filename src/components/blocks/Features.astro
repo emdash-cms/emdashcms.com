@@ -57,26 +57,29 @@ const iconMap: Record<string, string> = {
 
 <style>
 	.features-header {
-		text-align: center;
-		max-width: var(--max-width);
-		margin: 0 auto var(--spacing-4xl);
+		max-width: 44rem;
+		margin: 0 0 var(--spacing-3xl);
 	}
 
 	.features-headline {
 		font-size: var(--font-size-3xl);
-		font-weight: 800;
-		margin-bottom: var(--spacing-md);
+		font-weight: 700;
+		line-height: 1.08;
+		letter-spacing: -0.035em;
 	}
 
 	.features-subheadline {
-		font-size: var(--font-size-lg);
+		max-width: 36rem;
+		margin-top: var(--spacing-md);
+		font-size: var(--font-size-base);
+		line-height: 1.55;
 		color: var(--color-muted);
 	}
 
 	.features-grid {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
-		gap: var(--spacing-xl);
+		gap: var(--spacing-lg);
 	}
 
 	.feature-card {
@@ -128,6 +131,10 @@ const iconMap: Record<string, string> = {
 	}
 
 	@media (max-width: 600px) {
+		.features-header {
+			margin-bottom: var(--spacing-2xl);
+		}
+
 		.features-grid {
 			grid-template-columns: 1fr;
 		}
