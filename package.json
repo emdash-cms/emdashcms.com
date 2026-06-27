@@ -4,18 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "emdash dev",
     "build": "astro build",
     "preview": "astro preview",
     "deploy": "astro build && wrangler deploy",
     "typecheck": "astro check"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "https://pkg.pr.new/@astrojs/cloudflare@a9949197bd",
+    "@astrojs/cloudflare": "13.7.0",
     "@astrojs/react": "^5.0.0",
     "@emdash-cms/cloudflare": "^0.12.0",
     "@iconify-json/ph": "^1.2.2",
-    "astro": "https://pkg.pr.new/astro@a9949197bd",
+    "astro": "6.3.1",
     "astro-iconset": "^0.0.4",
     "emdash": "^0.12.0",
     "react": "19.2.4",
@@ -23,14 +23,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.7",
-    "@cloudflare/workers-types": "^4.20260305.1",
-    "wrangler": "^4.83.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "workerd"
-    ]
+    "@cloudflare/workers-types": "^4.20260625.1",
+    "wrangler": "^4.105.0"
   },
   "emdash": {
     "label": "Marketing",

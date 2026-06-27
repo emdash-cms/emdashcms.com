@@ -44,7 +44,6 @@ A conversion-focused landing page template built with [EmDash](https://github.co
 
 ```bash
 pnpm install
-pnpm bootstrap
 pnpm dev
 ```
 

@@ -111,9 +111,9 @@
 						{
 							"_type": "marketing.hero",
 							"_key": "hero",
-							"headline": "A CMS for humans and agents",
-							"subheadline": "EmDash is an open source CMS for Astro and Cloudflare. Define content in code, edit it in a polished admin, and let agents work with it through the same APIs you do.",
-							"primaryCtaLabel": "Try the playground",
+							"headline": "The CMS for you and your agent",
+							"subheadline": "EmDash is an open source, agent-ready, full-stack CMS for Astro, deployable in one click on Cloudflare.",
+							"primaryCtaLabel": "Try it out in our playground",
 							"primaryCtaUrl": "https://try.emdashcms.com",
 							"secondaryCtaLabel": "Read the docs",
 							"secondaryCtaUrl": "https://docs.emdashcms.com"
@@ -121,38 +121,38 @@
 						{
 							"_type": "marketing.features",
 							"_key": "features",
-							"headline": "Built for the way you actually ship",
-							"subheadline": "Type-safe content, server-rendered Astro pages, and a single binary deploy on Cloudflare. No SaaS dashboard between you and your data.",
+							"headline": "Build your next blog or microsite today",
+							"subheadline": "EmDash combines with Astro to create one end-to-end TypeScript CMS and frontend",
 							"features": [
 								{
 									"icon": "code",
-									"title": "Schema as code",
+									"title": "Not just Posts and Pages",
 									"description": "Define collections, fields, and relationships in a seed file. Get generated TypeScript types and a fully migrated database every time you run dev."
 								},
 								{
 									"icon": "zap",
-									"title": "Astro-native",
-									"description": "First-class Astro integration. Server-rendered pages, content loaders, image components, and Portable Text rendering with no glue code."
+									"title": "The Astro-native CMS",
+									"description": "First-class Astro integration. Server-rendered pages, content loaders, image components, and JSON structured content."
 								},
 								{
 									"icon": "cloud",
-									"title": "Runs on Cloudflare",
-									"description": "D1 for content, R2 for media, Workers for serving. One stack, global by default, deployed from a single command."
+									"title": "A spiritual WordPress successor",
+									"description": "Everything you love about WordPress with lightning-fast admin panels, no plugin security concerns, and a more modern architecture."
 								},
 								{
 									"icon": "users",
-									"title": "Admin humans love",
-									"description": "Drafts, revisions, scheduling, full-text search, taxonomies, menus, and live preview, all in a fast modern editor."
+									"title": "Easy to manage",
+									"description": "Create your own content types in the admin, with drafts, revisions, scheduling, full-text search, taxonomies, menus, and live preview."
 								},
 								{
 									"icon": "shield",
-									"title": "Built for agents",
-									"description": "Every CMS operation is exposed over MCP. Agents read schema, edit content, and publish through the same typed APIs the admin uses."
+									"title": "Built with agents in mind",
+									"description": "Work with your agent to create a modern, beautiful site that you can both edit through extensive APIs and MCPs."
 								},
 								{
 									"icon": "globe",
-									"title": "Extensible by design",
-									"description": "Plugins add custom block types, admin pages, hooks, and storage. Bring your own auth, payments, comments, or analytics."
+									"title": "Extend with plugins",
+									"description": "Add your own custom block types, admin pages, hooks, storage and more with plugins."
 								}
 							]
 						},
@@ -187,19 +187,19 @@
 							"items": [
 								{
 									"question": "What is EmDash?",
-									"answer": "EmDash is an open source CMS built on Astro and Cloudflare. It gives you a typed schema, a polished admin, and an MCP server so both humans and AI agents can manage your content."
+									"answer": "EmDash is an open source CMS built on Astro from Cloudflare. It gives you a typed schema, a polished admin, and an MCP server so both humans and AI agents can manage your content."
 								},
 								{
-									"question": "How is it different from other CMSes?",
-									"answer": "EmDash is Astro-native and self-hosted on your own Cloudflare account. Your schema lives in code, your data lives in D1 and R2, and there is no SaaS backend between you and your content."
+									"question": "How is it different from other CMSs like WordPress?",
+									"answer": "EmDash is a fully typescript full-stack CMS built on Astro. It has a lot of similarities to popular CMSs like WordPress, but improves on its security posture by eliminating the risk that comes with its plugin ecosystem. EmDash will support a new plugin ecosystem based on secure execution context and scoped permissions, making sure your plugins can't damage your site."
 								},
 								{
-									"question": "Can AI agents really edit content?",
-									"answer": "Yes. EmDash ships a Model Context Protocol server that exposes content, schema, media, taxonomies, menus, and revisions. Drop it into Claude, OpenCode, or any MCP-aware tool and it just works."
+									"question": "Do I need to use AI to use EmDash?",
+									"answer": "No! EmDash is a great CMS whether you run it with AI agents or not. Where EmDash excels is in shipping a Model Context Protocol server that exposes content, schema, media, taxonomies, menus, and revisions. Drop it into Claude, OpenCode, or any MCP-aware tool and it just works. Suddenly things that were a chore in other CMSs can be sent off as work for your agent to do."
 								},
 								{
 									"question": "How do I get started?",
-									"answer": "Open the playground for an instant sandbox, or run npx emdash dev in a fresh Astro project to spin up a local instance with the admin at /_emdash/admin."
+									"answer": "Open the playground for an instant sandbox, or run npm create emdash to scaffold out a new project on your local computer ready for deployment."
 								},
 								{
 									"question": "Where can I ask questions?",

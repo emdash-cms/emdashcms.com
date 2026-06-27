@@ -1,5 +1,4 @@
 import cloudflare from "@astrojs/cloudflare";
-import { cacheCloudflare } from "@astrojs/cloudflare/cache";
 import react from "@astrojs/react";
 import { access, d1, r2 } from "@emdash-cms/cloudflare";
 import icon from "astro-iconset";
@@ -9,11 +8,6 @@ import emdash from "emdash/astro";
 export default defineConfig({
 	output: "server",
 	adapter: cloudflare(),
-	experimental: {
-		cache: {
-			provider: cacheCloudflare(),
-		},
-	},
 	image: {
 		layout: "constrained",
 		responsiveStyles: true,
