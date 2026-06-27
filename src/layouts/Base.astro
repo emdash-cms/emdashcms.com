@@ -294,19 +294,62 @@ const pageCtx = createPublicPageContext({
         }
 
         :root {
-          /* Colors - Playful/Bold palette */
-          --color-bg: #ffffff;
-          --color-text: #0f172a;
-          --color-muted: #64748b;
-          --color-border: #e2e8f0;
-          --color-surface: #f8fafc;
-          --color-primary: #6366f1;
-          --color-primary-dark: #4f46e5;
-          --color-primary-light: #818cf8;
-          --color-accent: #f472b6;
-          --color-accent-light: #f9a8d4;
-          --color-success: #22c55e;
-          --color-warning: #f59e0b;
+          /* Firecrawl-inspired heat and neutral token scale. */
+          --heat-4: #fa5d190a;
+          --heat-8: #fa5d1914;
+          --heat-12: #fa5d191f;
+          --heat-16: #fa5d1929;
+          --heat-20: #fa5d1933;
+          --heat-40: #fa5d1966;
+          --heat-90: #fa5d19e6;
+          --heat-100: #fa5d19ff;
+          --accent-black: #262626ff;
+          --accent-white: #ffffffff;
+          --surface: #ffffffff;
+          --surface-raised: #ffffffff;
+          --black-alpha-3: #00000008;
+          --black-alpha-4: #0000000a;
+          --black-alpha-6: #0000000f;
+          --black-alpha-7: #00000012;
+          --black-alpha-32: #26262652;
+          --black-alpha-48: #2626267a;
+          --black-alpha-56: #2626268f;
+          --border-faint: #edededff;
+          --border-muted: #e8e8e8ff;
+          --border-loud: #e6e6e6ff;
+          --background-base: #f9f9f9ff;
+          --background-lighter: #fbfbfbff;
+
+          /* Semantic roles used by the site. */
+          --color-bg: var(--background-base);
+          --color-text: var(--accent-black);
+          --color-muted: var(--black-alpha-56);
+          --color-border: var(--border-muted);
+          --color-surface: var(--surface);
+          --color-surface-raised: var(--surface-raised);
+          --color-primary: var(--heat-100);
+          --color-primary-dark: var(--heat-90);
+          --color-primary-light: var(--heat-12);
+          --color-accent: var(--heat-100);
+          --color-accent-light: var(--heat-12);
+          --color-success: #42c366;
+          --color-warning: #ecb730;
+          --color-focus: var(--heat-100);
+
+          /* Button roles. */
+          --button-radius: 10px;
+          --button-gap: 6px;
+          --button-padding-y: 8px;
+          --button-padding-x: 12px;
+          --button-primary-bg: var(--heat-100);
+          --button-primary-bg-hover: var(--heat-90);
+          --button-primary-fg: var(--accent-white);
+          --button-secondary-bg: var(--black-alpha-4);
+          --button-secondary-bg-hover: var(--black-alpha-6);
+          --button-secondary-bg-active: var(--black-alpha-7);
+          --button-secondary-fg: var(--accent-black);
+          --button-disabled-bg: var(--black-alpha-3);
+          --button-disabled-fg: var(--black-alpha-48);
 
           /* Typography */
           --font-mono: ui-monospace, "SF Mono", monospace;
@@ -347,41 +390,76 @@ const pageCtx = createPublicPageContext({
           --transition-slow: 300ms ease;
 
           /* Shadows */
-          --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-          --shadow:
-            0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-          --shadow-lg:
-            0 10px 15px -3px rgba(0, 0, 0, 0.1),
-            0 4px 6px -4px rgba(0, 0, 0, 0.1);
-          --shadow-xl:
-            0 20px 25px -5px rgba(0, 0, 0, 0.1),
-            0 8px 10px -6px rgba(0, 0, 0, 0.1);
+          --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+          --shadow: 0 2px 2px rgba(0, 0, 0, 0.04);
+          --shadow-lg: 0 8px 16px -12px rgba(0, 0, 0, 0.2);
+          --shadow-xl: 0 18px 32px -24px rgba(0, 0, 0, 0.28);
         }
 
         /* Dark mode via system preference (when no explicit class) */
         @media (prefers-color-scheme: dark) {
           :root:not(.light) {
-            --color-bg: #0f172a;
-            --color-text: #f1f5f9;
-            --color-muted: #94a3b8;
-            --color-border: #334155;
-            --color-surface: #1e293b;
-            --color-primary: #818cf8;
-            --color-primary-dark: #6366f1;
-            --color-primary-light: #a5b4fc;
+            --accent-black: #f5f5f5ff;
+            --accent-white: #ffffffff;
+            --surface: #171717ff;
+            --surface-raised: #1f1f1fff;
+            --black-alpha-3: #ffffff08;
+            --black-alpha-4: #ffffff0a;
+            --black-alpha-6: #ffffff0f;
+            --black-alpha-7: #ffffff12;
+            --black-alpha-32: #ffffff52;
+            --black-alpha-48: #ffffff7a;
+            --black-alpha-56: #ffffff8f;
+            --border-faint: #2a2a2aff;
+            --border-muted: #333333ff;
+            --border-loud: #404040ff;
+            --background-base: #0a0a0aff;
+            --background-lighter: #141414ff;
+            --color-bg: var(--background-base);
+            --color-text: var(--accent-black);
+            --color-muted: var(--black-alpha-56);
+            --color-border: var(--border-muted);
+            --color-surface: var(--surface);
+            --color-surface-raised: var(--surface-raised);
+            --button-secondary-bg: var(--black-alpha-4);
+            --button-secondary-bg-hover: var(--black-alpha-6);
+            --button-secondary-bg-active: var(--black-alpha-7);
+            --button-secondary-fg: var(--accent-black);
+            --button-disabled-bg: var(--black-alpha-3);
+            --button-disabled-fg: var(--black-alpha-48);
           }
         }
 
         /* Explicit dark mode */
         :root.dark {
-          --color-bg: #0f172a;
-          --color-text: #f1f5f9;
-          --color-muted: #94a3b8;
-          --color-border: #334155;
-          --color-surface: #1e293b;
-          --color-primary: #818cf8;
-          --color-primary-dark: #6366f1;
-          --color-primary-light: #a5b4fc;
+          --accent-black: #f5f5f5ff;
+          --accent-white: #ffffffff;
+          --surface: #171717ff;
+          --surface-raised: #1f1f1fff;
+          --black-alpha-3: #ffffff08;
+          --black-alpha-4: #ffffff0a;
+          --black-alpha-6: #ffffff0f;
+          --black-alpha-7: #ffffff12;
+          --black-alpha-32: #ffffff52;
+          --black-alpha-48: #ffffff7a;
+          --black-alpha-56: #ffffff8f;
+          --border-faint: #2a2a2aff;
+          --border-muted: #333333ff;
+          --border-loud: #404040ff;
+          --background-base: #0a0a0aff;
+          --background-lighter: #141414ff;
+          --color-bg: var(--background-base);
+          --color-text: var(--accent-black);
+          --color-muted: var(--black-alpha-56);
+          --color-border: var(--border-muted);
+          --color-surface: var(--surface);
+          --color-surface-raised: var(--surface-raised);
+          --button-secondary-bg: var(--black-alpha-4);
+          --button-secondary-bg-hover: var(--black-alpha-6);
+          --button-secondary-bg-active: var(--black-alpha-7);
+          --button-secondary-fg: var(--accent-black);
+          --button-disabled-bg: var(--black-alpha-3);
+          --button-disabled-fg: var(--black-alpha-48);
         }
 
         html {
@@ -401,6 +479,15 @@ const pageCtx = createPublicPageContext({
         a {
           color: currentColor;
           text-decoration: none;
+        }
+
+        a:focus-visible,
+        button:focus-visible,
+        summary:focus-visible {
+          outline: none;
+          box-shadow:
+            0 0 0 2px var(--color-bg),
+            0 0 0 4px var(--color-focus);
         }
 
         img {
@@ -448,63 +535,76 @@ const pageCtx = createPublicPageContext({
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: var(--spacing-sm);
-          padding: var(--spacing-sm) var(--spacing-lg);
+          gap: var(--button-gap);
+          min-height: 36px;
+          padding: var(--button-padding-y) var(--button-padding-x);
           font-family: inherit;
           font-size: var(--font-size-sm);
-          font-weight: 600;
-          border-radius: var(--radius);
+          font-weight: 500;
+          line-height: 1.35;
+          border: 0;
+          border-radius: var(--button-radius);
           cursor: pointer;
           transition:
+            color var(--transition-fast),
             background var(--transition-fast),
-            transform var(--transition-fast),
-            box-shadow var(--transition-fast);
+            opacity var(--transition-fast),
+            transform var(--transition-fast);
         }
 
         .btn:hover {
-          transform: translateY(-1px);
+          text-decoration: none;
         }
 
         .btn:active {
-          transform: translateY(0);
+          transform: scale(0.995);
+        }
+
+        .btn[aria-disabled="true"],
+        .btn:disabled {
+          color: var(--button-disabled-fg);
+          background: var(--button-disabled-bg);
+          cursor: not-allowed;
+          opacity: 0.8;
+          transform: none;
         }
 
         .btn-primary {
-          color: white;
-          background: linear-gradient(
-            135deg,
-            var(--color-primary-dark),
-            var(--color-accent)
-          );
-          border: none;
-          transition:
-            background 0.3s ease,
-            box-shadow 0.3s ease;
+          color: var(--button-primary-fg);
+          background: var(--button-primary-bg);
         }
 
         .btn-primary:hover {
-          background: linear-gradient(
-            135deg,
-            var(--color-primary),
-            var(--color-accent)
-          );
-          box-shadow: var(--shadow-lg);
+          background: var(--button-primary-bg-hover);
         }
 
         .btn-secondary {
-          color: var(--color-text);
-          background: transparent;
-          border: 1px solid var(--color-border);
+          color: var(--button-secondary-fg);
+          background: var(--button-secondary-bg);
         }
 
         .btn-secondary:hover {
-          background: var(--color-surface);
-          border-color: var(--color-muted);
+          background: var(--button-secondary-bg-hover);
+        }
+
+        .btn-secondary:active {
+          background: var(--button-secondary-bg-active);
         }
 
         .btn-lg {
-          padding: var(--spacing-md) var(--spacing-xl);
+          min-height: 40px;
+          padding: 10px 14px;
           font-size: var(--font-size-base);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .btn {
+            transition: none;
+          }
+
+          .btn:active {
+            transform: none;
+          }
         }
       }
     </style>
@@ -594,28 +694,28 @@ const pageCtx = createPublicPageContext({
       }
 
       .nav-cta {
-        padding: var(--spacing-sm) var(--spacing-md);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 6px 12px;
         font-size: var(--font-size-sm);
-        font-weight: 600;
-        color: white;
-        background: linear-gradient(
-          135deg,
-          var(--color-primary-dark),
-          var(--color-accent)
-        );
-        border-radius: var(--radius-sm);
+        font-weight: 500;
+        line-height: 1.35;
+        color: var(--button-primary-fg);
+        background: var(--button-primary-bg);
+        border-radius: var(--button-radius);
         transition:
-          background 0.3s ease,
+          background var(--transition-fast),
           transform var(--transition-fast);
       }
 
       .nav-cta:hover {
-        background: linear-gradient(
-          135deg,
-          var(--color-primary),
-          var(--color-accent)
-        );
-        transform: translateY(-1px);
+        background: var(--button-primary-bg-hover);
+      }
+
+      .nav-cta:active {
+        transform: scale(0.995);
       }
 
       main {
@@ -699,26 +799,45 @@ const pageCtx = createPublicPageContext({
       }
 
       .theme-btn {
-        background: transparent;
-        border: 1px solid var(--color-border);
-        color: var(--color-muted);
+        background: var(--button-secondary-bg);
+        border: 0;
+        color: var(--button-secondary-fg);
         font-family: var(--font-sans);
         font-size: var(--font-size-sm);
+        font-weight: 500;
         padding: var(--spacing-xs) var(--spacing-sm);
-        border-radius: var(--radius-sm);
+        border-radius: var(--button-radius);
         cursor: pointer;
-        transition: all var(--transition-fast);
+        transition:
+          background var(--transition-fast),
+          color var(--transition-fast),
+          transform var(--transition-fast);
       }
 
       .theme-btn:hover {
-        color: var(--color-text);
-        border-color: var(--color-text);
+        background: var(--button-secondary-bg-hover);
       }
 
       .theme-btn.active {
-        background: var(--color-bg);
+        background: var(--heat-12);
         color: var(--color-text);
-        border-color: var(--color-primary);
+      }
+
+      .theme-btn:active {
+        background: var(--button-secondary-bg-active);
+        transform: scale(0.99);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .nav-cta,
+        .theme-btn {
+          transition: none;
+        }
+
+        .nav-cta:active,
+        .theme-btn:active {
+          transform: none;
+        }
       }
 
       @media (max-width: 768px) {

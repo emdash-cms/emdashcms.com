@@ -159,6 +159,7 @@
 						{
 							"_type": "marketing.testimonials",
 							"_key": "testimonials",
+							"headline": "What people are saying",
 							"testimonials": [
 								{
 									"quote": "The entire functionality of WordPress, and then some.",
