@@ -3,6 +3,7 @@ import { getMenu, getSiteSettings } from "emdash";
 import { EmDashHead } from "emdash/ui";
 import { createPublicPageContext } from "emdash/page";
 import { Font } from "astro:assets";
+import SiteHeader from "../components/SiteHeader.astro";
 import "../styles/theme.css";
 
 interface Props {
@@ -19,7 +20,9 @@ const siteTitle = settings?.title || "EmDash CMS";
 const fullTitle = title ? `${title} — ${siteTitle}` : siteTitle;
 const siteDescription =
   settings?.tagline || "An open source Astro CMS built for humans and agents.";
-const siteLogo = settings?.logo?.url ? settings.logo : null;
+const siteLogo = settings?.logo?.url
+  ? { url: settings.logo.url, alt: settings.logo.alt }
+  : null;
 const siteFavicon = settings?.favicon?.url ?? null;
 
 const [menu, footerProduct, footerCommunity, footerResources] = await Promise.all([
@@ -83,58 +86,12 @@ const pageCtx = createPublicPageContext({
     </script>
   </head>
   <body>
-    <header class="site-header">
-      <nav class="nav">
-        <a href="/" class="site-logo" aria-label={siteTitle}>
-          {
-            siteLogo ? (
-              <img
-                src={siteLogo.url}
-                alt={siteLogo.alt || siteTitle}
-                class="site-logo-img"
-              />
-            ) : (
-              <>
-                <img
-                  src="/brand/logo-dark-text.svg"
-                  alt={siteTitle}
-                  class="site-logo-img site-logo-img--light"
-                />
-                <img
-                  src="/brand/logo-light-text.svg"
-                  alt={siteTitle}
-                  class="site-logo-img site-logo-img--dark"
-                />
-              </>
-            )
-          }
-        </a>
-        <div class="nav-links">
-          {
-            menu?.items.map((item) => (
-              <a
-                href={item.url}
-                target={
-                  item.target ||
-                  (isExternalUrl(item.url) ? "_blank" : undefined)
-                }
-                rel={isExternalUrl(item.url) ? "noreferrer" : undefined}
-              >
-                {item.label}
-              </a>
-            ))
-          }
-        </div>
-        <div class="nav-actions">
-          <a
-            href={PLAYGROUND_URL}
-            class="nav-cta"
-            target="_blank"
-            rel="noreferrer">Try it</a
-          >
-        </div>
-      </nav>
-    </header>
+    <SiteHeader
+      siteTitle={siteTitle}
+      siteLogo={siteLogo}
+      menuItems={menu?.items ?? []}
+      playgroundUrl={PLAYGROUND_URL}
+    />
 
     <main>
       <slot />
@@ -610,112 +567,27 @@ const pageCtx = createPublicPageContext({
     </style>
 
     <style>
-      .site-header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: var(--color-bg);
-        border-bottom: 1px solid var(--color-border);
-      }
-
-      .nav {
-        max-width: var(--wide-width);
-        margin: 0 auto;
-        padding: var(--spacing-md) var(--spacing-lg);
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-        gap: var(--spacing-lg);
-      }
-
-      .site-logo {
-        display: inline-flex;
-        align-items: center;
-        line-height: 0;
-      }
-
-      .site-logo-img {
-        height: 36px;
-        width: auto;
-        display: block;
-      }
-
-      /* Light/dark logo swap. Default to the dark-text lockup and hide
-			   the light-text variant; the swap rules below flip them. */
-      .site-logo-img--dark,
+      /* Light/dark footer logo swap. Header logo swapping lives in SiteHeader. */
       .footer-logo-img--dark {
         display: none;
       }
 
-      :root.dark .site-logo-img--light,
       :root.dark .footer-logo-img--light {
         display: none;
       }
 
-      :root.dark .site-logo-img--dark,
       :root.dark .footer-logo-img--dark {
         display: block;
       }
 
       @media (prefers-color-scheme: dark) {
-        :root:not(.light) .site-logo-img--light,
         :root:not(.light) .footer-logo-img--light {
           display: none;
         }
 
-        :root:not(.light) .site-logo-img--dark,
         :root:not(.light) .footer-logo-img--dark {
           display: block;
         }
-      }
-
-      .nav-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--spacing-lg);
-        margin-left: auto;
-      }
-
-      .nav-links a {
-        font-size: var(--font-size-sm);
-        font-weight: 500;
-        color: var(--color-muted);
-        transition: color var(--transition-fast);
-      }
-
-      .nav-links a:hover {
-        color: var(--color-text);
-      }
-
-      .nav-actions {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-lg);
-      }
-
-      .nav-cta {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 34px;
-        padding: 6px 12px;
-        font-size: var(--font-size-sm);
-        font-weight: 500;
-        line-height: 1.35;
-        color: var(--button-primary-fg);
-        background: var(--button-primary-bg);
-        border-radius: var(--button-radius);
-        transition:
-          background var(--transition-fast),
-          transform var(--transition-fast);
-      }
-
-      .nav-cta:hover {
-        background: var(--button-primary-bg-hover);
-      }
-
-      .nav-cta:active {
-        transform: scale(0.995);
       }
 
       main {
@@ -829,12 +701,10 @@ const pageCtx = createPublicPageContext({
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .nav-cta,
         .theme-btn {
           transition: none;
         }
 
-        .nav-cta:active,
         .theme-btn:active {
           transform: none;
         }
@@ -865,21 +735,6 @@ const pageCtx = createPublicPageContext({
         }
         h2 {
           font-size: var(--font-size-2xl);
-        }
-      }
-
-      @media (max-width: 540px) {
-        .nav {
-          flex-wrap: wrap;
-          row-gap: var(--spacing-md);
-          justify-content: space-between;
-        }
-
-        .nav-links {
-          order: 3;
-          width: 100%;
-          justify-content: flex-end;
-          margin-left: 0;
         }
       }
 
