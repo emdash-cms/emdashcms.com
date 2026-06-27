@@ -15,6 +15,7 @@ export default defineConfig({
 	vite: {
 		ssr: {
 			optimizeDeps: {
+				exclude: ["emdash/ui"],
 				// Pre-bundle so it isn't discovered mid-render, which would trigger
 				// a Vite dep re-optimization and break in-flight worker imports
 				// under the Cloudflare dev runner (workerd).
