@@ -1,0 +1,382 @@
+---
+interface MenuItem {
+	label: string;
+	url: string;
+	target?: string | null;
+}
+
+interface FooterColumn {
+	heading: string;
+	menu: {
+		items: MenuItem[];
+	};
+}
+
+interface SiteLogo {
+	url: string;
+	alt?: string | null;
+}
+
+interface Props {
+	siteTitle: string;
+	siteLogo?: SiteLogo | null;
+	tagline: string;
+	footerColumns: FooterColumn[];
+}
+
+const { siteTitle, siteLogo, tagline, footerColumns } = Astro.props;
+const currentYear = new Date().getFullYear();
+
+function isExternalUrl(url?: string | null) {
+	return typeof url === "string" && /^https?:\/\//.test(url);
+}
+
+function getSocialType(item: MenuItem) {
+	const label = item.label.toLowerCase();
+	const url = item.url.toLowerCase();
+	if (label.includes("github") || url.includes("github.com")) return "github";
+	if (label.includes("discord") || url.includes("discord.")) return "discord";
+	return null;
+}
+
+const socialLinks = Array.from(
+	footerColumns
+		.flatMap((column) => column.menu.items)
+		.reduce((links, item) => {
+			const type = getSocialType(item);
+			if (!type || links.has(type)) return links;
+			links.set(type, { ...item, type });
+			return links;
+		}, new Map<string, MenuItem & { type: "github" | "discord" }>())
+		.values(),
+);
+---
+
+<footer class="site-footer">
+	<div class="footer-shell">
+		<div class="footer-top">
+			<div class="footer-brand">
+				<a href="/" class="footer-logo" aria-label={`${siteTitle} home`}>
+					{siteLogo ? (
+						<img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="footer-logo-img" />
+					) : (
+						<>
+							<img
+								src="/brand/logo-dark-text.svg"
+								alt={siteTitle}
+								class="footer-logo-img footer-logo-img--light"
+							/>
+							<img
+								src="/brand/logo-light-text.svg"
+								alt={siteTitle}
+								class="footer-logo-img footer-logo-img--dark"
+							/>
+						</>
+					)}
+				</a>
+				<p class="footer-tagline">{tagline}</p>
+			</div>
+
+			<nav class="footer-links" aria-label="Footer navigation">
+				{footerColumns.map((column) => (
+					<div class="footer-col">
+						<h4>{column.heading}</h4>
+						{column.menu.items.map((item) => (
+							<a
+								href={item.url}
+								target={item.target || (isExternalUrl(item.url) ? "_blank" : undefined)}
+								rel={isExternalUrl(item.url) ? "noreferrer" : undefined}
+							>
+								<span>{item.label}</span>
+							</a>
+						))}
+					</div>
+				))}
+			</nav>
+		</div>
+
+		<div class="footer-bottom">
+			<div class="footer-legal">
+				<p>&copy; {currentYear} {siteTitle}.</p>
+				<p class="footer-powered">Open source CMS for Astro and Cloudflare.</p>
+			</div>
+
+			<div class="footer-actions">
+				{socialLinks.length > 0 && (
+					<div class="social-links" aria-label="Social links">
+						{socialLinks.map((item) => (
+							<a
+								href={item.url}
+								class="social-link"
+								target={item.target || (isExternalUrl(item.url) ? "_blank" : undefined)}
+								rel={isExternalUrl(item.url) ? "noreferrer" : undefined}
+								aria-label={item.type === "github" ? "GitHub" : "Discord"}
+							>
+								{item.type === "github" ? (
+									<svg viewBox="0 0 24 24" aria-hidden="true">
+										<path
+											fill="currentColor"
+											d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73c.5.09.68-.22.68-.49c0-.24-.01-1.05-.01-1.9c-2.78.62-3.37-1.21-3.37-1.21c-.45-1.19-1.11-1.5-1.11-1.5c-.91-.64.07-.63.07-.63c1 .07 1.53 1.06 1.53 1.06c.89 1.56 2.34 1.11 2.91.85c.09-.66.35-1.11.64-1.37c-2.22-.26-4.55-1.14-4.55-5.06c0-1.12.39-2.03 1.03-2.75c-.1-.26-.45-1.3.1-2.71c0 0 .84-.27 2.75 1.05A9.3 9.3 0 0 1 12 6.97c.85 0 1.71.12 2.51.35c1.91-1.32 2.75-1.05 2.75-1.05c.55 1.41.2 2.45.1 2.71c.64.72 1.03 1.63 1.03 2.75c0 3.93-2.34 4.8-4.57 5.06c.36.32.68.94.68 1.9c0 1.37-.01 2.48-.01 2.81c0 .27.18.59.69.49A10.1 10.1 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"
+										/>
+									</svg>
+								) : (
+									<svg viewBox="0 0 24 24" aria-hidden="true">
+										<path
+											fill="currentColor"
+											d="M20.32 4.37A19.8 19.8 0 0 0 15.36 2.8a13.6 13.6 0 0 0-.63 1.3a18.4 18.4 0 0 0-5.5 0a13.6 13.6 0 0 0-.64-1.3a19.7 19.7 0 0 0-4.96 1.58C.5 9.22-.04 13.94.32 18.59a19.9 19.9 0 0 0 6.08 3.1a14.7 14.7 0 0 0 1.3-2.13a12.8 12.8 0 0 1-2.05-.99c.17-.13.34-.26.5-.4a14.1 14.1 0 0 0 11.68 0c.16.14.33.27.5.4c-.66.4-1.35.73-2.06.99c.38.75.82 1.47 1.3 2.13a19.8 19.8 0 0 0 6.1-3.1c.42-5.39-.72-10.07-3.35-14.22ZM8.02 15.73c-1.18 0-2.15-1.1-2.15-2.45s.95-2.45 2.15-2.45c1.21 0 2.17 1.1 2.15 2.45c0 1.35-.95 2.45-2.15 2.45Zm7.96 0c-1.18 0-2.15-1.1-2.15-2.45s.95-2.45 2.15-2.45c1.21 0 2.17 1.1 2.15 2.45c0 1.35-.94 2.45-2.15 2.45Z"
+										/>
+									</svg>
+								)}
+							</a>
+						))}
+					</div>
+				)}
+
+				<div class="theme-switcher" aria-label="Theme selector">
+					<button type="button" class="theme-btn" data-theme="light" aria-label="Light mode">Light</button>
+					<button type="button" class="theme-btn" data-theme="dark" aria-label="Dark mode">Dark</button>
+					<button type="button" class="theme-btn" data-theme="system" aria-label="System theme">System</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.footer-logo-img--dark {
+		display: none;
+	}
+
+	:global(:root.dark) .footer-logo-img--light {
+		display: none;
+	}
+
+	:global(:root.dark) .footer-logo-img--dark {
+		display: block;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .footer-logo-img--light {
+			display: none;
+		}
+
+		:global(:root:not(.light)) .footer-logo-img--dark {
+			display: block;
+		}
+	}
+
+	.site-footer {
+		background: var(--color-surface);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.footer-shell {
+		max-width: var(--wide-width);
+		margin: 0 auto;
+		padding: var(--spacing-5xl) var(--spacing-lg) 0;
+	}
+
+	.footer-top {
+		display: grid;
+		gap: var(--spacing-4xl);
+	}
+
+	.footer-brand {
+		max-width: 20rem;
+	}
+
+	.footer-logo {
+		display: inline-flex;
+		width: fit-content;
+		align-items: center;
+		line-height: 0;
+	}
+
+	.footer-logo-img {
+		height: 30px;
+		width: auto;
+	}
+
+	.footer-tagline {
+		max-width: 18rem;
+		margin-top: var(--spacing-md);
+		font-size: var(--font-size-sm);
+		line-height: 1.6;
+		color: var(--color-muted);
+	}
+
+	.footer-links {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--spacing-xl) var(--spacing-2xl);
+	}
+
+	.footer-col h4 {
+		margin-bottom: var(--spacing-md);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		line-height: 1.35;
+		color: var(--color-text);
+	}
+
+	.footer-col a {
+		display: block;
+		padding: 0.25rem 0;
+		font-size: var(--font-size-sm);
+		line-height: 1.55;
+		color: var(--color-muted);
+		transition: color var(--transition-fast);
+	}
+
+	.footer-col a:hover {
+		color: var(--color-primary);
+	}
+
+	.footer-bottom {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--spacing-lg);
+		margin-top: var(--spacing-4xl);
+		padding: var(--spacing-lg) 0;
+		color: var(--color-muted);
+		font-size: var(--font-size-sm);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.footer-legal {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem var(--spacing-md);
+	}
+
+	.footer-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--spacing-md);
+	}
+
+	.social-links {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-xs);
+	}
+
+	.social-link {
+		display: inline-flex;
+		width: 36px;
+		height: 36px;
+		align-items: center;
+		justify-content: center;
+		color: var(--color-muted);
+		border-radius: var(--button-radius);
+		transition:
+			background var(--transition-fast),
+			color var(--transition-fast),
+			transform var(--transition-fast);
+	}
+
+	.social-link:hover {
+		color: var(--color-primary);
+		background: var(--heat-8);
+	}
+
+	.social-link:active {
+		transform: scale(0.98);
+	}
+
+	.social-link svg {
+		width: 20px;
+		height: 20px;
+	}
+
+	.theme-switcher {
+		display: flex;
+		gap: 2px;
+		padding: 3px;
+		background: var(--button-secondary-bg);
+		border-radius: calc(var(--button-radius) + 4px);
+	}
+
+	.theme-btn {
+		padding: 6px 10px;
+		color: var(--color-muted);
+		font-family: var(--font-sans);
+		font-size: var(--font-size-sm);
+		font-weight: 500;
+		line-height: 1.3;
+		background: transparent;
+		border: 0;
+		border-radius: var(--button-radius);
+		cursor: pointer;
+		transition:
+			background var(--transition-fast),
+			color var(--transition-fast),
+			transform var(--transition-fast);
+	}
+
+	.theme-btn:hover,
+	.theme-btn.active {
+		color: var(--color-text);
+		background: var(--color-surface);
+	}
+
+	.theme-btn:active {
+		transform: scale(0.98);
+	}
+
+	@media (min-width: 768px) {
+		.footer-top {
+			grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+		}
+
+		.footer-links {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 768px) {
+		.footer-shell {
+			padding-top: var(--spacing-4xl);
+		}
+
+		.footer-bottom {
+			align-items: flex-start;
+		}
+
+		.footer-actions {
+			order: -1;
+			width: 100%;
+			justify-content: space-between;
+		}
+
+		.footer-legal {
+			flex-direction: column;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.footer-links {
+			grid-template-columns: 1fr;
+		}
+
+		.footer-actions {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.social-link,
+		.theme-btn {
+			transition: none;
+		}
+
+		.social-link:active,
+		.theme-btn:active {
+			transform: none;
+		}
+	}
+</style>

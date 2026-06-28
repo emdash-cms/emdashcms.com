@@ -3,6 +3,7 @@ import { getMenu, getSiteSettings } from "emdash";
 import { EmDashHead } from "emdash/ui";
 import { createPublicPageContext } from "emdash/page";
 import { Font } from "astro:assets";
+import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import "../styles/theme.css";
 
@@ -36,11 +37,7 @@ const footerColumns = [
   { heading: "Product", menu: footerProduct },
   { heading: "Community", menu: footerCommunity },
   { heading: "Resources", menu: footerResources },
-].filter((col) => col.menu && col.menu.items.length > 0);
-
-function isExternalUrl(url?: string | null) {
-  return typeof url === "string" && /^https?:\/\//.test(url);
-}
+].flatMap((col) => (col.menu && col.menu.items.length > 0 ? [{ heading: col.heading, menu: col.menu }] : []));
 
 const pageCtx = createPublicPageContext({
   Astro,
@@ -97,87 +94,12 @@ const pageCtx = createPublicPageContext({
       <slot />
     </main>
 
-    <footer class="site-footer">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <span class="footer-logo">
-            {
-              siteLogo ? (
-                <img
-                  src={siteLogo.url}
-                  alt={siteLogo.alt || siteTitle}
-                  class="footer-logo-img"
-                />
-              ) : (
-                <>
-                  <img
-                    src="/brand/logo-dark-text.svg"
-                    alt={siteTitle}
-                    class="footer-logo-img footer-logo-img--light"
-                  />
-                  <img
-                    src="/brand/logo-light-text.svg"
-                    alt={siteTitle}
-                    class="footer-logo-img footer-logo-img--dark"
-                  />
-                </>
-              )
-            }
-          </span>
-          <p class="footer-tagline">
-            {settings?.tagline || "Build something amazing"}
-          </p>
-        </div>
-        <div class="footer-links">
-          {
-            footerColumns.map((col) => (
-              <div class="footer-col">
-                <h4>{col.heading}</h4>
-                {col.menu!.items.map((item) => (
-                  <a
-                    href={item.url}
-                    target={
-                      item.target ||
-                      (isExternalUrl(item.url) ? "_blank" : undefined)
-                    }
-                    rel={isExternalUrl(item.url) ? "noreferrer" : undefined}
-                  >
-                    {item.label}
-                  </a>
-                ))}
-              </div>
-            ))
-          }
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>
-          &copy; {new Date().getFullYear()}
-          {siteTitle}.
-        </p>
-        <div class="theme-switcher">
-          <button
-            type="button"
-            class="theme-btn"
-            data-theme="light"
-            aria-label="Light mode">Light</button
-          >
-          <button
-            type="button"
-            class="theme-btn"
-            data-theme="dark"
-            aria-label="Dark mode">Dark</button
-          >
-          <button
-            type="button"
-            class="theme-btn"
-            data-theme="system"
-            aria-label="System theme">System</button
-          >
-        </div>
-        <p class="footer-powered">Open source CMS for Astro and Cloudflare.</p>
-      </div>
-    </footer>
+    <SiteFooter
+      siteTitle={siteTitle}
+      siteLogo={siteLogo}
+      tagline={settings?.tagline || "Build something amazing"}
+      footerColumns={footerColumns}
+    />
 
     <script>
       // Theme switcher
@@ -567,181 +489,8 @@ const pageCtx = createPublicPageContext({
     </style>
 
     <style>
-      /* Light/dark footer logo swap. Header logo swapping lives in SiteHeader. */
-      .footer-logo-img--dark {
-        display: none;
-      }
-
-      :root.dark .footer-logo-img--light {
-        display: none;
-      }
-
-      :root.dark .footer-logo-img--dark {
-        display: block;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        :root:not(.light) .footer-logo-img--light {
-          display: none;
-        }
-
-        :root:not(.light) .footer-logo-img--dark {
-          display: block;
-        }
-      }
-
       main {
         min-height: calc(100vh - 200px);
-      }
-
-      .site-footer {
-        background: var(--color-surface);
-        border-top: 1px solid var(--color-border);
-      }
-
-      .footer-content {
-        max-width: var(--wide-width);
-        margin: 0 auto;
-        padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-2xl);
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: var(--spacing-4xl);
-      }
-
-      .footer-logo {
-        display: inline-flex;
-        align-items: center;
-        line-height: 0;
-      }
-
-      .footer-logo-img {
-        height: 28px;
-        width: auto;
-      }
-
-      .footer-tagline {
-        margin-top: var(--spacing-sm);
-        font-size: var(--font-size-sm);
-        color: var(--color-muted);
-      }
-
-      .footer-links {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--spacing-xl);
-      }
-
-      .footer-col h4 {
-        font-size: var(--font-size-sm);
-        font-weight: 600;
-        margin-bottom: var(--spacing-md);
-      }
-
-      .footer-col a {
-        display: block;
-        font-size: var(--font-size-sm);
-        color: var(--color-muted);
-        padding: var(--spacing-xs) 0;
-        transition: color var(--transition-fast);
-      }
-
-      .footer-col a:hover {
-        color: var(--color-text);
-      }
-
-      .footer-bottom {
-        max-width: var(--wide-width);
-        margin: 0 auto;
-        padding: var(--spacing-lg);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: var(--font-size-sm);
-        color: var(--color-muted);
-        border-top: 1px solid var(--color-border);
-      }
-
-      .footer-powered a {
-        color: var(--color-text);
-      }
-
-      .theme-switcher {
-        display: flex;
-        gap: var(--spacing-xs);
-      }
-
-      .theme-btn {
-        background: var(--button-secondary-bg);
-        border: 0;
-        color: var(--button-secondary-fg);
-        font-family: var(--font-sans);
-        font-size: var(--font-size-sm);
-        font-weight: 500;
-        padding: var(--spacing-xs) var(--spacing-sm);
-        border-radius: var(--button-radius);
-        cursor: pointer;
-        transition:
-          background var(--transition-fast),
-          color var(--transition-fast),
-          transform var(--transition-fast);
-      }
-
-      .theme-btn:hover {
-        background: var(--button-secondary-bg-hover);
-      }
-
-      .theme-btn.active {
-        background: var(--heat-12);
-        color: var(--color-text);
-      }
-
-      .theme-btn:active {
-        background: var(--button-secondary-bg-active);
-        transform: scale(0.99);
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .theme-btn {
-          transition: none;
-        }
-
-        .theme-btn:active {
-          transform: none;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .footer-content {
-          grid-template-columns: 1fr;
-          gap: var(--spacing-2xl);
-        }
-
-        .footer-links {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .footer-bottom {
-          flex-direction: column;
-          gap: var(--spacing-md);
-          text-align: center;
-        }
-
-        .theme-switcher {
-          order: -1;
-        }
-
-        h1 {
-          font-size: var(--font-size-4xl);
-        }
-        h2 {
-          font-size: var(--font-size-2xl);
-        }
-      }
-
-      @media (max-width: 480px) {
-        .footer-links {
-          grid-template-columns: 1fr;
-        }
       }
     </style>
   </body>

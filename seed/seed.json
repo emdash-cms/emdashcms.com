@@ -127,7 +127,7 @@
 								{
 									"icon": "code",
 									"title": "Not just Posts and Pages",
-									"description": "Define collections, fields, and relationships in a seed file. Get generated TypeScript types and a fully migrated database every time you run dev."
+									"description": "Define your content types, collections, fields, and relationships in a seed file. Get generated TypeScript types and a fully migrated database every time you run dev."
 								},
 								{
 									"icon": "zap",
