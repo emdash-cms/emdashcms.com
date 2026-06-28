@@ -166,21 +166,21 @@
 									"author": "Matt Mullenweg",
 									"role": "Co-founder",
 									"company": "WordPress",
-									"avatar": "/testimonial/people/matt-mullenweg.webp"
+									"avatar": "/landing/people/matt-mullenweg.webp"
 								},
 								{
 									"quote": "The most interesting thing to happen to content management in years.",
 									"author": "Joost de Valk",
 									"role": "Founder",
 									"company": "Yoast",
-									"avatar": "/testimonial/people/joost-de-valk.png"
+									"avatar": "/landing/people/joost-de-valk.png"
 								},
 								{
 									"quote": "Getting from zero to a basic design is fast. I mean, really fast.",
 									"author": "Brian Coords",
 									"role": "Developer Advocate",
 									"company": "Automattic",
-									"avatar": "/testimonial/people/brian-coords.webp"
+									"avatar": "/landing/people/brian-coords.webp"
 								}
 							]
 						},

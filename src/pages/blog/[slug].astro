@@ -27,9 +27,20 @@ const published = post.data.publishedAt
 		}),
 	}
 	: null;
+const articleMeta = {
+	publishedTime: post.data.publishedAt?.toISOString() ?? null,
+	modifiedTime: post.data.updatedAt.toISOString(),
+	author: post.data.bylines?.[0]?.byline.displayName ?? null,
+};
 ---
 
-<Base title={post.data.title} description={post.data.excerpt || "Release announcement from EmDash CMS."}>
+<Base
+	title={post.data.title}
+	description={post.data.excerpt || "Release announcement from EmDash CMS."}
+	pageType="article"
+	articleMeta={articleMeta}
+	content={{ collection: "posts", id: post.data.id, slug: post.id }}
+>
 	<article class="post-page">
 		<div class="post-container">
 			<div class="post-rail">

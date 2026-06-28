@@ -11,10 +11,24 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  pageType?: string;
+  articleMeta?: {
+    publishedTime?: string | null;
+    modifiedTime?: string | null;
+    author?: string | null;
+  };
+  content?: {
+    collection: string;
+    id: string;
+    slug?: string | null;
+  };
 }
 
-const { title, description, image } = Astro.props;
+const { title, description, image, pageType = "website", articleMeta, content } = Astro.props;
 const PLAYGROUND_URL = "https://try.emdashcms.com";
+const PUBLIC_SITE_URL = Astro.site?.href ?? "https://emdashcms.com/";
+const canonical = new URL(Astro.url.pathname, PUBLIC_SITE_URL).href;
+const siteUrl = new URL(PUBLIC_SITE_URL).origin;
 
 const settings = await getSiteSettings();
 const siteTitle = settings?.title || "EmDash CMS";
@@ -25,6 +39,13 @@ const siteLogo = settings?.logo?.url
   ? { url: settings.logo.url, alt: settings.logo.alt }
   : null;
 const siteFavicon = settings?.favicon?.url ?? null;
+const siteFaviconType = siteFavicon?.endsWith(".png")
+  ? "image/png"
+  : siteFavicon?.endsWith(".ico")
+    ? "image/x-icon"
+    : siteFavicon?.endsWith(".webp")
+      ? "image/webp"
+      : "image/svg+xml";
 
 const [menu, footerProduct, footerCommunity, footerResources] = await Promise.all([
   getMenu("primary"),
@@ -42,14 +63,17 @@ const footerColumns = [
 const pageCtx = createPublicPageContext({
   Astro,
   kind: "custom",
-  pageType: "website",
+  pageType,
   title: fullTitle,
   pageTitle: title ?? siteTitle,
   description: description || siteDescription,
-  canonical: Astro.url.href,
+  canonical,
   image,
   seo: { ogImage: image },
   siteName: siteTitle,
+  siteUrl,
+  articleMeta,
+  content,
 });
 ---
 
@@ -61,7 +85,7 @@ const pageCtx = createPublicPageContext({
     <title>{fullTitle}</title>
     <link
       rel="icon"
-      type="image/svg+xml"
+      type={siteFaviconType}
       href={siteFavicon ?? "/brand/favicon.svg"}
     />
     <link rel="icon" type="image/png" sizes="any" href="/brand/favicon.png" />
@@ -71,6 +95,7 @@ const pageCtx = createPublicPageContext({
     <script is:inline>
       // Apply theme immediately to prevent flash
       (function () {
+        document.documentElement.classList.add("js");
         var c = document.cookie;
         var i = c.indexOf("theme=");
         var theme = i >= 0 ? c.slice(i + 6).split(";")[0] : null;
@@ -126,7 +151,9 @@ const pageCtx = createPublicPageContext({
 
       function updateActiveBtn(theme: string) {
         themeBtns.forEach((btn) => {
-          btn.classList.toggle("active", btn.dataset.theme === theme);
+          const isActive = btn.dataset.theme === theme;
+          btn.classList.toggle("active", isActive);
+          btn.setAttribute("aria-pressed", String(isActive));
         });
       }
 

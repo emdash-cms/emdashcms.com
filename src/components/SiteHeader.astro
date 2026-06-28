@@ -1,4 +1,6 @@
 ---
+import { sanitizeHref } from "emdash";
+
 interface MenuItem {
 	label: string;
 	url: string;
@@ -29,15 +31,28 @@ const {
 } = Astro.props;
 
 function isExternalUrl(url?: string | null) {
-	return typeof url === "string" && /^https?:\/\//.test(url);
+	return typeof url === "string" && /^https?:\/\//i.test(url);
+}
+
+function getTarget(item: MenuItem) {
+	return item.target || (isExternalUrl(item.url) ? "_blank" : undefined);
+}
+
+function getRel(item: MenuItem) {
+	return getTarget(item) === "_blank" ? "noreferrer" : undefined;
 }
 
 function isGitHubItem(item: MenuItem) {
 	return item.label.toLowerCase() === "github" || item.url.includes("github.com");
 }
 
-const githubItem = menuItems.find(isGitHubItem);
-const navItems = menuItems.filter((item) => !isGitHubItem(item));
+const safeMenuItems = menuItems.map((item) => ({
+	...item,
+	url: sanitizeHref(item.url?.trim()),
+}));
+const safePlaygroundUrl = sanitizeHref(playgroundUrl.trim());
+const githubItem = safeMenuItems.find(isGitHubItem);
+const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 ---
 
 <header class="site-header" data-site-header data-scrolled="false">
@@ -82,14 +97,14 @@ const navItems = menuItems.filter((item) => !isGitHubItem(item));
 				</div>
 
 				{navItems.length > 0 && (
-					<div class="nav-center" aria-hidden="false">
+					<div class="nav-center">
 						<ul>
 							{navItems.map((item) => (
 								<li>
 									<a
 										href={item.url}
-										target={item.target || (isExternalUrl(item.url) ? "_blank" : undefined)}
-										rel={isExternalUrl(item.url) ? "noreferrer" : undefined}
+										target={getTarget(item)}
+										rel={getRel(item)}
 									>
 										{item.label}
 									</a>
@@ -107,8 +122,8 @@ const navItems = menuItems.filter((item) => !isGitHubItem(item));
 									<li>
 										<a
 											href={item.url}
-											target={item.target || (isExternalUrl(item.url) ? "_blank" : undefined)}
-											rel={isExternalUrl(item.url) ? "noreferrer" : undefined}
+											target={getTarget(item)}
+											rel={getRel(item)}
 											data-menu-close
 										>
 											{item.label}
@@ -124,8 +139,8 @@ const navItems = menuItems.filter((item) => !isGitHubItem(item));
 							<a
 								href={githubItem.url}
 								class="nav-action nav-action--github"
-								target={githubItem.target || (isExternalUrl(githubItem.url) ? "_blank" : undefined)}
-								rel={isExternalUrl(githubItem.url) ? "noreferrer" : undefined}
+								target={getTarget(githubItem)}
+								rel={getRel(githubItem)}
 								aria-label={`EmDash GitHub repository, ${githubStarsLabel} stars`}
 								data-menu-close
 							>
@@ -140,7 +155,7 @@ const navItems = menuItems.filter((item) => !isGitHubItem(item));
 								<span>{githubStars}</span>
 							</a>
 						)}
-						<a href={playgroundUrl} class="nav-action nav-action--primary" target="_blank" rel="noreferrer" data-menu-close>
+						<a href={safePlaygroundUrl} class="nav-action nav-action--primary" target="_blank" rel="noreferrer" data-menu-close>
 							Try it
 						</a>
 					</div>
@@ -356,7 +371,7 @@ const navItems = menuItems.filter((item) => !isGitHubItem(item));
 	}
 
 	.nav-panel {
-		display: none;
+		display: block;
 		width: 100%;
 		margin-bottom: var(--spacing-md);
 		padding: var(--spacing-lg);
@@ -366,7 +381,11 @@ const navItems = menuItems.filter((item) => !isGitHubItem(item));
 		box-shadow: var(--shadow-xl);
 	}
 
-	.site-nav[data-state="active"] .nav-panel {
+	:global(html.js) .nav-panel {
+		display: none;
+	}
+
+	:global(html.js) .site-nav[data-state="active"] .nav-panel {
 		display: block;
 	}
 
@@ -473,7 +492,8 @@ const navItems = menuItems.filter((item) => !isGitHubItem(item));
 		}
 
 		.nav-panel,
-		.site-nav[data-state="active"] .nav-panel {
+		:global(html.js) .nav-panel,
+		:global(html.js) .site-nav[data-state="active"] .nav-panel {
 			display: flex;
 			width: fit-content;
 			margin: 0;

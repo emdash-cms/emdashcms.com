@@ -1,4 +1,6 @@
 ---
+import { sanitizeHref } from "emdash";
+
 interface MenuItem {
 	label: string;
 	url: string;
@@ -24,11 +26,19 @@ interface Props {
 	footerColumns: FooterColumn[];
 }
 
-const { siteTitle, siteLogo, tagline, footerColumns } = Astro.props;
+const { siteTitle, siteLogo, tagline, footerColumns: rawFooterColumns } = Astro.props;
 const currentYear = new Date().getFullYear();
 
 function isExternalUrl(url?: string | null) {
-	return typeof url === "string" && /^https?:\/\//.test(url);
+	return typeof url === "string" && /^https?:\/\//i.test(url);
+}
+
+function getTarget(item: MenuItem) {
+	return item.target || (isExternalUrl(item.url) ? "_blank" : undefined);
+}
+
+function getRel(item: MenuItem) {
+	return getTarget(item) === "_blank" ? "noreferrer" : undefined;
 }
 
 function getSocialType(item: MenuItem) {
@@ -38,6 +48,18 @@ function getSocialType(item: MenuItem) {
 	if (label.includes("discord") || url.includes("discord.")) return "discord";
 	return null;
 }
+
+const footerColumns = rawFooterColumns
+	.map((column) => ({
+		...column,
+		menu: {
+			items: column.menu.items.map((item) => ({
+				...item,
+				url: sanitizeHref(item.url?.trim()),
+			})),
+		},
+	}))
+	.filter((column) => column.menu.items.length > 0);
 
 const socialLinks = Array.from(
 	footerColumns
@@ -84,8 +106,8 @@ const socialLinks = Array.from(
 						{column.menu.items.map((item) => (
 							<a
 								href={item.url}
-								target={item.target || (isExternalUrl(item.url) ? "_blank" : undefined)}
-								rel={isExternalUrl(item.url) ? "noreferrer" : undefined}
+								target={getTarget(item)}
+								rel={getRel(item)}
 							>
 								<span>{item.label}</span>
 							</a>
@@ -108,8 +130,8 @@ const socialLinks = Array.from(
 							<a
 								href={item.url}
 								class="social-link"
-								target={item.target || (isExternalUrl(item.url) ? "_blank" : undefined)}
-								rel={isExternalUrl(item.url) ? "noreferrer" : undefined}
+								target={getTarget(item)}
+								rel={getRel(item)}
 								aria-label={item.type === "github" ? "GitHub" : "Discord"}
 							>
 								{item.type === "github" ? (
@@ -133,9 +155,9 @@ const socialLinks = Array.from(
 				)}
 
 				<div class="theme-switcher" aria-label="Theme selector">
-					<button type="button" class="theme-btn" data-theme="light" aria-label="Light mode">Light</button>
-					<button type="button" class="theme-btn" data-theme="dark" aria-label="Dark mode">Dark</button>
-					<button type="button" class="theme-btn" data-theme="system" aria-label="System theme">System</button>
+					<button type="button" class="theme-btn" data-theme="light" aria-label="Light mode" aria-pressed="false">Light</button>
+					<button type="button" class="theme-btn" data-theme="dark" aria-label="Dark mode" aria-pressed="false">Dark</button>
+					<button type="button" class="theme-btn" data-theme="system" aria-label="System theme" aria-pressed="false">System</button>
 				</div>
 			</div>
 		</div>

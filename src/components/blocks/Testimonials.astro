@@ -18,6 +18,12 @@ interface Props {
 const { node } = Astro.props;
 const { _key, headline, testimonials } = node;
 
+const defaultAvatars: Record<string, string> = {
+	"matt mullenweg": "/landing/people/matt-mullenweg.webp",
+	"joost de valk": "/landing/people/joost-de-valk.png",
+	"brian coords": "/landing/people/brian-coords.webp",
+};
+
 function getInitials(name: string) {
 	return name
 		.split(" ")
@@ -33,8 +39,15 @@ function getAttribution(testimonial: Testimonial) {
 	return testimonial.role || testimonial.company;
 }
 
+function getAvatar(testimonial: Testimonial) {
+	const avatar = testimonial.avatar?.trim();
+	if (avatar) return avatar.replace("/testimonial/people/", "/landing/people/");
+	return defaultAvatars[testimonial.author.toLowerCase()];
+}
+
 const testimonialItems = testimonials.map((testimonial) => ({
 	...testimonial,
+	avatar: getAvatar(testimonial),
 	attribution: getAttribution(testimonial),
 	initials: getInitials(testimonial.author),
 }));
@@ -59,7 +72,10 @@ const testimonialItems = testimonials.map((testimonial) => ({
 								src={testimonial.avatar}
 								alt=""
 								class="testimonial-avatar"
+								width="32"
+								height="32"
 								loading="lazy"
+								decoding="async"
 							/>
 						) : (
 							<span class="testimonial-avatar testimonial-avatar-fallback" aria-hidden="true">

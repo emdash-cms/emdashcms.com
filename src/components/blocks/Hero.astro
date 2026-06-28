@@ -1,4 +1,5 @@
 ---
+import { sanitizeHref } from "emdash";
 import arrowRightSvg from "../../icons/arrow-right.svg?raw";
 
 interface Props {
@@ -20,7 +21,14 @@ interface Props {
 const { node } = Astro.props;
 const { _key, headline, subheadline, image, centered } = node;
 const headingId = _key ? `${_key}-title` : "hero-title";
-const imageUrl = image?.url?.trim();
+const defaultImage = {
+	url: "/landing/hero/hero-dash.png",
+	alt: "EmDash CMS dashboard",
+};
+const customImageUrl = image?.url?.trim();
+const heroImage = customImageUrl
+	? { url: customImageUrl, alt: image?.alt || "" }
+	: { ...defaultImage, width: 2000, height: 1200 };
 const announcement = {
 	href: "/blog/emdash-is-live",
 	tag: "Announcement",
@@ -29,11 +37,11 @@ const announcement = {
 
 const primaryCta =
 	node.primaryCtaLabel && node.primaryCtaUrl
-		? { label: node.primaryCtaLabel, url: node.primaryCtaUrl }
+		? { label: node.primaryCtaLabel, url: sanitizeHref(node.primaryCtaUrl.trim()) }
 		: undefined;
 const secondaryCta =
 	node.secondaryCtaLabel && node.secondaryCtaUrl
-		? { label: node.secondaryCtaLabel, url: node.secondaryCtaUrl }
+		? { label: node.secondaryCtaLabel, url: sanitizeHref(node.secondaryCtaUrl.trim()) }
 		: undefined;
 ---
 
@@ -67,16 +75,14 @@ const secondaryCta =
 
 			<div class="hero-image-wrap">
 				<div class="hero-image-frame">
-					{imageUrl ? (
-						<img
-							src={imageUrl}
-							alt={image?.alt || ""}
-							loading="eager"
-							fetchpriority="high"
-						/>
-					) : (
-						<div class="hero-image-blank" aria-hidden="true"></div>
-					)}
+					<img
+						src={heroImage.url}
+						alt={heroImage.alt}
+						width={"width" in heroImage ? heroImage.width : undefined}
+						height={"height" in heroImage ? heroImage.height : undefined}
+						loading="eager"
+						fetchpriority="high"
+					/>
 				</div>
 			</div>
 		</div>
@@ -222,13 +228,14 @@ const secondaryCta =
 
 	.hero-image-wrap {
 		position: relative;
+		width: 100%;
 		margin-top: var(--spacing-3xl);
-		margin-right: -14rem;
 	}
 
 	.hero-image-frame {
 		position: relative;
 		overflow: hidden;
+		width: 100%;
 		margin: 0 auto;
 		background: var(--color-surface);
 		border: 1px solid var(--color-border);
@@ -257,19 +264,11 @@ const secondaryCta =
 		}
 	}
 
-	.hero-image-frame img,
-	.hero-image-blank {
-		width: 100%;
-		aspect-ratio: 2880 / 1842;
-	}
-
 	.hero-image-frame img {
-		height: auto;
-	}
-
-	.hero-image-blank {
 		display: block;
-		background: var(--color-surface);
+		width: 100%;
+		height: auto;
+		aspect-ratio: 5 / 3;
 	}
 
 	@media (min-width: 640px) {
@@ -282,9 +281,6 @@ const secondaryCta =
 			width: fit-content;
 		}
 
-		.hero-image-wrap {
-			margin-right: 0;
-		}
 	}
 
 	@media (min-width: 1024px) {
