@@ -91,16 +91,18 @@ const testimonialItems = testimonials.map((testimonial) => ({
 	}
 
 	.testimonials-header {
-		max-width: 44rem;
-		margin-bottom: var(--spacing-2xl);
+		max-width: none;
+		margin: 0 auto var(--spacing-3xl);
+		text-align: center;
 	}
 
 	.testimonials-headline {
-		font-size: var(--font-size-4xl);
-		font-weight: 600;
-		line-height: 1.12;
-		letter-spacing: -0.035em;
+		font-size: clamp(1.25rem, 6vw, var(--font-size-4xl));
+		font-weight: 700;
+		line-height: 1.03;
+		letter-spacing: -0.045em;
 		text-wrap: balance;
+		white-space: nowrap;
 	}
 
 	.testimonials-grid {
@@ -205,6 +207,12 @@ const testimonialItems = testimonials.map((testimonial) => ({
 		}
 	}
 
+	@media (min-width: 1024px) {
+		.testimonials-headline {
+			font-size: 3.25rem;
+		}
+	}
+
 	@media (max-width: 900px) {
 		.testimonials-grid {
 			grid-template-columns: repeat(2, 1fr);
@@ -214,10 +222,6 @@ const testimonialItems = testimonials.map((testimonial) => ({
 	@media (max-width: 600px) {
 		.testimonials-header {
 			margin-bottom: var(--spacing-xl);
-		}
-
-		.testimonials-headline {
-			font-size: var(--font-size-3xl);
 		}
 
 		.testimonials-grid {

@@ -82,15 +82,17 @@ const plans = rawPlans.map((plan) => ({
 
 <style>
 	.pricing-header {
-		max-width: 44rem;
-		margin-bottom: var(--spacing-3xl);
+		max-width: 36rem;
+		margin: 0 auto var(--spacing-3xl);
+		text-align: center;
 	}
 
 	.pricing-headline {
 		font-size: var(--font-size-3xl);
 		font-weight: 700;
-		line-height: 1.08;
+		line-height: 1.12;
 		letter-spacing: -0.035em;
+		text-wrap: balance;
 	}
 
 	.pricing-grid {
@@ -192,6 +194,18 @@ const plans = rawPlans.map((plan) => ({
 
 	.pricing-cta {
 		width: 100%;
+	}
+
+	@media (min-width: 768px) {
+		.pricing-headline {
+			font-size: var(--font-size-4xl);
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.pricing-headline {
+			font-size: var(--font-size-5xl);
+		}
 	}
 
 	@media (max-width: 900px) {

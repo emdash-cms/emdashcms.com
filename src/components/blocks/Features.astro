@@ -34,7 +34,7 @@ const iconMap: Record<string, string> = {
 ---
 
 <section class="features section" id={_key}>
-	<div class="container">
+	<div class="features-container container">
 		{(headline || subheadline) && (
 			<header class="features-header">
 				{headline && <h2 class="features-headline">{headline}</h2>}
@@ -44,10 +44,12 @@ const iconMap: Record<string, string> = {
 		<div class="features-grid">
 			{features.map((feature) => (
 				<div class="feature-card">
-					<div class="feature-icon">
-						<Icon name={iconMap[feature.icon] || "ph:sparkle"} aria-hidden="true" />
+					<div class="feature-title-row">
+						<span class="feature-icon">
+							<Icon name={iconMap[feature.icon] || "ph:sparkle"} aria-hidden="true" />
+						</span>
+						<h3 class="feature-title">{feature.title}</h3>
 					</div>
-					<h3 class="feature-title">{feature.title}</h3>
 					<p class="feature-description">{feature.description}</p>
 				</div>
 			))}
@@ -56,87 +58,154 @@ const iconMap: Record<string, string> = {
 </section>
 
 <style>
+	.features.section {
+		padding: var(--spacing-4xl) 0;
+	}
+
+	.features-container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-3xl);
+	}
+
 	.features-header {
-		max-width: 44rem;
-		margin: 0 0 var(--spacing-3xl);
+		max-width: 36rem;
+		margin: 0 auto;
+		text-align: center;
 	}
 
 	.features-headline {
 		font-size: var(--font-size-3xl);
 		font-weight: 700;
-		line-height: 1.08;
+		line-height: 1.12;
 		letter-spacing: -0.035em;
+		text-wrap: balance;
 	}
 
 	.features-subheadline {
-		max-width: 36rem;
-		margin-top: var(--spacing-md);
+		max-width: 38rem;
+		margin: var(--spacing-md) auto 0;
 		font-size: var(--font-size-base);
-		line-height: 1.55;
-		color: var(--color-muted);
+		line-height: 1.65;
+		color: color-mix(in srgb, var(--color-text) 62%, transparent);
+		text-wrap: balance;
 	}
 
 	.features-grid {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: var(--spacing-lg);
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: var(--spacing-md);
+		align-items: stretch;
 	}
 
 	.feature-card {
-		padding: var(--spacing-xl);
+		position: relative;
+		display: flex;
+		min-height: 13.5rem;
+		flex-direction: column;
+		gap: 0.75rem;
+		padding: 2.75rem;
 		background: var(--color-surface);
 		border: 1px solid var(--color-border);
-		border-radius: var(--radius-lg);
+		border-radius: 18px;
+		box-shadow: var(--shadow-sm);
 		transition:
-			transform var(--transition-base),
-			box-shadow var(--transition-base),
-			border-color var(--transition-base);
+			background var(--transition-fast),
+			border-color var(--transition-fast),
+			box-shadow var(--transition-fast);
 	}
 
 	.feature-card:hover {
-		transform: translateY(-4px);
-		box-shadow: var(--shadow-lg);
-		border-color: var(--color-primary-light);
+		background: color-mix(in srgb, var(--color-surface) 92%, var(--color-bg));
+		border-color: color-mix(in srgb, var(--color-text) 14%, var(--color-border));
+		box-shadow:
+			0 0 0 1px color-mix(in srgb, var(--color-text) 8%, transparent),
+			var(--shadow-sm);
+	}
+
+	.feature-title-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 	}
 
 	.feature-icon {
-		width: 48px;
-		height: 48px;
-		display: flex;
+		display: inline-flex;
+		width: 1rem;
+		height: 1rem;
+		flex: 0 0 auto;
 		align-items: center;
 		justify-content: center;
-		font-size: 1.5rem;
-		color: white;
-		background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-		border-radius: var(--radius);
-		margin-bottom: var(--spacing-lg);
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+		font-size: 1rem;
+		line-height: 1;
 	}
 
 	.feature-title {
-		font-size: var(--font-size-lg);
-		font-weight: 700;
-		margin-bottom: var(--spacing-sm);
+		font-size: var(--font-size-sm);
+		font-weight: 500;
+		line-height: 1.35;
+		letter-spacing: -0.01em;
 	}
 
 	.feature-description {
 		font-size: var(--font-size-sm);
-		color: var(--color-muted);
-		line-height: 1.6;
+		line-height: 1.65;
+		color: color-mix(in srgb, var(--color-text) 58%, transparent);
+	}
+
+	@media (min-width: 768px) {
+		.features-headline {
+			font-size: var(--font-size-4xl);
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.features.section {
+			padding: var(--spacing-5xl) 0;
+		}
+
+		.features-container {
+			gap: var(--spacing-4xl);
+		}
+
+		.features-headline {
+			font-size: var(--font-size-5xl);
+		}
 	}
 
 	@media (max-width: 900px) {
 		.features-grid {
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.feature-card {
+			padding: var(--spacing-2xl);
 		}
 	}
 
 	@media (max-width: 600px) {
-		.features-header {
-			margin-bottom: var(--spacing-2xl);
+		.features.section {
+			padding: var(--spacing-3xl) 0;
+		}
+
+		.features-container {
+			gap: var(--spacing-2xl);
 		}
 
 		.features-grid {
 			grid-template-columns: 1fr;
+		}
+
+		.feature-card {
+			min-height: auto;
+			padding: var(--spacing-xl);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.feature-card {
+			transition: none;
 		}
 	}
 </style>

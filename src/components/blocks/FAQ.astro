@@ -141,29 +141,31 @@ const { _key, headline, items } = node;
 	}
 
 	.faq-container {
-		max-width: 64rem;
-		padding-right: var(--spacing-md);
-		padding-left: var(--spacing-md);
+		width: calc(100% - 16px);
+		max-width: 920px;
+		padding-right: 0;
+		padding-left: 0;
 	}
 
 	.faq-header {
-		max-width: 36rem;
+		max-width: none;
 		margin: 0 auto;
 		text-align: center;
 	}
 
 	.faq-headline {
-		font-size: var(--font-size-3xl);
+		font-size: clamp(1.25rem, 6vw, var(--font-size-4xl));
 		font-weight: 700;
-		line-height: 1.12;
-		letter-spacing: -0.035em;
+		line-height: 1.03;
+		letter-spacing: -0.045em;
 		text-wrap: balance;
+		white-space: nowrap;
 	}
 
 	.faq-list {
 		display: block;
 		width: 100%;
-		max-width: 36rem;
+		max-width: none;
 		margin: 0 auto;
 		padding: 0.75rem var(--spacing-xl);
 		background: var(--color-surface);
@@ -246,18 +248,14 @@ const { _key, headline, items } = node;
 
 	@media (min-width: 768px) {
 		.faq-container {
-			padding-right: var(--spacing-lg);
-			padding-left: var(--spacing-lg);
-		}
-
-		.faq-headline {
-			font-size: var(--font-size-4xl);
+			padding-right: 0;
+			padding-left: 0;
 		}
 	}
 
 	@media (min-width: 1024px) {
 		.faq-headline {
-			font-size: var(--font-size-5xl);
+			font-size: 3.25rem;
 		}
 	}
 
