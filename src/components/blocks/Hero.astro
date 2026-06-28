@@ -231,12 +231,30 @@ const secondaryCta =
 		overflow: hidden;
 		margin: 0 auto;
 		background: var(--color-surface);
-		border: 1px solid transparent;
+		border: 1px solid var(--color-border);
 		border-radius: var(--radius);
 		box-shadow:
+			0 0 0 4px var(--border-faint),
 			0 20px 24px -4px rgba(0, 0, 0, 0.1),
-			0 8px 8px -4px rgba(0, 0, 0, 0.04),
-			0 0 0 1px rgba(0, 0, 0, 0.1);
+			0 8px 8px -4px rgba(0, 0, 0, 0.04);
+	}
+
+	:global(:root.dark) .hero-image-frame {
+		border-color: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+		box-shadow:
+			0 0 0 4px color-mix(in srgb, var(--color-text) 5%, transparent),
+			0 20px 24px -4px rgba(0, 0, 0, 0.24),
+			0 8px 8px -4px rgba(0, 0, 0, 0.18);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .hero-image-frame {
+			border-color: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+			box-shadow:
+				0 0 0 4px color-mix(in srgb, var(--color-text) 5%, transparent),
+				0 20px 24px -4px rgba(0, 0, 0, 0.24),
+				0 8px 8px -4px rgba(0, 0, 0, 0.18);
+		}
 	}
 
 	.hero-image-frame img,

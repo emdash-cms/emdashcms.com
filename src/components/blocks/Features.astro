@@ -109,7 +109,9 @@ const iconMap: Record<string, string> = {
 		background: var(--color-surface);
 		border: 1px solid var(--color-border);
 		border-radius: 18px;
-		box-shadow: var(--shadow-sm);
+		box-shadow:
+			0 0 0 4px var(--border-faint),
+			var(--shadow-sm);
 		transition:
 			background var(--transition-fast),
 			border-color var(--transition-fast),
@@ -120,7 +122,7 @@ const iconMap: Record<string, string> = {
 		background: color-mix(in srgb, var(--color-surface) 92%, var(--color-bg));
 		border-color: color-mix(in srgb, var(--color-text) 14%, var(--color-border));
 		box-shadow:
-			0 0 0 1px color-mix(in srgb, var(--color-text) 8%, transparent),
+			0 0 0 4px var(--border-faint),
 			var(--shadow-sm);
 	}
 
@@ -153,6 +155,36 @@ const iconMap: Record<string, string> = {
 		font-size: var(--font-size-sm);
 		line-height: 1.65;
 		color: color-mix(in srgb, var(--color-text) 58%, transparent);
+	}
+
+	:global(:root.dark) .feature-card {
+		border-color: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+		box-shadow:
+			0 0 0 4px color-mix(in srgb, var(--color-text) 5%, transparent),
+			var(--shadow-sm);
+	}
+
+	:global(:root.dark) .feature-card:hover {
+		border-color: color-mix(in srgb, var(--color-bg) 84%, var(--color-text));
+		box-shadow:
+			0 0 0 4px color-mix(in srgb, var(--color-text) 5%, transparent),
+			var(--shadow-sm);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .feature-card {
+			border-color: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+			box-shadow:
+				0 0 0 4px color-mix(in srgb, var(--color-text) 5%, transparent),
+				var(--shadow-sm);
+		}
+
+		:global(:root:not(.light)) .feature-card:hover {
+			border-color: color-mix(in srgb, var(--color-bg) 84%, var(--color-text));
+			box-shadow:
+				0 0 0 4px color-mix(in srgb, var(--color-text) 5%, transparent),
+				var(--shadow-sm);
+		}
 	}
 
 	@media (min-width: 768px) {

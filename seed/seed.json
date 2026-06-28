@@ -243,6 +243,66 @@
 									"text": "This site will be used for release announcements, product updates, and major changes to the project. If you want to explore EmDash right now, head to the playground or read through the docs."
 								}
 							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"text": "What's in the first release"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "The 0.x line covers the core editing surface: collections, fields, drafts, revisions, scheduling, full-text search, taxonomies, menus, and a media library backed by R2. The Astro integration ships content loaders, a Portable Text renderer, and a Cloudflare adapter that deploys the whole stack from a single command."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Built for agents from day one"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Every CMS operation — schema, content, media, taxonomies, menus, settings — is exposed over MCP. Agents work with the same typed APIs the admin uses, so there is no separate \"AI surface\" to keep in sync."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Where to go next"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"text": "Open the playground for an instant sandbox, read the docs for setup and architecture, or run npx emdash dev in a fresh Astro project to spin up a local instance with the admin at /_emdash/admin."
+								}
+							]
 						}
 					]
 				}

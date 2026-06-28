@@ -238,12 +238,18 @@ const { _key, headline, items } = node;
 	}
 
 	:global(:root.dark) .faq-list {
-		box-shadow: var(--shadow-sm);
+		border-color: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+		box-shadow:
+			0 0 0 4px color-mix(in srgb, var(--color-text) 5%, transparent),
+			var(--shadow-sm);
 	}
 
 	@media (prefers-color-scheme: dark) {
 		:global(:root:not(.light)) .faq-list {
-			box-shadow: var(--shadow-sm);
+			border-color: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+			box-shadow:
+				0 0 0 4px color-mix(in srgb, var(--color-text) 5%, transparent),
+				var(--shadow-sm);
 		}
 	}
 

@@ -58,29 +58,30 @@ const published = post.data.publishedAt
 	}
 
 	.post-container {
-		max-width: var(--wide-width);
+		width: calc(100% - 16px);
+		max-width: 920px;
 		margin: 0 auto;
-		padding: 8.5rem var(--spacing-lg) var(--spacing-5xl);
+		padding: 8.5rem 0 var(--spacing-5xl);
 	}
 
 	.post-rail {
-		max-width: 46rem;
+		max-width: none;
+		padding: 0 var(--spacing-md);
 	}
 
 	.post-header {
-		margin-bottom: var(--spacing-2xl);
+		max-width: 28rem;
+		margin-bottom: var(--spacing-3xl);
 	}
 
 	.eyebrow {
 		font-size: var(--font-size-sm);
-		font-weight: 700;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		margin-bottom: 1.5rem;
+		font-weight: 400;
+		line-height: 1.5;
 	}
 
 	.eyebrow a {
-		color: color-mix(in srgb, var(--color-text) 52%, transparent);
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
 		transition: color var(--transition-fast);
 	}
 
@@ -89,11 +90,13 @@ const published = post.data.publishedAt
 	}
 
 	.post-page h1 {
-		max-width: 44rem;
+		max-width: 28rem;
+		margin-top: var(--spacing-md);
+		color: var(--color-text);
 		font-size: var(--font-size-4xl);
-		font-weight: 700;
-		line-height: 1.03;
-		letter-spacing: -0.045em;
+		font-weight: 600;
+		line-height: 1.12;
+		letter-spacing: -0.035em;
 		text-wrap: balance;
 	}
 
@@ -189,10 +192,6 @@ const published = post.data.publishedAt
 	@media (min-width: 1024px) {
 		.post-container {
 			padding-top: 10rem;
-		}
-
-		.post-page h1 {
-			font-size: 3.25rem;
 		}
 
 		.post-excerpt {

@@ -37,11 +37,11 @@ function formatPostDate(date?: Date | null) {
 		<div class="blog-container">
 			<div class="blog-rail">
 				<div class="blog-header">
-					<p class="eyebrow">Blog</p>
+					<span class="eyebrow">Blog</span>
 					<h1>Release notes and product updates</h1>
 					<p>
-						This is where we announce new releases, notable improvements, and major changes
-						to EmDash CMS.
+						This is where we announce new releases, notable improvements, and major changes to
+						EmDash CMS.
 					</p>
 				</div>
 
@@ -79,42 +79,46 @@ function formatPostDate(date?: Date | null) {
 	}
 
 	.blog-container {
-		max-width: var(--wide-width);
+		width: calc(100% - 16px);
+		max-width: 920px;
 		margin: 0 auto;
-		padding: 8.5rem var(--spacing-lg) var(--spacing-5xl);
+		padding: 8.5rem 0 var(--spacing-5xl);
 	}
 
 	.blog-rail {
-		max-width: 56rem;
+		max-width: none;
 	}
 
 	.blog-header {
+		position: relative;
 		display: flex;
-		max-width: 44rem;
+		max-width: 28rem;
 		flex-direction: column;
 		align-items: flex-start;
 		margin-bottom: var(--spacing-3xl);
+		padding: 0 var(--spacing-md);
 	}
 
 	.eyebrow {
 		font-size: var(--font-size-sm);
-		font-weight: 700;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: color-mix(in srgb, var(--color-text) 52%, transparent);
-		margin-bottom: 1.5rem;
+		font-weight: 400;
+		line-height: 1.5;
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
 	}
 
 	.blog-header h1 {
-		max-width: 44rem;
+		max-width: 28rem;
+		margin-top: var(--spacing-md);
+		color: var(--color-text);
 		font-size: var(--font-size-4xl);
-		font-weight: 700;
-		line-height: 1.03;
-		letter-spacing: -0.045em;
+		font-weight: 600;
+		line-height: 1.12;
+		letter-spacing: -0.035em;
 		text-wrap: balance;
 	}
 
 	.blog-header p {
+		display: block;
 		max-width: 40rem;
 		margin-top: var(--spacing-md);
 		font-size: 0.9375rem;
@@ -191,11 +195,7 @@ function formatPostDate(date?: Date | null) {
 		}
 
 		.blog-header h1 {
-			font-size: 3.25rem;
-		}
-
-		.blog-header p {
-			font-size: var(--font-size-lg);
+			font-size: var(--font-size-4xl);
 		}
 	}
 
