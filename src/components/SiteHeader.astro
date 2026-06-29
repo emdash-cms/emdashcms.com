@@ -50,6 +50,8 @@ const safeMenuItems = menuItems.map((item) => ({
 	...item,
 	url: sanitizeHref(item.url?.trim()),
 }));
+const logoWidth = 471;
+const logoHeight = 118;
 const safePlaygroundUrl = sanitizeHref(playgroundUrl.trim());
 const githubItem = safeMenuItems.find(isGitHubItem);
 const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
@@ -62,18 +64,22 @@ const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 				<div class="site-brand-row">
 					<a href="/" class="site-logo" aria-label={siteTitle} data-menu-close>
 						{siteLogo ? (
-							<img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="site-logo-img" />
+							<img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="site-logo-img" width={logoWidth} height={logoHeight} />
 						) : (
 							<>
 								<img
 									src="/brand/logo-dark-text.svg"
 									alt={siteTitle}
 									class="site-logo-img site-logo-img--light"
+									width={logoWidth}
+									height={logoHeight}
 								/>
 								<img
 									src="/brand/logo-light-text.svg"
 									alt={siteTitle}
 									class="site-logo-img site-logo-img--dark"
+									width={logoWidth}
+									height={logoHeight}
 								/>
 							</>
 						)}
