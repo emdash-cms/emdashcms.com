@@ -1,5 +1,7 @@
 ---
 import { sanitizeHref } from "emdash";
+import { Image } from "astro:assets";
+import heroDash from "../../../public/landing/hero/hero-dash.png";
 import arrowRightSvg from "../../icons/arrow-right.svg?raw";
 
 interface Props {
@@ -13,22 +15,13 @@ interface Props {
 		primaryCtaUrl?: string;
 		secondaryCtaLabel?: string;
 		secondaryCtaUrl?: string;
-		image?: { url: string; alt?: string };
 		centered?: boolean;
 	};
 }
 
 const { node } = Astro.props;
-const { _key, headline, subheadline, image, centered } = node;
+const { _key, headline, subheadline, centered } = node;
 const headingId = _key ? `${_key}-title` : "hero-title";
-const defaultImage = {
-	url: "/landing/hero/hero-dash.png",
-	alt: "EmDash CMS dashboard",
-};
-const customImageUrl = image?.url?.trim();
-const heroImage = customImageUrl
-	? { url: customImageUrl, alt: image?.alt || "" }
-	: { ...defaultImage, width: 2000, height: 1200 };
 const announcement = {
 	href: "/blog/emdash-is-live",
 	tag: "Announcement",
@@ -75,11 +68,12 @@ const secondaryCta =
 
 			<div class="hero-image-wrap">
 				<div class="hero-image-frame">
-					<img
-						src={heroImage.url}
-						alt={heroImage.alt}
-						width={"width" in heroImage ? heroImage.width : undefined}
-						height={"height" in heroImage ? heroImage.height : undefined}
+					<Image
+						src={heroDash}
+						alt="EmDash CMS dashboard"
+						class="hero-image"
+						widths={[640, 960, 1280, 1600, 2000]}
+						sizes="(min-width: 1140px) 1096px, calc(100vw - 32px)"
 						loading="eager"
 						fetchpriority="high"
 					/>
@@ -264,7 +258,7 @@ const secondaryCta =
 		}
 	}
 
-	.hero-image-frame img {
+	.hero-image-frame :global(.hero-image) {
 		display: block;
 		width: 100%;
 		height: auto;
