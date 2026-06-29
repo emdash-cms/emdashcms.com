@@ -14,8 +14,8 @@
  *   toggle. Nested repeaters are not allowed -- list-of-strings becomes a
  *   single multiline text field, split on newline at render time (see
  *   Pricing.astro for the pattern).
- * - There is no media picker element in the editor's plugin-block modal yet,
- *   so image fields (avatars, hero images) are URL strings entered by hand.
+	 * - There is no media picker element in the editor's plugin-block modal yet,
+	 *   so image fields are URL strings entered by hand.
  *
  * Site-side rendering still goes through MarketingBlocks.astro --
  * componentsEntry auto-wiring is a separate cleanup.
@@ -124,7 +124,6 @@ const definition: PluginDefinition = {
 							{ type: "text_input", action_id: "author", label: "Author name" },
 							{ type: "text_input", action_id: "role", label: "Role / title" },
 							{ type: "text_input", action_id: "company", label: "Company" },
-							{ type: "text_input", action_id: "avatar", label: "Avatar URL" },
 						],
 					},
 				],

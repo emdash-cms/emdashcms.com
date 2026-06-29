@@ -36,7 +36,7 @@ const articleMeta = {
 
 <Base
 	title={post.data.title}
-	description={post.data.excerpt || "Release announcement from EmDash CMS."}
+	description={post.data.excerpt ?? ""}
 	pageType="article"
 	articleMeta={articleMeta}
 	content={{ collection: "posts", id: post.data.id, slug: post.id }}

@@ -47,11 +47,12 @@ const siteFaviconType = siteFavicon?.endsWith(".png")
       ? "image/webp"
       : "image/svg+xml";
 
-const [menu, footerProduct, footerCommunity, footerResources] = await Promise.all([
+const [menu, footerProduct, footerCommunity, footerResources, footerSocial] = await Promise.all([
   getMenu("primary"),
   getMenu("footer_product"),
   getMenu("footer_community"),
   getMenu("footer_resources"),
+  getMenu("footer_social"),
 ]);
 
 const footerColumns = [
@@ -59,6 +60,7 @@ const footerColumns = [
   { heading: "Community", menu: footerCommunity },
   { heading: "Resources", menu: footerResources },
 ].flatMap((col) => (col.menu && col.menu.items.length > 0 ? [{ heading: col.heading, menu: col.menu }] : []));
+const footerSocialItems = footerSocial?.items.length ? footerSocial.items : footerCommunity?.items ?? [];
 
 const pageCtx = createPublicPageContext({
   Astro,
@@ -66,7 +68,7 @@ const pageCtx = createPublicPageContext({
   pageType,
   title: fullTitle,
   pageTitle: title ?? siteTitle,
-  description: description || siteDescription,
+  description: description ?? siteDescription,
   canonical,
   image,
   seo: { ogImage: image },
@@ -124,6 +126,7 @@ const pageCtx = createPublicPageContext({
       siteLogo={siteLogo}
       tagline={settings?.tagline || "Build something amazing"}
       footerColumns={footerColumns}
+      socialLinks={footerSocialItems}
     />
 
     <script>
