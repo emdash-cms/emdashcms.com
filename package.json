@@ -2,6 +2,7 @@
   "name": "emdashcms-com",
   "version": "0.0.3",
   "private": true,
+  "packageManager": "pnpm@11.9.0",
   "type": "module",
   "scripts": {
     "dev": "astro dev",
@@ -23,7 +24,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
-    "@cloudflare/workers-types": "^4.20260629.1",
+    "@cloudflare/workers-types": "4.20260627.1",
     "wrangler": "^4.105.0"
   },
   "emdash": {

@@ -12,3 +12,10 @@ onlyBuiltDependencies:
   - esbuild
   - sharp
   - workerd
+
+minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - emdash
+  - "@emdash-cms/*"
+  - "@atcute/*"
+blockExoticSubdeps: true
