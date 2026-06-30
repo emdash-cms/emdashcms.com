@@ -1,35 +1,57 @@
 /*
   theme.css — brand palette for emdashcms.com.
 
-  Mirrors the EmDash brand gradient (navy → purple → magenta → orange →
-  cream). Overrides the defaults declared inside @layer base in Base.astro,
-  so unlayered declarations here always win.
-
-  Dark mode is handled in matching :root.dark + @media blocks below.
+  These unlayered declarations override the defaults declared inside
+  @layer base in Base.astro. The palette intentionally borrows the disciplined
+  neutral system from Vercel and the orange heat accent from Firecrawl/Cloudflare.
 */
 
 :root {
-	--color-primary: #5d0c83;
-	--color-primary-dark: #281a81;
-	--color-primary-light: #911475;
-	--color-accent: #ff6633;
-	--color-accent-light: #fbad41;
+	--heat-100: #ff5e1f;
+	--heat-90: #ff5e1fe6;
+	--heat-40: #ff5e1f66;
+	--heat-20: #ff5e1f33;
+	--heat-12: #ff5e1f1f;
+	--heat-8: #ff5e1f14;
+	--heat-4: #ff5e1f0a;
+	--color-primary: var(--heat-100);
+	--color-primary-dark: var(--heat-90);
+	--color-primary-light: var(--heat-12);
+	--color-accent: var(--heat-100);
+	--color-accent-light: var(--heat-12);
+	--button-primary-fg: #fffbf5;
 }
 
 :root.dark {
-	--color-primary: #c585e0;
-	--color-primary-dark: #911475;
-	--color-primary-light: #e0a3f0;
-	--color-accent: #fbad41;
-	--color-accent-light: #ffcd89;
+	--heat-100: #ff5e1f;
+	--heat-90: #ff5e1fe6;
+	--heat-40: #ff5e1f66;
+	--heat-20: #ff5e1f33;
+	--heat-12: #ff5e1f1f;
+	--heat-8: #ff5e1f14;
+	--heat-4: #ff5e1f0a;
+	--color-primary: var(--heat-100);
+	--color-primary-dark: var(--heat-90);
+	--color-primary-light: var(--heat-12);
+	--color-accent: var(--heat-100);
+	--color-accent-light: var(--heat-12);
+	--button-primary-fg: #fffbf5;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root:not(.light) {
-		--color-primary: #c585e0;
-		--color-primary-dark: #911475;
-		--color-primary-light: #e0a3f0;
-		--color-accent: #fbad41;
-		--color-accent-light: #ffcd89;
+		--heat-100: #ff5e1f;
+		--heat-90: #ff5e1fe6;
+		--heat-40: #ff5e1f66;
+		--heat-20: #ff5e1f33;
+		--heat-12: #ff5e1f1f;
+		--heat-8: #ff5e1f14;
+		--heat-4: #ff5e1f0a;
+		--color-primary: var(--heat-100);
+		--color-primary-dark: var(--heat-90);
+		--color-primary-light: var(--heat-12);
+		--color-accent: var(--heat-100);
+		--color-accent-light: var(--heat-12);
+		--button-primary-fg: #fffbf5;
 	}
 }

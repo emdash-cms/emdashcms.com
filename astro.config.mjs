@@ -7,12 +7,11 @@ import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
 
 export default defineConfig({
+	site: "https://emdashcms.com",
 	output: "server",
 	adapter: cloudflare(),
-	experimental: {
-		cache: {
-			provider: cacheCloudflare(),
-		},
+	cache: {
+		provider: cacheCloudflare(),
 	},
 	image: {
 		layout: "constrained",
@@ -21,6 +20,7 @@ export default defineConfig({
 	vite: {
 		ssr: {
 			optimizeDeps: {
+				exclude: ["emdash/ui"],
 				// Pre-bundle so it isn't discovered mid-render, which would trigger
 				// a Vite dep re-optimization and break in-flight worker imports
 				// under the Cloudflare dev runner (workerd).

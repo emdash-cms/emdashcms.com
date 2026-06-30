@@ -96,6 +96,14 @@
 				{ "type": "custom", "label": "Documentation", "url": "https://docs.emdashcms.com", "target": "_blank" },
 				{ "type": "custom", "label": "Playground", "url": "https://try.emdashcms.com", "target": "_blank" }
 			]
+		},
+		{
+			"name": "footer_social",
+			"label": "Footer: Social Links",
+			"items": [
+				{ "type": "custom", "label": "Discord", "url": "https://discord.gg/YY9vBaQRYt", "target": "_blank" },
+				{ "type": "custom", "label": "GitHub", "url": "https://github.com/emdash-cms/emdash", "target": "_blank" }
+			]
 		}
 	],
 

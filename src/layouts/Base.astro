@@ -3,53 +3,79 @@ import { getMenu, getSiteSettings } from "emdash";
 import { EmDashHead } from "emdash/ui";
 import { createPublicPageContext } from "emdash/page";
 import { Font } from "astro:assets";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import "../styles/theme.css";
 
 interface Props {
   title?: string;
   description?: string;
   image?: string;
+  pageType?: string;
+  articleMeta?: {
+    publishedTime?: string | null;
+    modifiedTime?: string | null;
+    author?: string | null;
+  };
+  content?: {
+    collection: string;
+    id: string;
+    slug?: string | null;
+  };
 }
 
-const { title, description, image } = Astro.props;
+const { title, description, image, pageType = "website", articleMeta, content } = Astro.props;
 const PLAYGROUND_URL = "https://try.emdashcms.com";
+const PUBLIC_SITE_URL = Astro.site?.href ?? "https://emdashcms.com/";
+const canonical = new URL(Astro.url.pathname, PUBLIC_SITE_URL).href;
+const siteUrl = new URL(PUBLIC_SITE_URL).origin;
 
 const settings = await getSiteSettings();
 const siteTitle = settings?.title || "EmDash CMS";
 const fullTitle = title ? `${title} — ${siteTitle}` : siteTitle;
 const siteDescription =
   settings?.tagline || "An open source Astro CMS built for humans and agents.";
-const siteLogo = settings?.logo?.url ? settings.logo : null;
+const siteLogo = settings?.logo?.url
+  ? { url: settings.logo.url, alt: settings.logo.alt }
+  : null;
 const siteFavicon = settings?.favicon?.url ?? null;
+const siteFaviconType = siteFavicon?.endsWith(".png")
+  ? "image/png"
+  : siteFavicon?.endsWith(".ico")
+    ? "image/x-icon"
+    : siteFavicon?.endsWith(".webp")
+      ? "image/webp"
+      : "image/svg+xml";
 
-const [menu, footerProduct, footerCommunity, footerResources] = await Promise.all([
+const [menu, footerProduct, footerCommunity, footerResources, footerSocial] = await Promise.all([
   getMenu("primary"),
   getMenu("footer_product"),
   getMenu("footer_community"),
   getMenu("footer_resources"),
+  getMenu("footer_social"),
 ]);
 
 const footerColumns = [
   { heading: "Product", menu: footerProduct },
   { heading: "Community", menu: footerCommunity },
   { heading: "Resources", menu: footerResources },
-].filter((col) => col.menu && col.menu.items.length > 0);
-
-function isExternalUrl(url?: string | null) {
-  return typeof url === "string" && /^https?:\/\//.test(url);
-}
+].flatMap((col) => (col.menu && col.menu.items.length > 0 ? [{ heading: col.heading, menu: col.menu }] : []));
+const footerSocialItems = footerSocial?.items.length ? footerSocial.items : footerCommunity?.items ?? [];
 
 const pageCtx = createPublicPageContext({
   Astro,
   kind: "custom",
-  pageType: "website",
+  pageType,
   title: fullTitle,
   pageTitle: title ?? siteTitle,
-  description: description || siteDescription,
-  canonical: Astro.url.href,
+  description: description ?? siteDescription,
+  canonical,
   image,
   seo: { ogImage: image },
   siteName: siteTitle,
+  siteUrl,
+  articleMeta,
+  content,
 });
 ---
 
@@ -61,7 +87,7 @@ const pageCtx = createPublicPageContext({
     <title>{fullTitle}</title>
     <link
       rel="icon"
-      type="image/svg+xml"
+      type={siteFaviconType}
       href={siteFavicon ?? "/brand/favicon.svg"}
     />
     <link rel="icon" type="image/png" sizes="any" href="/brand/favicon.png" />
@@ -71,6 +97,7 @@ const pageCtx = createPublicPageContext({
     <script is:inline>
       // Apply theme immediately to prevent flash
       (function () {
+        document.documentElement.classList.add("js");
         var c = document.cookie;
         var i = c.indexOf("theme=");
         var theme = i >= 0 ? c.slice(i + 6).split(";")[0] : null;
@@ -83,144 +110,24 @@ const pageCtx = createPublicPageContext({
     </script>
   </head>
   <body>
-    <header class="site-header">
-      <nav class="nav">
-        <a href="/" class="site-logo" aria-label={siteTitle}>
-          {
-            siteLogo ? (
-              <img
-                src={siteLogo.url}
-                alt={siteLogo.alt || siteTitle}
-                class="site-logo-img"
-              />
-            ) : (
-              <>
-                <img
-                  src="/brand/logo-dark-text.svg"
-                  alt={siteTitle}
-                  class="site-logo-img site-logo-img--light"
-                />
-                <img
-                  src="/brand/logo-light-text.svg"
-                  alt={siteTitle}
-                  class="site-logo-img site-logo-img--dark"
-                />
-              </>
-            )
-          }
-        </a>
-        <div class="nav-links">
-          {
-            menu?.items.map((item) => (
-              <a
-                href={item.url}
-                target={
-                  item.target ||
-                  (isExternalUrl(item.url) ? "_blank" : undefined)
-                }
-                rel={isExternalUrl(item.url) ? "noreferrer" : undefined}
-              >
-                {item.label}
-              </a>
-            ))
-          }
-        </div>
-        <div class="nav-actions">
-          <a
-            href={PLAYGROUND_URL}
-            class="nav-cta"
-            target="_blank"
-            rel="noreferrer">Try it</a
-          >
-        </div>
-      </nav>
-    </header>
+    <SiteHeader
+      siteTitle={siteTitle}
+      siteLogo={siteLogo}
+      menuItems={menu?.items ?? []}
+      playgroundUrl={PLAYGROUND_URL}
+    />
 
     <main>
       <slot />
     </main>
 
-    <footer class="site-footer">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <span class="footer-logo">
-            {
-              siteLogo ? (
-                <img
-                  src={siteLogo.url}
-                  alt={siteLogo.alt || siteTitle}
-                  class="footer-logo-img"
-                />
-              ) : (
-                <>
-                  <img
-                    src="/brand/logo-dark-text.svg"
-                    alt={siteTitle}
-                    class="footer-logo-img footer-logo-img--light"
-                  />
-                  <img
-                    src="/brand/logo-light-text.svg"
-                    alt={siteTitle}
-                    class="footer-logo-img footer-logo-img--dark"
-                  />
-                </>
-              )
-            }
-          </span>
-          <p class="footer-tagline">
-            {settings?.tagline || "Build something amazing"}
-          </p>
-        </div>
-        <div class="footer-links">
-          {
-            footerColumns.map((col) => (
-              <div class="footer-col">
-                <h4>{col.heading}</h4>
-                {col.menu!.items.map((item) => (
-                  <a
-                    href={item.url}
-                    target={
-                      item.target ||
-                      (isExternalUrl(item.url) ? "_blank" : undefined)
-                    }
-                    rel={isExternalUrl(item.url) ? "noreferrer" : undefined}
-                  >
-                    {item.label}
-                  </a>
-                ))}
-              </div>
-            ))
-          }
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>
-          &copy; {new Date().getFullYear()}
-          {siteTitle}.
-        </p>
-        <div class="theme-switcher">
-          <button
-            type="button"
-            class="theme-btn"
-            data-theme="light"
-            aria-label="Light mode">Light</button
-          >
-          <button
-            type="button"
-            class="theme-btn"
-            data-theme="dark"
-            aria-label="Dark mode">Dark</button
-          >
-          <button
-            type="button"
-            class="theme-btn"
-            data-theme="system"
-            aria-label="System theme">System</button
-          >
-        </div>
-        <p class="footer-powered">Open source CMS for Astro and Cloudflare.</p>
-      </div>
-    </footer>
+    <SiteFooter
+      siteTitle={siteTitle}
+      siteLogo={siteLogo}
+      tagline={settings?.tagline || "Build something amazing"}
+      footerColumns={footerColumns}
+      socialLinks={footerSocialItems}
+    />
 
     <script>
       // Theme switcher
@@ -247,7 +154,9 @@ const pageCtx = createPublicPageContext({
 
       function updateActiveBtn(theme: string) {
         themeBtns.forEach((btn) => {
-          btn.classList.toggle("active", btn.dataset.theme === theme);
+          const isActive = btn.dataset.theme === theme;
+          btn.classList.toggle("active", isActive);
+          btn.setAttribute("aria-pressed", String(isActive));
         });
       }
 
@@ -294,19 +203,62 @@ const pageCtx = createPublicPageContext({
         }
 
         :root {
-          /* Colors - Playful/Bold palette */
-          --color-bg: #ffffff;
-          --color-text: #0f172a;
-          --color-muted: #64748b;
-          --color-border: #e2e8f0;
-          --color-surface: #f8fafc;
-          --color-primary: #6366f1;
-          --color-primary-dark: #4f46e5;
-          --color-primary-light: #818cf8;
-          --color-accent: #f472b6;
-          --color-accent-light: #f9a8d4;
-          --color-success: #22c55e;
-          --color-warning: #f59e0b;
+          /* Firecrawl-inspired heat and neutral token scale. */
+          --heat-4: #fa5d190a;
+          --heat-8: #fa5d1914;
+          --heat-12: #fa5d191f;
+          --heat-16: #fa5d1929;
+          --heat-20: #fa5d1933;
+          --heat-40: #fa5d1966;
+          --heat-90: #fa5d19e6;
+          --heat-100: #fa5d19ff;
+          --accent-black: #262626ff;
+          --accent-white: #ffffffff;
+          --surface: #ffffffff;
+          --surface-raised: #ffffffff;
+          --black-alpha-3: #00000008;
+          --black-alpha-4: #0000000a;
+          --black-alpha-6: #0000000f;
+          --black-alpha-7: #00000012;
+          --black-alpha-32: #26262652;
+          --black-alpha-48: #2626267a;
+          --black-alpha-56: #2626268f;
+          --border-faint: #edededff;
+          --border-muted: #e8e8e8ff;
+          --border-loud: #e6e6e6ff;
+          --background-base: #f9f9f9ff;
+          --background-lighter: #fbfbfbff;
+
+          /* Semantic roles used by the site. */
+          --color-bg: var(--background-base);
+          --color-text: var(--accent-black);
+          --color-muted: var(--black-alpha-56);
+          --color-border: var(--border-muted);
+          --color-surface: var(--surface);
+          --color-surface-raised: var(--surface-raised);
+          --color-primary: var(--heat-100);
+          --color-primary-dark: var(--heat-90);
+          --color-primary-light: var(--heat-12);
+          --color-accent: var(--heat-100);
+          --color-accent-light: var(--heat-12);
+          --color-success: #42c366;
+          --color-warning: #ecb730;
+          --color-focus: var(--heat-100);
+
+          /* Button roles. */
+          --button-radius: 10px;
+          --button-gap: 6px;
+          --button-padding-y: 8px;
+          --button-padding-x: 12px;
+          --button-primary-bg: var(--heat-100);
+          --button-primary-bg-hover: var(--heat-90);
+          --button-primary-fg: var(--accent-white);
+          --button-secondary-bg: var(--black-alpha-4);
+          --button-secondary-bg-hover: var(--black-alpha-6);
+          --button-secondary-bg-active: var(--black-alpha-7);
+          --button-secondary-fg: var(--accent-black);
+          --button-disabled-bg: var(--black-alpha-3);
+          --button-disabled-fg: var(--black-alpha-48);
 
           /* Typography */
           --font-mono: ui-monospace, "SF Mono", monospace;
@@ -347,41 +299,76 @@ const pageCtx = createPublicPageContext({
           --transition-slow: 300ms ease;
 
           /* Shadows */
-          --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-          --shadow:
-            0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-          --shadow-lg:
-            0 10px 15px -3px rgba(0, 0, 0, 0.1),
-            0 4px 6px -4px rgba(0, 0, 0, 0.1);
-          --shadow-xl:
-            0 20px 25px -5px rgba(0, 0, 0, 0.1),
-            0 8px 10px -6px rgba(0, 0, 0, 0.1);
+          --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+          --shadow: 0 2px 2px rgba(0, 0, 0, 0.04);
+          --shadow-lg: 0 8px 16px -12px rgba(0, 0, 0, 0.2);
+          --shadow-xl: 0 18px 32px -24px rgba(0, 0, 0, 0.28);
         }
 
         /* Dark mode via system preference (when no explicit class) */
         @media (prefers-color-scheme: dark) {
           :root:not(.light) {
-            --color-bg: #0f172a;
-            --color-text: #f1f5f9;
-            --color-muted: #94a3b8;
-            --color-border: #334155;
-            --color-surface: #1e293b;
-            --color-primary: #818cf8;
-            --color-primary-dark: #6366f1;
-            --color-primary-light: #a5b4fc;
+            --accent-black: #f5f5f5ff;
+            --accent-white: #ffffffff;
+            --surface: #171717ff;
+            --surface-raised: #1f1f1fff;
+            --black-alpha-3: #ffffff08;
+            --black-alpha-4: #ffffff0a;
+            --black-alpha-6: #ffffff0f;
+            --black-alpha-7: #ffffff12;
+            --black-alpha-32: #ffffff52;
+            --black-alpha-48: #ffffff7a;
+            --black-alpha-56: #ffffff8f;
+            --border-faint: #2a2a2aff;
+            --border-muted: #333333ff;
+            --border-loud: #404040ff;
+            --background-base: #0a0a0aff;
+            --background-lighter: #141414ff;
+            --color-bg: var(--background-base);
+            --color-text: var(--accent-black);
+            --color-muted: var(--black-alpha-56);
+            --color-border: var(--border-muted);
+            --color-surface: var(--surface);
+            --color-surface-raised: var(--surface-raised);
+            --button-secondary-bg: var(--black-alpha-4);
+            --button-secondary-bg-hover: var(--black-alpha-6);
+            --button-secondary-bg-active: var(--black-alpha-7);
+            --button-secondary-fg: var(--accent-black);
+            --button-disabled-bg: var(--black-alpha-3);
+            --button-disabled-fg: var(--black-alpha-48);
           }
         }
 
         /* Explicit dark mode */
         :root.dark {
-          --color-bg: #0f172a;
-          --color-text: #f1f5f9;
-          --color-muted: #94a3b8;
-          --color-border: #334155;
-          --color-surface: #1e293b;
-          --color-primary: #818cf8;
-          --color-primary-dark: #6366f1;
-          --color-primary-light: #a5b4fc;
+          --accent-black: #f5f5f5ff;
+          --accent-white: #ffffffff;
+          --surface: #171717ff;
+          --surface-raised: #1f1f1fff;
+          --black-alpha-3: #ffffff08;
+          --black-alpha-4: #ffffff0a;
+          --black-alpha-6: #ffffff0f;
+          --black-alpha-7: #ffffff12;
+          --black-alpha-32: #ffffff52;
+          --black-alpha-48: #ffffff7a;
+          --black-alpha-56: #ffffff8f;
+          --border-faint: #2a2a2aff;
+          --border-muted: #333333ff;
+          --border-loud: #404040ff;
+          --background-base: #0a0a0aff;
+          --background-lighter: #141414ff;
+          --color-bg: var(--background-base);
+          --color-text: var(--accent-black);
+          --color-muted: var(--black-alpha-56);
+          --color-border: var(--border-muted);
+          --color-surface: var(--surface);
+          --color-surface-raised: var(--surface-raised);
+          --button-secondary-bg: var(--black-alpha-4);
+          --button-secondary-bg-hover: var(--black-alpha-6);
+          --button-secondary-bg-active: var(--black-alpha-7);
+          --button-secondary-fg: var(--accent-black);
+          --button-disabled-bg: var(--black-alpha-3);
+          --button-disabled-fg: var(--black-alpha-48);
         }
 
         html {
@@ -401,6 +388,15 @@ const pageCtx = createPublicPageContext({
         a {
           color: currentColor;
           text-decoration: none;
+        }
+
+        a:focus-visible,
+        button:focus-visible,
+        summary:focus-visible {
+          outline: none;
+          box-shadow:
+            0 0 0 2px var(--color-bg),
+            0 0 0 4px var(--color-focus);
         }
 
         img {
@@ -448,326 +444,83 @@ const pageCtx = createPublicPageContext({
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: var(--spacing-sm);
-          padding: var(--spacing-sm) var(--spacing-lg);
+          gap: var(--button-gap);
+          min-height: 36px;
+          padding: var(--button-padding-y) var(--button-padding-x);
           font-family: inherit;
           font-size: var(--font-size-sm);
-          font-weight: 600;
-          border-radius: var(--radius);
+          font-weight: 500;
+          line-height: 1.35;
+          border: 0;
+          border-radius: var(--button-radius);
           cursor: pointer;
           transition:
+            color var(--transition-fast),
             background var(--transition-fast),
-            transform var(--transition-fast),
-            box-shadow var(--transition-fast);
+            opacity var(--transition-fast),
+            transform var(--transition-fast);
         }
 
         .btn:hover {
-          transform: translateY(-1px);
+          text-decoration: none;
         }
 
         .btn:active {
-          transform: translateY(0);
+          transform: scale(0.995);
+        }
+
+        .btn[aria-disabled="true"],
+        .btn:disabled {
+          color: var(--button-disabled-fg);
+          background: var(--button-disabled-bg);
+          cursor: not-allowed;
+          opacity: 0.8;
+          transform: none;
         }
 
         .btn-primary {
-          color: white;
-          background: linear-gradient(
-            135deg,
-            var(--color-primary-dark),
-            var(--color-accent)
-          );
-          border: none;
-          transition:
-            background 0.3s ease,
-            box-shadow 0.3s ease;
+          color: var(--button-primary-fg);
+          background: var(--button-primary-bg);
         }
 
         .btn-primary:hover {
-          background: linear-gradient(
-            135deg,
-            var(--color-primary),
-            var(--color-accent)
-          );
-          box-shadow: var(--shadow-lg);
+          background: var(--button-primary-bg-hover);
         }
 
         .btn-secondary {
-          color: var(--color-text);
-          background: transparent;
-          border: 1px solid var(--color-border);
+          color: var(--button-secondary-fg);
+          background: var(--button-secondary-bg);
         }
 
         .btn-secondary:hover {
-          background: var(--color-surface);
-          border-color: var(--color-muted);
+          background: var(--button-secondary-bg-hover);
+        }
+
+        .btn-secondary:active {
+          background: var(--button-secondary-bg-active);
         }
 
         .btn-lg {
-          padding: var(--spacing-md) var(--spacing-xl);
+          min-height: 40px;
+          padding: 10px 14px;
           font-size: var(--font-size-base);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .btn {
+            transition: none;
+          }
+
+          .btn:active {
+            transform: none;
+          }
         }
       }
     </style>
 
     <style>
-      .site-header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: var(--color-bg);
-        border-bottom: 1px solid var(--color-border);
-      }
-
-      .nav {
-        max-width: var(--wide-width);
-        margin: 0 auto;
-        padding: var(--spacing-md) var(--spacing-lg);
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-        gap: var(--spacing-lg);
-      }
-
-      .site-logo {
-        display: inline-flex;
-        align-items: center;
-        line-height: 0;
-      }
-
-      .site-logo-img {
-        height: 36px;
-        width: auto;
-        display: block;
-      }
-
-      /* Light/dark logo swap. Default to the dark-text lockup and hide
-			   the light-text variant; the swap rules below flip them. */
-      .site-logo-img--dark,
-      .footer-logo-img--dark {
-        display: none;
-      }
-
-      :root.dark .site-logo-img--light,
-      :root.dark .footer-logo-img--light {
-        display: none;
-      }
-
-      :root.dark .site-logo-img--dark,
-      :root.dark .footer-logo-img--dark {
-        display: block;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        :root:not(.light) .site-logo-img--light,
-        :root:not(.light) .footer-logo-img--light {
-          display: none;
-        }
-
-        :root:not(.light) .site-logo-img--dark,
-        :root:not(.light) .footer-logo-img--dark {
-          display: block;
-        }
-      }
-
-      .nav-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--spacing-lg);
-        margin-left: auto;
-      }
-
-      .nav-links a {
-        font-size: var(--font-size-sm);
-        font-weight: 500;
-        color: var(--color-muted);
-        transition: color var(--transition-fast);
-      }
-
-      .nav-links a:hover {
-        color: var(--color-text);
-      }
-
-      .nav-actions {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-lg);
-      }
-
-      .nav-cta {
-        padding: var(--spacing-sm) var(--spacing-md);
-        font-size: var(--font-size-sm);
-        font-weight: 600;
-        color: white;
-        background: linear-gradient(
-          135deg,
-          var(--color-primary-dark),
-          var(--color-accent)
-        );
-        border-radius: var(--radius-sm);
-        transition:
-          background 0.3s ease,
-          transform var(--transition-fast);
-      }
-
-      .nav-cta:hover {
-        background: linear-gradient(
-          135deg,
-          var(--color-primary),
-          var(--color-accent)
-        );
-        transform: translateY(-1px);
-      }
-
       main {
         min-height: calc(100vh - 200px);
-      }
-
-      .site-footer {
-        background: var(--color-surface);
-        border-top: 1px solid var(--color-border);
-      }
-
-      .footer-content {
-        max-width: var(--wide-width);
-        margin: 0 auto;
-        padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-2xl);
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: var(--spacing-4xl);
-      }
-
-      .footer-logo {
-        display: inline-flex;
-        align-items: center;
-        line-height: 0;
-      }
-
-      .footer-logo-img {
-        height: 28px;
-        width: auto;
-      }
-
-      .footer-tagline {
-        margin-top: var(--spacing-sm);
-        font-size: var(--font-size-sm);
-        color: var(--color-muted);
-      }
-
-      .footer-links {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--spacing-xl);
-      }
-
-      .footer-col h4 {
-        font-size: var(--font-size-sm);
-        font-weight: 600;
-        margin-bottom: var(--spacing-md);
-      }
-
-      .footer-col a {
-        display: block;
-        font-size: var(--font-size-sm);
-        color: var(--color-muted);
-        padding: var(--spacing-xs) 0;
-        transition: color var(--transition-fast);
-      }
-
-      .footer-col a:hover {
-        color: var(--color-text);
-      }
-
-      .footer-bottom {
-        max-width: var(--wide-width);
-        margin: 0 auto;
-        padding: var(--spacing-lg);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: var(--font-size-sm);
-        color: var(--color-muted);
-        border-top: 1px solid var(--color-border);
-      }
-
-      .footer-powered a {
-        color: var(--color-text);
-      }
-
-      .theme-switcher {
-        display: flex;
-        gap: var(--spacing-xs);
-      }
-
-      .theme-btn {
-        background: transparent;
-        border: 1px solid var(--color-border);
-        color: var(--color-muted);
-        font-family: var(--font-sans);
-        font-size: var(--font-size-sm);
-        padding: var(--spacing-xs) var(--spacing-sm);
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        transition: all var(--transition-fast);
-      }
-
-      .theme-btn:hover {
-        color: var(--color-text);
-        border-color: var(--color-text);
-      }
-
-      .theme-btn.active {
-        background: var(--color-bg);
-        color: var(--color-text);
-        border-color: var(--color-primary);
-      }
-
-      @media (max-width: 768px) {
-        .footer-content {
-          grid-template-columns: 1fr;
-          gap: var(--spacing-2xl);
-        }
-
-        .footer-links {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .footer-bottom {
-          flex-direction: column;
-          gap: var(--spacing-md);
-          text-align: center;
-        }
-
-        .theme-switcher {
-          order: -1;
-        }
-
-        h1 {
-          font-size: var(--font-size-4xl);
-        }
-        h2 {
-          font-size: var(--font-size-2xl);
-        }
-      }
-
-      @media (max-width: 540px) {
-        .nav {
-          flex-wrap: wrap;
-          row-gap: var(--spacing-md);
-          justify-content: space-between;
-        }
-
-        .nav-links {
-          order: 3;
-          width: 100%;
-          justify-content: flex-end;
-          margin-left: 0;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .footer-links {
-          grid-template-columns: 1fr;
-        }
       }
     </style>
   </body>

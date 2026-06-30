@@ -14,79 +14,117 @@ const sortedPosts = posts.toSorted((a, b) => {
 	return dateB - dateA;
 });
 
-function formatDate(date?: Date | null) {
+const postSummaries = sortedPosts.map((post) => ({
+	post,
+	published: formatPostDate(post.data.publishedAt),
+}));
+
+function formatPostDate(date?: Date | null) {
 	if (!date) return null;
-	return date.toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	});
+	return {
+		datetime: date.toISOString(),
+		label: date.toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		}),
+	};
 }
 ---
 
 <Base title="Blog" description="Release announcements and product updates for EmDash CMS.">
 	<section class="blog-index">
-		<div class="blog-header">
-			<p class="eyebrow">Blog</p>
-			<h1>Release notes and product updates</h1>
-			<p>
-				This is where we announce new releases, notable improvements, and major changes
-				to EmDash CMS.
-			</p>
-		</div>
+		<div class="blog-container">
+			<div class="blog-rail">
+				<div class="blog-header">
+					<span class="eyebrow">Blog</span>
+					<h1>Release notes and product updates</h1>
+					<p>
+						This is where we announce new releases, notable improvements, and major changes to
+						EmDash CMS.
+					</p>
+				</div>
 
-		{sortedPosts.length === 0 ? (
-			<div class="empty-state">
-				<h2>No posts yet</h2>
-				<p>Publish your first release post in the admin.</p>
-				<a href="/_emdash/admin/content/posts/new" class="btn btn-primary">Write a post</a>
+				{sortedPosts.length === 0 ? (
+					<div class="empty-state">
+						<h2>No posts yet</h2>
+						<p>Publish your first release post in the admin.</p>
+						<a href="/_emdash/admin/content/posts/new" class="btn btn-primary">Write a post</a>
+					</div>
+				) : (
+					<div class="post-list">
+						{postSummaries.map(({ post, published }) => (
+							<article class="post-card">
+								<a href={`/blog/${post.id}`} class="post-link">
+									<div class="post-meta">
+										{published && <time datetime={published.datetime}>{published.label}</time>}
+									</div>
+									<h2>{post.data.title}</h2>
+									{post.data.excerpt && <p>{post.data.excerpt}</p>}
+									<span class="read-more">Read update</span>
+								</a>
+							</article>
+						))}
+					</div>
+				)}
 			</div>
-		) : (
-			<div class="post-list">
-				{sortedPosts.map((post) => (
-					<article class="post-card">
-						<a href={`/blog/${post.id}`} class="post-link">
-							<div class="post-meta">
-								{formatDate(post.data.publishedAt) && <time>{formatDate(post.data.publishedAt)}</time>}
-							</div>
-							<h2>{post.data.title}</h2>
-							{post.data.excerpt && <p>{post.data.excerpt}</p>}
-							<span class="read-more">Read update</span>
-						</a>
-					</article>
-				))}
-			</div>
-		)}
+		</div>
 	</section>
 </Base>
 
 <style>
 	.blog-index {
-		max-width: var(--max-width);
+		overflow: hidden;
+		background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+	}
+
+	.blog-container {
+		width: calc(100% - 16px);
+		max-width: 920px;
 		margin: 0 auto;
-		padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-5xl);
+		padding: 8.5rem 0 var(--spacing-5xl);
+	}
+
+	.blog-rail {
+		max-width: none;
 	}
 
 	.blog-header {
+		position: relative;
+		display: flex;
+		max-width: 28rem;
+		flex-direction: column;
+		align-items: flex-start;
 		margin-bottom: var(--spacing-3xl);
+		padding: 0 var(--spacing-md);
 	}
 
 	.eyebrow {
 		font-size: var(--font-size-sm);
-		font-weight: 700;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--color-primary);
-		margin-bottom: var(--spacing-sm);
+		font-weight: 400;
+		line-height: 1.5;
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
 	}
 
 	.blog-header h1 {
-		margin-bottom: var(--spacing-md);
+		max-width: 28rem;
+		margin-top: var(--spacing-md);
+		color: var(--color-text);
+		font-size: var(--font-size-4xl);
+		font-weight: 600;
+		line-height: 1.12;
+		letter-spacing: -0.035em;
+		text-wrap: balance;
 	}
 
 	.blog-header p {
-		font-size: var(--font-size-lg);
-		color: var(--color-muted);
+		display: block;
+		max-width: 40rem;
+		margin-top: var(--spacing-md);
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		color: color-mix(in srgb, var(--color-text) 62%, transparent);
+		text-wrap: balance;
 	}
 
 	.post-list {
@@ -99,11 +137,13 @@ function formatDate(date?: Date | null) {
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-lg);
 		background: var(--color-surface);
-		transition: transform var(--transition-base), box-shadow var(--transition-base);
+		transition:
+			border-color var(--transition-base),
+			box-shadow var(--transition-base);
 	}
 
 	.post-card:hover {
-		transform: translateY(-2px);
+		border-color: color-mix(in srgb, var(--color-text) 16%, var(--color-border));
 		box-shadow: var(--shadow-lg);
 	}
 
@@ -114,17 +154,19 @@ function formatDate(date?: Date | null) {
 
 	.post-meta {
 		font-size: var(--font-size-sm);
-		color: var(--color-muted);
+		color: color-mix(in srgb, var(--color-text) 56%, transparent);
 		margin-bottom: var(--spacing-sm);
 	}
 
 	.post-link h2 {
-		font-size: var(--font-size-2xl);
+		font-size: var(--font-size-xl);
+		line-height: 1.2;
+		letter-spacing: -0.03em;
 		margin-bottom: var(--spacing-sm);
 	}
 
 	.post-link p {
-		color: var(--color-muted);
+		color: color-mix(in srgb, var(--color-text) 62%, transparent);
 		margin-bottom: var(--spacing-md);
 	}
 
@@ -135,7 +177,6 @@ function formatDate(date?: Date | null) {
 	}
 
 	.empty-state {
-		text-align: center;
 		padding: var(--spacing-4xl) 0;
 	}
 
@@ -146,5 +187,25 @@ function formatDate(date?: Date | null) {
 	.empty-state p {
 		color: var(--color-muted);
 		margin-bottom: var(--spacing-lg);
+	}
+
+	@media (min-width: 1024px) {
+		.blog-container {
+			padding-top: 10rem;
+		}
+
+		.blog-header h1 {
+			font-size: var(--font-size-4xl);
+		}
+	}
+
+	@media (max-width: 640px) {
+		.blog-container {
+			padding-top: 7.5rem;
+		}
+
+		.blog-header h1 {
+			font-size: var(--font-size-3xl);
+		}
 	}
 </style>

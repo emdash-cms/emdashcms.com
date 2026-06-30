@@ -9,6 +9,7 @@ dist/
 
 # Wrangler / Miniflare local state
 .wrangler/
+wrangler.preview*.jsonc
 
 # Data
 data.db
