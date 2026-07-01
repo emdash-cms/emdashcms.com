@@ -1,7 +1,8 @@
 ---
 import { sanitizeHref } from "emdash";
 import { Image } from "astro:assets";
-import heroDash from "../../../public/landing/hero/hero-dash.png";
+import heroDashDark from "../../../public/landing/hero/hero-dash-dark.png";
+import heroDashLight from "../../../public/landing/hero/hero-dash-light.png";
 import arrowRightSvg from "../../icons/arrow-right.svg?raw";
 
 interface Props {
@@ -69,9 +70,18 @@ const secondaryCta =
 			<div class="hero-image-wrap">
 				<div class="hero-image-frame">
 					<Image
-						src={heroDash}
+						src={heroDashLight}
 						alt="EmDash CMS dashboard"
-						class="hero-image"
+						class="hero-image hero-image--light"
+						widths={[640, 960, 1280, 1600, 2000]}
+						sizes="(min-width: 1140px) 1096px, calc(100vw - 32px)"
+						loading="eager"
+						fetchpriority="high"
+					/>
+					<Image
+						src={heroDashDark}
+						alt="EmDash CMS dashboard"
+						class="hero-image hero-image--dark"
 						widths={[640, 960, 1280, 1600, 2000]}
 						sizes="(min-width: 1140px) 1096px, calc(100vw - 32px)"
 						loading="eager"
@@ -248,6 +258,14 @@ const secondaryCta =
 			0 8px 8px -4px rgba(0, 0, 0, 0.18);
 	}
 
+	:global(:root.dark) .hero-image-frame :global(.hero-image--light) {
+		display: none;
+	}
+
+	:global(:root.dark) .hero-image-frame :global(.hero-image--dark) {
+		display: block;
+	}
+
 	@media (prefers-color-scheme: dark) {
 		:global(:root:not(.light)) .hero-image-frame {
 			border-color: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
@@ -256,6 +274,14 @@ const secondaryCta =
 				0 20px 24px -4px rgba(0, 0, 0, 0.24),
 				0 8px 8px -4px rgba(0, 0, 0, 0.18);
 		}
+
+		:global(:root:not(.light)) .hero-image-frame :global(.hero-image--light) {
+			display: none;
+		}
+
+		:global(:root:not(.light)) .hero-image-frame :global(.hero-image--dark) {
+			display: block;
+		}
 	}
 
 	.hero-image-frame :global(.hero-image) {
@@ -263,6 +289,10 @@ const secondaryCta =
 		width: 100%;
 		height: auto;
 		aspect-ratio: 5 / 3;
+	}
+
+	.hero-image-frame :global(.hero-image--dark) {
+		display: none;
 	}
 
 	@media (min-width: 640px) {
