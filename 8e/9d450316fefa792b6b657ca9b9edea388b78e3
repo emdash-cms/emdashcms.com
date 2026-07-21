@@ -1,0 +1,19 @@
+src/components/blocks/Hero.astro
+  s_3bbe202353ae88::t_bb3a0378d92890 4-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8e9d450316fefa792b6b657ca9b9edea388b78e3",
+  "prompts": {},
+  "sessions": {
+    "s_3bbe202353ae88": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f84b8-1caf-7122-9120-b06c5b7856af",
+        "model": "unknown"
+      },
+      "human_author": "Noah Pham <npham@cloudflare.com>"
+    }
+  }
+}
