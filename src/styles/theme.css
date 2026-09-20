@@ -4,6 +4,11 @@
   These unlayered declarations override the defaults declared inside
   @layer base in Base.astro. The palette intentionally borrows the disciplined
   neutral system from Vercel and the orange heat accent from Firecrawl/Cloudflare.
+
+  --heat-100 is identical in every theme block, so the primary button fill is
+  theme-invariant and its foreground has to be too. It is a literal rather than
+  var(--accent-black), because --accent-black flips to #f5f5f5 in dark mode and
+  would put near-white back on the orange.
 */
 
 :root {
@@ -19,7 +24,7 @@
 	--color-primary-light: var(--heat-12);
 	--color-accent: var(--heat-100);
 	--color-accent-light: var(--heat-12);
-	--button-primary-fg: #fffbf5;
+	--button-primary-fg: #1a1a1a;
 }
 
 :root.dark {
@@ -35,7 +40,7 @@
 	--color-primary-light: var(--heat-12);
 	--color-accent: var(--heat-100);
 	--color-accent-light: var(--heat-12);
-	--button-primary-fg: #fffbf5;
+	--button-primary-fg: #1a1a1a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -52,6 +57,6 @@
 		--color-primary-light: var(--heat-12);
 		--color-accent: var(--heat-100);
 		--color-accent-light: var(--heat-12);
-		--button-primary-fg: #fffbf5;
+		--button-primary-fg: #1a1a1a;
 	}
 }
