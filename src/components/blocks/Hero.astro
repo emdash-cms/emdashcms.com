@@ -15,7 +15,7 @@ interface Props {
 		// Empty strings mean "no CTA".
 		primaryCtaLabel?: string;
 		primaryCtaUrl?: string;
-		copyPrompt?: string;
+		agentPrompt?: string;
 		centered?: boolean;
 	};
 }
@@ -28,10 +28,9 @@ const announcement = {
 	tag: "Announcement",
 	label: "EmDash is live",
 };
-const defaultCopyPrompt = `Read https://docs.emdashcms.com/llms.txt, then help me build an EmDash site.
-Ask what I want to make, follow the current docs to set up or adapt an Astro project, model editable content, and run it locally for review. Show me how to edit content in the admin and connect my AI assistant through EmDash's MCP server. Don't deploy until I approve.`;
-const copyPrompt = node.copyPrompt?.trim() || defaultCopyPrompt;
-const copyPromptPreview = copyPrompt.split(/\r?\n/, 1)[0];
+const startUrl = new URL("/start.md", Astro.url).toString();
+const defaultCopyPrompt = `I want to build a site with EmDash. Read ${startUrl}, inspect my project, and use what I have already told you. If my goal is unclear, ask one focused question. Make the content editable, run the site locally, and let me review it before deployment.`;
+const copyPrompt = node.agentPrompt?.trim() || defaultCopyPrompt;
 
 const primaryCta =
 	node.primaryCtaLabel && node.primaryCtaUrl
@@ -61,13 +60,12 @@ const primaryCta =
 				</div>
 				<div class="hero-prompt-feedback" data-copy-prompt-feedback>
 					<p class="hero-prompt-preview" data-copy-prompt-preview aria-hidden="true">
-						<span class="hero-prompt-quote" aria-hidden="true">“</span>
-						<span class="hero-prompt-preview-text">{copyPromptPreview}</span>
-						<span class="hero-prompt-quote" aria-hidden="true">”</span>
+						<span class="hero-prompt-dash" aria-hidden="true"></span>
+						<span class="hero-prompt-preview-text">An EmDash starter for your agent: plan, build, preview locally.</span>
 					</p>
 					<p class="hero-prompt-copied" data-copy-prompt-copied aria-hidden="true">
-						<span>✓</span>
-						<span class="hero-prompt-message">Copied — now paste that into your coding agent for a guided walkthrough!</span>
+						<span class="hero-prompt-check">✓</span>
+						<span class="hero-prompt-message">Prompt copied. Paste it into your coding agent to begin.</span>
 					</p>
 					<p class="hero-prompt-failed" data-copy-prompt-failed aria-hidden="true">Could not copy the prompt. Try again.</p>
 				</div>
@@ -126,6 +124,7 @@ const primaryCta =
 	}
 
 	.hero-copy {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
@@ -240,17 +239,18 @@ const primaryCta =
 	}
 
 	.hero-prompt-feedback {
-		position: relative;
+		position: absolute;
+		inset-block-start: calc(100% + var(--spacing-md));
+		inset-inline-start: 0;
 		width: min(100%, 43rem);
 		height: 1.5rem;
-		margin-top: var(--spacing-md);
 		font-size: var(--font-size-sm);
-		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 		line-height: 1.5;
 	}
 
 	.hero-centered .hero-prompt-feedback {
-		margin-inline: auto;
+		inset-inline-start: 50%;
+		transform: translateX(-50%);
 	}
 
 	.hero-prompt-feedback p {
@@ -272,15 +272,11 @@ const primaryCta =
 	}
 
 	.hero-prompt-copied {
-		color: #2563eb;
+		color: var(--color-muted);
 	}
 
 	.hero-prompt-failed {
 		color: #b42318;
-	}
-
-	:global(:root.dark) .hero-prompt-copied {
-		color: #60a5fa;
 	}
 
 	:global(:root.dark) .hero-prompt-failed {
@@ -288,10 +284,6 @@ const primaryCta =
 	}
 
 	@media (prefers-color-scheme: dark) {
-		:global(:root:not(.light)) .hero-prompt-copied {
-			color: #60a5fa;
-		}
-
 		:global(:root:not(.light)) .hero-prompt-failed {
 			color: #f97066;
 		}
@@ -311,9 +303,16 @@ const primaryCta =
 		white-space: nowrap;
 	}
 
-	.hero-prompt-quote {
+	.hero-prompt-dash {
+		width: 0.875rem;
+		height: 2px;
+		flex: 0 0 auto;
+		background: var(--color-primary);
+		border-radius: var(--radius-full);
+	}
+
+	.hero-prompt-check {
 		color: var(--color-primary);
-		font-family: var(--font-sans);
 		font-weight: 600;
 	}
 

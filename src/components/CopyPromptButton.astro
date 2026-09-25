@@ -138,7 +138,7 @@ const { prompt } = Astro.props;
 				if (!prompt || !navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
 				await navigator.clipboard.writeText(prompt);
 				copyState = "copied";
-				status.textContent = "Copied — now paste that into your coding agent for a guided walkthrough!";
+				status.textContent = "Prompt copied. Paste it into your coding agent to begin.";
 			} catch {
 				copyState = "failed";
 				status.textContent = "Could not copy the prompt. Try again.";

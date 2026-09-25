@@ -61,8 +61,8 @@ const definition: PluginDefinition = {
 					{ type: "text_input", action_id: "primaryCtaUrl", label: "Primary CTA URL" },
 					{
 						type: "text_input",
-						action_id: "copyPrompt",
-						label: "Copy prompt (optional)",
+						action_id: "agentPrompt",
+						label: "Agent starter prompt (optional)",
 						multiline: true,
 					},
 					{ type: "toggle", action_id: "centered", label: "Center the layout" },
