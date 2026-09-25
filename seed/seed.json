@@ -123,8 +123,7 @@
 							"subheadline": "EmDash is an open source CMS for Astro and Cloudflare. Define content in code, edit it in a polished admin, and let agents work with it through the same APIs you do.",
 							"primaryCtaLabel": "Try the playground",
 							"primaryCtaUrl": "https://try.emdashcms.com",
-							"secondaryCtaLabel": "Read the docs",
-							"secondaryCtaUrl": "https://docs.emdashcms.com"
+							"copyPrompt": "Read https://docs.emdashcms.com/llms.txt, then help me build an EmDash site.\nAsk what I want to make, follow the current docs to set up or adapt an Astro project, model editable content, and run it locally for review. Show me how to edit content in the admin and connect my AI assistant through EmDash's MCP server. Don't deploy until I approve."
 						},
 						{
 							"_type": "marketing.features",

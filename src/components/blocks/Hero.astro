@@ -4,18 +4,18 @@ import { Image } from "astro:assets";
 import heroDashDark from "../../../public/landing/hero/hero-dash-dark.png";
 import heroDashLight from "../../../public/landing/hero/hero-dash-light.png";
 import arrowRightSvg from "../../icons/arrow-right.svg?raw";
+import CopyPromptButton from "../CopyPromptButton.astro";
 
 interface Props {
 	node: {
 		_key?: string;
 		headline: string;
 		subheadline?: string;
-		// CTAs are flattened to sibling fields because Block Kit has no
-		// object-group element. Empty strings mean "no CTA".
+		// CTA fields are flattened because Block Kit has no object-group element.
+		// Empty strings mean "no CTA".
 		primaryCtaLabel?: string;
 		primaryCtaUrl?: string;
-		secondaryCtaLabel?: string;
-		secondaryCtaUrl?: string;
+		copyPrompt?: string;
 		centered?: boolean;
 	};
 }
@@ -28,21 +28,21 @@ const announcement = {
 	tag: "Announcement",
 	label: "EmDash is live",
 };
+const defaultCopyPrompt = `Read https://docs.emdashcms.com/llms.txt, then help me build an EmDash site.
+Ask what I want to make, follow the current docs to set up or adapt an Astro project, model editable content, and run it locally for review. Show me how to edit content in the admin and connect my AI assistant through EmDash's MCP server. Don't deploy until I approve.`;
+const copyPrompt = node.copyPrompt?.trim() || defaultCopyPrompt;
+const copyPromptPreview = copyPrompt.split(/\r?\n/, 1)[0];
 
 const primaryCta =
 	node.primaryCtaLabel && node.primaryCtaUrl
 		? { label: node.primaryCtaLabel, url: sanitizeHref(node.primaryCtaUrl.trim()) }
-		: undefined;
-const secondaryCta =
-	node.secondaryCtaLabel && node.secondaryCtaUrl
-		? { label: node.secondaryCtaLabel, url: sanitizeHref(node.secondaryCtaUrl.trim()) }
 		: undefined;
 ---
 
 <section class:list={["hero", { "hero-centered": centered }]} id={_key} aria-labelledby={headingId}>
 	<div class="hero-section">
 		<div class="hero-container">
-			<div class="hero-copy">
+			<div class="hero-copy" data-copy-prompt-root>
 				<a href={announcement.href} class="hero-announcement">
 					<span class="hero-announcement-tag">{announcement.tag}</span>
 					<span class="hero-announcement-text">{announcement.label}</span>
@@ -51,20 +51,26 @@ const secondaryCta =
 				</a>
 				<h1 id={headingId} class="hero-headline">{headline}</h1>
 				{subheadline && <p class="hero-subheadline">{subheadline}</p>}
-				{(primaryCta || secondaryCta) && (
-					<div class="hero-actions">
-						{primaryCta && (
-							<a href={primaryCta.url} class="btn btn-primary btn-lg">
-								<span>{primaryCta.label}</span>
-							</a>
-						)}
-						{secondaryCta && (
-							<a href={secondaryCta.url} class="btn btn-secondary btn-lg">
-								<span>{secondaryCta.label}</span>
-							</a>
-						)}
-					</div>
-				)}
+				<div class="hero-actions">
+					{primaryCta && (
+						<a href={primaryCta.url} class="btn btn-primary btn-lg">
+							<span>{primaryCta.label}</span>
+						</a>
+					)}
+					<CopyPromptButton prompt={copyPrompt} />
+				</div>
+				<div class="hero-prompt-feedback" data-copy-prompt-feedback>
+					<p class="hero-prompt-preview" data-copy-prompt-preview aria-hidden="true">
+						<span class="hero-prompt-quote" aria-hidden="true">“</span>
+						<span class="hero-prompt-preview-text">{copyPromptPreview}</span>
+						<span class="hero-prompt-quote" aria-hidden="true">”</span>
+					</p>
+					<p class="hero-prompt-copied" data-copy-prompt-copied aria-hidden="true">
+						<span>✓</span>
+						<span class="hero-prompt-message">Copied — now paste that into your coding agent for a guided walkthrough!</span>
+					</p>
+					<p class="hero-prompt-failed" data-copy-prompt-failed aria-hidden="true">Could not copy the prompt. Try again.</p>
+				</div>
 			</div>
 
 			<div class="hero-image-wrap">
@@ -227,7 +233,92 @@ const secondaryCta =
 
 	.hero-actions :global(.btn) {
 		width: 100%;
+		min-height: 48px;
+		padding: 0.75rem 1.25rem;
+		border-radius: var(--radius-full);
 		white-space: nowrap;
+	}
+
+	.hero-prompt-feedback {
+		position: relative;
+		width: min(100%, 43rem);
+		height: 1.5rem;
+		margin-top: var(--spacing-md);
+		font-size: var(--font-size-sm);
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+		line-height: 1.5;
+	}
+
+	.hero-centered .hero-prompt-feedback {
+		margin-inline: auto;
+	}
+
+	.hero-prompt-feedback p {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		min-width: 0;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 0;
+		opacity: 0;
+		filter: blur(3px);
+		transform: translateY(4px);
+		pointer-events: none;
+		transition:
+			opacity 180ms ease-out,
+			filter 180ms ease-out,
+			transform 180ms ease-out;
+	}
+
+	.hero-prompt-preview {
+		color: var(--color-muted);
+	}
+
+	.hero-prompt-copied {
+		color: #2563eb;
+	}
+
+	.hero-prompt-failed {
+		color: #b42318;
+	}
+
+	:global(:root.dark) .hero-prompt-copied {
+		color: #60a5fa;
+	}
+
+	:global(:root.dark) .hero-prompt-failed {
+		color: #f97066;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .hero-prompt-copied {
+			color: #60a5fa;
+		}
+
+		:global(:root:not(.light)) .hero-prompt-failed {
+			color: #f97066;
+		}
+	}
+
+	.hero-prompt-preview-text {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.hero-prompt-message {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.hero-prompt-quote {
+		color: var(--color-primary);
+		font-family: var(--font-sans);
+		font-weight: 600;
 	}
 
 	.hero-image-wrap {
@@ -338,7 +429,8 @@ const secondaryCta =
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.hero-announcement {
+		.hero-announcement,
+		.hero-prompt-feedback p {
 			transition: none;
 		}
 	}

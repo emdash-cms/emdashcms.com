@@ -48,7 +48,7 @@ const definition: PluginDefinition = {
 			{
 				type: "marketing.hero",
 				label: "Hero",
-				description: "Big headline section with optional CTAs",
+				description: "Headline with a primary CTA and copyable agent prompt",
 				fields: [
 					{ type: "text_input", action_id: "headline", label: "Headline" },
 					{
@@ -61,10 +61,10 @@ const definition: PluginDefinition = {
 					{ type: "text_input", action_id: "primaryCtaUrl", label: "Primary CTA URL" },
 					{
 						type: "text_input",
-						action_id: "secondaryCtaLabel",
-						label: "Secondary CTA label",
+						action_id: "copyPrompt",
+						label: "Copy prompt (optional)",
+						multiline: true,
 					},
-					{ type: "text_input", action_id: "secondaryCtaUrl", label: "Secondary CTA URL" },
 					{ type: "toggle", action_id: "centered", label: "Center the layout" },
 				],
 			},
