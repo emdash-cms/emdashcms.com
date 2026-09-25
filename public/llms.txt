@@ -1,0 +1,19 @@
+# EmDash CMS
+
+> An open-source Astro CMS with an admin for people and content APIs for authorized agents.
+
+## Start here
+
+- [Build a site with EmDash](https://emdashcms.com/start.md): A short handoff for coding agents, from the user's brief to an editable local site.
+- [Create your first site](https://docs.emdashcms.com/getting-started/): Scaffold a new Astro and EmDash site.
+- [Add EmDash to an Astro project](https://docs.emdashcms.com/existing-project/): Keep an existing site and add the CMS.
+
+## Work with agents
+
+- [Connect AI tools to a site](https://docs.emdashcms.com/guides/ai-tools/): Authenticated MCP access to content after setup.
+- [EmDash docs MCP](https://docs.emdashcms.com/docs-mcp/): Read-only search over current documentation.
+
+## Reference
+
+- [Complete documentation index](https://docs.emdashcms.com/llms.txt): Guides and API references.
+- [CLI reference](https://docs.emdashcms.com/reference/cli/): Local setup and content commands.
