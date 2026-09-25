@@ -28,8 +28,7 @@ const announcement = {
 	tag: "Announcement",
 	label: "EmDash is live",
 };
-const startUrl = new URL("/start.md", Astro.url).toString();
-const defaultCopyPrompt = `I want to build a site with EmDash. Read ${startUrl}, inspect my project, and use what I have already told you. If my goal is unclear, ask one focused question. Make the content editable, run the site locally, and let me review it before deployment.`;
+const defaultCopyPrompt = `I want to build a site with EmDash. Read https://emdashcms.com/start.md, inspect my project, and use what I have already told you. If my goal is unclear, ask one focused question. Make the content editable, run the site locally, and let me review it before deployment.`;
 const copyPrompt = node.agentPrompt?.trim() || defaultCopyPrompt;
 
 const primaryCta =
