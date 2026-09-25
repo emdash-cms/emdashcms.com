@@ -54,29 +54,60 @@ const { prompt } = Astro.props;
 		let keyboardFocused = false;
 		let copyState: "idle" | "copied" | "failed" = "idle";
 		const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-		if (reducedMotion) {
-			[preview, copied, failed].forEach((element) => {
-				if (element) element.style.transition = "none";
-			});
-		}
-		const show = (element: HTMLElement | null | undefined, visible: boolean) => {
+		const shown = new WeakMap<HTMLElement, boolean>();
+		const exitTimers = new WeakMap<HTMLElement, number>();
+		if (defaultLabel) shown.set(defaultLabel, true);
+		const show = (element: HTMLElement | null | undefined, visible: boolean, delay = 0) => {
 			if (!element) return;
-			element.style.opacity = visible ? "1" : "0";
-			element.style.transform = reducedMotion ? "none" : visible ? "translateY(0)" : "translateY(-4px)";
-			element.style.filter = reducedMotion ? "none" : visible ? "blur(0)" : "blur(2px)";
+			if ((shown.get(element) ?? false) === visible) return;
+			shown.set(element, visible);
+			const exitTimer = exitTimers.get(element);
+			if (exitTimer !== undefined) window.clearTimeout(exitTimer);
+
+			if (reducedMotion) {
+				element.style.transition = "none";
+				element.style.opacity = visible ? "1" : "0";
+				element.style.transform = "none";
+				element.style.filter = "none";
+			} else if (visible) {
+				const ease = "cubic-bezier(0.22, 1, 0.36, 1)";
+				element.style.transition = ["opacity", "transform", "filter"]
+					.map((property) => `${property} 500ms ${ease} ${delay}ms`)
+					.join(", ");
+				element.style.opacity = "1";
+				element.style.transform = "translateY(0)";
+				element.style.filter = "blur(0)";
+			} else {
+				element.style.transition = "opacity 200ms ease, transform 0s linear, filter 0s linear";
+				element.style.opacity = "0";
+				element.style.transform = "translateY(0)";
+				element.style.filter = "blur(0)";
+				exitTimers.set(element, window.setTimeout(() => {
+					if (shown.get(element) === false) {
+						element.style.transition = "none";
+						element.style.transform = "translateY(12px)";
+						element.style.filter = "blur(3px)";
+					}
+				}, 200));
+			}
+
 			if (element === preview) element.setAttribute("aria-hidden", String(!visible));
 		};
-		const updateFeedback = () => {
-			show(preview, copyState === "idle" && (hovered || keyboardFocused));
-			show(copied, copyState === "copied");
-			show(failed, copyState === "failed");
-			show(defaultLabel, copyState === "idle");
-			show(copiedLabel, copyState === "copied");
-			show(failedLabel, copyState === "failed");
+		const resizeActiveLabel = () => {
 			const activeLabel = copyState === "copied" ? copiedLabel : copyState === "failed" ? failedLabel : defaultLabel;
 			if (labels && activeLabel) labels.style.inlineSize = `${activeLabel.scrollWidth}px`;
 		};
-		void document.fonts?.ready.then(updateFeedback);
+		const updateFeedback = () => {
+			show(preview, copyState === "idle" && (hovered || keyboardFocused), 40);
+			show(copied, copyState === "copied", 40);
+			show(failed, copyState === "failed", 40);
+			show(defaultLabel, copyState === "idle");
+			show(copiedLabel, copyState === "copied");
+			show(failedLabel, copyState === "failed");
+			resizeActiveLabel();
+		};
+		resizeActiveLabel();
+		void document.fonts?.ready.then(resizeActiveLabel);
 
 		button.addEventListener("pointerenter", () => {
 			hovered = true;
@@ -185,7 +216,7 @@ const { prompt } = Astro.props;
 		white-space: nowrap;
 		opacity: 0;
 		filter: blur(3px);
-		transform: translateY(4px);
+		transform: translateY(12px);
 	}
 
 	.copy-prompt-label--default {
@@ -233,14 +264,7 @@ const { prompt } = Astro.props;
 
 	@media (prefers-reduced-motion: no-preference) {
 		.copy-prompt-labels {
-			transition: inline-size 280ms cubic-bezier(0.2, 0, 0, 1);
-		}
-
-		.copy-prompt-label {
-			transition:
-				opacity 180ms ease-out,
-				filter 180ms ease-out,
-				transform 180ms ease-out;
+			transition: inline-size 500ms cubic-bezier(0.22, 1, 0.36, 1);
 		}
 	}
 </style>

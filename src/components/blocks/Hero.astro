@@ -263,12 +263,8 @@ const primaryCta =
 		margin: 0;
 		opacity: 0;
 		filter: blur(3px);
-		transform: translateY(4px);
+		transform: translateY(12px);
 		pointer-events: none;
-		transition:
-			opacity 180ms ease-out,
-			filter 180ms ease-out,
-			transform 180ms ease-out;
 	}
 
 	.hero-prompt-preview {
@@ -429,8 +425,7 @@ const primaryCta =
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.hero-announcement,
-		.hero-prompt-feedback p {
+		.hero-announcement {
 			transition: none;
 		}
 	}
