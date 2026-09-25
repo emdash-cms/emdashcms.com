@@ -1,0 +1,117 @@
+---
+import { Image } from "astro:assets";
+import schemaDark from "../../public/landing/features/schema-dark.png";
+import schemaLight from "../../public/landing/features/schema-light.png";
+import editorDark from "../../public/landing/features/editor-dark.png";
+import editorLight from "../../public/landing/features/editor-light.png";
+import agentsDark from "../../public/landing/features/agents-dark.png";
+import agentsLight from "../../public/landing/features/agents-light.png";
+
+interface Props {
+	scene: number;
+}
+
+const scenes = [
+	{
+		label: "Content type fields",
+		alt: "EmDash content type editor showing the system and custom fields for Posts",
+		light: schemaLight,
+		dark: schemaDark,
+	},
+	{
+		label: "Post editor",
+		alt: "EmDash post editor showing the title, excerpt, and editable article content",
+		light: editorLight,
+		dark: editorDark,
+	},
+	{
+		label: "Agent permissions",
+		alt: "EmDash token form with specific content and schema permissions selected for an editorial agent",
+		light: agentsLight,
+		dark: agentsDark,
+	},
+];
+
+const scene = scenes[Astro.props.scene];
+---
+
+<figure class="feature-visual">
+	<figcaption>
+		<span>{scene.label}</span>
+		<span class="visual-source">EmDash UI</span>
+	</figcaption>
+	<Image
+		src={scene.light}
+		alt={scene.alt}
+		class="visual-image visual-image--light"
+		widths={[480, 640]}
+		sizes="(min-width: 900px) 520px, calc(100vw - 48px)"
+		loading="lazy"
+	/>
+	<Image
+		src={scene.dark}
+		alt={scene.alt}
+		class="visual-image visual-image--dark"
+		widths={[480, 640]}
+		sizes="(min-width: 900px) 520px, calc(100vw - 48px)"
+		loading="lazy"
+	/>
+</figure>
+
+<style>
+	.feature-visual {
+		overflow: hidden;
+		width: 100%;
+		margin: 0;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius);
+	}
+
+	.feature-visual figcaption {
+		display: flex;
+		min-height: 3rem;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.75rem 1rem;
+		border-bottom: 1px solid var(--color-border);
+		font-size: var(--font-size-sm);
+		font-weight: 500;
+	}
+
+	.visual-source {
+		color: var(--color-muted);
+		font-size: var(--font-size-xs);
+		font-weight: 400;
+		white-space: nowrap;
+	}
+
+	.visual-image {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	.visual-image--dark {
+		display: none;
+	}
+
+	:global(:root.dark) .visual-image--light {
+		display: none;
+	}
+
+	:global(:root.dark) .visual-image--dark {
+		display: block;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .visual-image--light {
+			display: none;
+		}
+
+		:global(:root:not(.light)) .visual-image--dark {
+			display: block;
+		}
+	}
+</style>

@@ -1,5 +1,6 @@
 ---
 import { Icon } from "astro-iconset/components";
+import FeatureVisual from "../FeatureVisual.astro";
 
 interface Feature {
 	icon: string;
@@ -52,31 +53,34 @@ const iconMap: Record<string, string> = {
 	)}
 	<div class="features-chapters">
 		{chapters.map(({ index, lead, support, headingId: chapterHeadingId }) => (
-			<section class:list={["feature-chapter", { "feature-chapter--solo": support.length === 0 }]} aria-labelledby={chapterHeadingId}>
+			<section class="feature-chapter" aria-labelledby={chapterHeadingId}>
 				<div class="chapter-layout container">
-					<span class="chapter-number" aria-hidden="true">
-						{String(index + 1).padStart(2, "0")} / {String(chapterCount).padStart(2, "0")}
-					</span>
-					<div class="chapter-lead">
-						<span class="chapter-icon" aria-hidden="true">
-							<Icon name={iconMap[lead.icon] || "ph:sparkle"} />
+					<div class="chapter-content">
+						<span class="chapter-number" aria-hidden="true">
+							{String(index + 1).padStart(2, "0")} / {String(chapterCount).padStart(2, "0")}
 						</span>
-						<h3 id={chapterHeadingId}>{lead.title}</h3>
-						<p>{lead.description}</p>
-					</div>
-					{support.length > 0 && (
-						<div class="chapter-support">
-							{support.map((feature) => (
-								<div class="support-feature">
-									<span class="support-icon" aria-hidden="true">
-										<Icon name={iconMap[feature.icon] || "ph:sparkle"} />
-									</span>
-									<h4>{feature.title}</h4>
-									<p>{feature.description}</p>
-								</div>
-							))}
+						<div class="chapter-lead">
+							<span class="chapter-icon" aria-hidden="true">
+								<Icon name={iconMap[lead.icon] || "ph:sparkle"} />
+							</span>
+							<h3 id={chapterHeadingId}>{lead.title}</h3>
+							<p>{lead.description}</p>
 						</div>
-					)}
+						{support.length > 0 && (
+							<div class="chapter-support">
+								{support.map((feature) => (
+									<div class="support-feature">
+										<span class="support-icon" aria-hidden="true">
+											<Icon name={iconMap[feature.icon] || "ph:sparkle"} />
+										</span>
+										<h4>{feature.title}</h4>
+										<p>{feature.description}</p>
+									</div>
+								))}
+							</div>
+						)}
+					</div>
+					<div class="chapter-visual"><FeatureVisual scene={index} /></div>
 				</div>
 			</section>
 		))}
@@ -121,12 +125,18 @@ const iconMap: Record<string, string> = {
 
 	.chapter-layout {
 		display: grid;
-		gap: var(--spacing-xl);
+		gap: var(--spacing-3xl);
 		padding-top: var(--spacing-4xl);
 		padding-bottom: var(--spacing-4xl);
 	}
 
+	.chapter-content {
+		align-self: center;
+	}
+
 	.chapter-number {
+		display: block;
+		margin-bottom: var(--spacing-3xl);
 		color: var(--color-primary);
 		font-size: var(--font-size-xs);
 		font-weight: 600;
@@ -166,7 +176,7 @@ const iconMap: Record<string, string> = {
 	}
 
 	.chapter-support {
-		align-self: end;
+		margin-top: var(--spacing-3xl);
 		border-top: 1px solid var(--color-border);
 		padding-top: var(--spacing-lg);
 	}
@@ -206,14 +216,12 @@ const iconMap: Record<string, string> = {
 		}
 
 		.chapter-layout {
-			grid-template-columns: 3rem minmax(0, 1.2fr) minmax(0, 0.8fr);
-			gap: clamp(2rem, 4vw, 4rem);
-			padding-top: var(--spacing-5xl);
-			padding-bottom: var(--spacing-5xl);
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			gap: clamp(3rem, 5vw, 5rem);
 		}
 
-		.feature-chapter--solo .chapter-layout {
-			grid-template-columns: 3rem minmax(0, 1fr);
+		.feature-chapter:nth-child(even) .chapter-visual {
+			order: -1;
 		}
 	}
 </style>
