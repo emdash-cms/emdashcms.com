@@ -1,10 +1,8 @@
 ---
 import { sanitizeHref } from "emdash";
-import { Image } from "astro:assets";
-import heroDashDark from "../../../public/landing/hero/hero-dash-dark.png";
-import heroDashLight from "../../../public/landing/hero/hero-dash-light.png";
 import arrowRightSvg from "../../icons/arrow-right.svg?raw";
 import CopyPromptButton from "../CopyPromptButton.astro";
+import HeroProductProof from "../HeroProductProof.astro";
 
 interface Props {
 	node: {
@@ -71,26 +69,7 @@ const primaryCta =
 			</div>
 
 			<div class="hero-image-wrap">
-				<div class="hero-image-frame">
-					<Image
-						src={heroDashLight}
-						alt="EmDash CMS dashboard"
-						class="hero-image hero-image--light"
-						widths={[640, 960, 1280, 1600, 2000]}
-						sizes="(min-width: 1140px) 1096px, calc(100vw - 32px)"
-						loading="eager"
-						fetchpriority="high"
-					/>
-					<Image
-						src={heroDashDark}
-						alt="EmDash CMS dashboard"
-						class="hero-image hero-image--dark"
-						widths={[640, 960, 1280, 1600, 2000]}
-						sizes="(min-width: 1140px) 1096px, calc(100vw - 32px)"
-						loading="eager"
-						fetchpriority="high"
-					/>
-				</div>
+				<HeroProductProof />
 			</div>
 		</div>
 	</div>
@@ -319,65 +298,6 @@ const primaryCta =
 		position: relative;
 		width: 100%;
 		margin-top: var(--spacing-3xl);
-	}
-
-	.hero-image-frame {
-		position: relative;
-		overflow: hidden;
-		width: 100%;
-		margin: 0 auto;
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius);
-		box-shadow:
-			0 0 0 4px var(--border-faint),
-			0 20px 24px -4px rgba(0, 0, 0, 0.1),
-			0 8px 8px -4px rgba(0, 0, 0, 0.04);
-	}
-
-	:global(:root.dark) .hero-image-frame {
-		border-color: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
-		box-shadow:
-			0 0 0 4px color-mix(in srgb, var(--color-text) 5%, transparent),
-			0 20px 24px -4px rgba(0, 0, 0, 0.24),
-			0 8px 8px -4px rgba(0, 0, 0, 0.18);
-	}
-
-	:global(:root.dark) .hero-image-frame :global(.hero-image--light) {
-		display: none;
-	}
-
-	:global(:root.dark) .hero-image-frame :global(.hero-image--dark) {
-		display: block;
-	}
-
-	@media (prefers-color-scheme: dark) {
-		:global(:root:not(.light)) .hero-image-frame {
-			border-color: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
-			box-shadow:
-				0 0 0 4px color-mix(in srgb, var(--color-text) 5%, transparent),
-				0 20px 24px -4px rgba(0, 0, 0, 0.24),
-				0 8px 8px -4px rgba(0, 0, 0, 0.18);
-		}
-
-		:global(:root:not(.light)) .hero-image-frame :global(.hero-image--light) {
-			display: none;
-		}
-
-		:global(:root:not(.light)) .hero-image-frame :global(.hero-image--dark) {
-			display: block;
-		}
-	}
-
-	.hero-image-frame :global(.hero-image) {
-		display: block;
-		width: 100%;
-		height: auto;
-		aspect-ratio: 5 / 3;
-	}
-
-	.hero-image-frame :global(.hero-image--dark) {
-		display: none;
 	}
 
 	@media (min-width: 640px) {
