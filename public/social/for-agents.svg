@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none" font-family="Inter, Arial, sans-serif">
+		<title>Let agents work. Keep the content yours. — EmDash</title>
+		<defs><linearGradient id="orange-mark" x1="0%" y1="100%" x2="100%" y2="0%"><stop stop-color="#ff5e1f"/><stop offset="0.6" stop-color="#ffae58"/><stop offset="1" stop-color="#fff2e3"/></linearGradient></defs>
+		<rect width="1200" height="630" fill="#f7f7f6"/>
+		<rect x="28" y="28" width="1144" height="574" rx="28" fill="#fff" stroke="#e4e4e1" stroke-width="2"/>
+		<rect x="80" y="72" width="34" height="34" rx="6" stroke="#ff7a42" stroke-width="3"/><path d="M88 89h18" stroke="#ff7a42" stroke-width="3" stroke-linecap="round"/>
+		<text x="128" y="100" fill="#1b1c20" font-size="28" font-weight="700" letter-spacing="-1">EmDash</text>
+		<text x="80" y="185" fill="#a94b25" font-family="monospace" font-size="16" font-weight="700" letter-spacing="1.2">A CMS FOR AGENTS</text>
+		<text x="80" y="247" fill="#1b1c20" font-size="56" font-weight="700" letter-spacing="-2.8">Let agents work.</text><text x="80" y="319" fill="#1b1c20" font-size="56" font-weight="700" letter-spacing="-2.8">Keep the content</text><text x="80" y="391" fill="#1b1c20" font-size="56" font-weight="700" letter-spacing="-2.8">yours.</text><text x="80" y="447" fill="#5d6166" font-size="22">Give authorized agents content tools.</text><text x="80" y="478" fill="#5d6166" font-size="22">Keep review and publishing in your hands.</text>
+		<g transform="translate(690 162)">
+		<rect width="450" height="340" rx="22" fill="#1b1c20"/>
+		<path d="M136 138h61m117 66h53" stroke="#ff9568" stroke-width="2" stroke-dasharray="4 8"/>
+		<g transform="rotate(-3 116 100)"><rect x="25" y="42" width="224" height="116" rx="12" fill="#2a2b31" stroke="#ffffff30"/><text x="43" y="70" fill="#ff9568" font-size="15">✳  Agent via MCP</text><text x="43" y="105" fill="#f7f7f8" font-size="17" font-weight="600">Create a draft in Posts</text><text x="43" y="132" fill="#b9bbbf" font-size="13">Keep it unpublished</text></g>
+		<g transform="rotate(3 292 199)"><rect x="181" y="126" width="242" height="161" rx="13" fill="#f9f9f8" stroke="#e5e4e2"/><text x="201" y="153" fill="#a94b25" font-size="14">EMDASH / POSTS</text><text x="378" y="153" fill="#a94b25" font-size="13">Draft</text><text x="201" y="194" fill="#1b1c20" font-size="22" font-weight="700">A new chapter</text><path d="M201 216h185m-185 15h146" stroke="#d9d9d7" stroke-width="5" stroke-linecap="round"/><text x="201" y="263" fill="#65676b" font-size="14">Editor review next →</text></g>
+		<g transform="rotate(-4 114 260)"><rect x="28" y="233" width="169" height="75" rx="10" fill="#2a2b31" stroke="#ffffff30"/><text x="45" y="261" fill="#ff9568" font-size="13">◎  Human editor</text><text x="45" y="286" fill="#f7f7f8" font-size="15" font-weight="600">Review and publish</text></g></g>
+		<path d="M80 530h1040" stroke="#e8e8e5" stroke-width="2"/>
+		<text x="80" y="566" fill="#6f7377" font-family="monospace" font-size="17">emdashcms.com</text>
+		<text x="1120" y="566" fill="#a94b25" font-family="monospace" font-size="17" text-anchor="end">A CMS FOR AGENTS</text>
+	</svg>

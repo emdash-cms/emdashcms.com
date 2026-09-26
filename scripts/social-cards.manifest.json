@@ -1,0 +1,21 @@
+{
+  "generator": "01f25cbcdba05bb081ab3d4334e7804cbf4d43045df2c44eb6a7234052555642",
+  "cards": {
+    "home": {
+      "svg": "f6ecafcf9e1e81322ec385a3ebcc6da3505ff0fde6b1fabd97d2d65844706604",
+      "png": "672177c9a4d314b4878d323c50c328675921dd6bf55749e1b168bb26d159e0d5"
+    },
+    "astro-cms": {
+      "svg": "86a24a5b61a243008a513930a3572503cff5ad68a84824758f5c11d2c03cddee",
+      "png": "4e37ae5099299b1af5e4a9e788afcf1d4c13d915a7bdcd5c4ba4eb6abae7c554"
+    },
+    "media-library": {
+      "svg": "3e18d8862f520d8a9708d7d81f3e5d66051d4cb3a3c76860caf53588c24b25eb",
+      "png": "095ac5f4f80f204e87403e8256212edb91dfb17c496028f0d9635c0c04e8d094"
+    },
+    "for-agents": {
+      "svg": "6e08b77b72346f231a9b2167e2776cb821de7206ed44aa20cd793a30276dce89",
+      "png": "c194c557dc9d7ea456e06963f7d3482d3599db4afe18835fe8f549e03f6b5e2f"
+    }
+  }
+}
