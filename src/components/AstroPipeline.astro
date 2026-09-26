@@ -110,6 +110,12 @@
 		.artifact-bar { padding-inline: 0.6rem; }
 		.astro-pipeline figcaption { padding-inline: 1rem; }
 	}
+	@media (max-width: 380px) {
+		.pipeline-stage { display: grid; gap: 0.75rem; min-height: 0; padding: 0.75rem; }
+		.seed-card, .type-card, .page-card { position: relative; inset: auto; width: 100%; transform: none; }
+		.type-card { justify-self: end; width: 80%; }
+		.page-card { width: 90%; }
+	}
 	@media (prefers-reduced-motion: no-preference) {
 		.pipeline-wires .wire-signal { animation: flow 5s linear infinite; }
 		.pipeline-wires .wire-signal--late { animation-delay: -2.5s; }
