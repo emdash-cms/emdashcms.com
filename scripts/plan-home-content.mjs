@@ -52,9 +52,9 @@ async function main() {
 	const seed = JSON.parse(await readFile(new URL("../seed/seed.json", import.meta.url), "utf8"));
 	const seedHomes = seed.content?.pages?.filter((entry) => entry.slug === "home") ?? [];
 	if (seedHomes.length !== 1) throw new Error("Expected exactly one Home page in the seed");
-	const current = await client.get("pages", "home", { raw: true });
-	const comparison = await client.compare("pages", current.id);
+	const comparison = await client.compare("pages", "home");
 	if (comparison.hasChanges || comparison.draft) throw new Error("Home already has an unpublished draft; review it before planning another update");
+	const current = await client.get("pages", "home", { raw: true });
 	const plan = planHomeContent(current, seedHomes[0]);
 	console.log(JSON.stringify({
 		entryId: plan.entryId,
