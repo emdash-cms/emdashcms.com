@@ -1,0 +1,250 @@
+---
+interface Props {
+	scene: number;
+	compact?: boolean;
+}
+
+const { scene, compact = false } = Astro.props;
+---
+
+{compact ? (
+	<div class="feature-compact" aria-hidden="true">
+		{scene === 0 && (
+			<div class="compact-pipeline">
+				<span class="pipeline-file">posts.astro</span>
+				<svg viewBox="0 0 48 16" fill="none"><path d="M1 8h44m-8-6 8 6-8 6" stroke="currentColor" stroke-width="1.3" /></svg>
+				<span class="pipeline-page"><span></span><span></span><span></span></span>
+			</div>
+		)}
+		{scene === 1 && (
+			<div class="compact-editor">
+				<div class="mini-editor-bar"><span>Post editor</span><span class="mini-draft">Draft</span></div>
+				<div class="mini-editor-title">Your next story starts here<span class="mini-caret"></span></div>
+				<div class="mini-editor-rule"></div><div class="mini-editor-rule short"></div>
+			</div>
+		)}
+		{scene === 2 && (
+			<div class="compact-plugins">
+				<span><b>↗</b> Admin pages</span><span><b>⌘</b> Hooks</span><span><b>◇</b> Storage</span>
+			</div>
+		)}
+	</div>
+) : (
+	<figure class:list={["feature-stage", `feature-stage--${scene}`]}>
+		{scene === 0 && (
+			<>
+				<figcaption><span class="stage-dot"></span> From schema to editor <span class="stage-meta">01 / define</span></figcaption>
+				<div class="schema-art" aria-hidden="true">
+					<svg class="schema-wires" viewBox="0 0 680 360" preserveAspectRatio="none" fill="none">
+						<path d="M368 95H430Q450 95 450 115V215Q450 235 470 235H600" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 7" />
+						<circle class="signal" cx="450" cy="165" r="4" fill="currentColor" />
+					</svg>
+					<div class="schema-code">
+						<div class="panel-chrome"><span class="panel-icon">{`{ }`}</span><span>seed.json</span><span class="panel-path">/ schema</span></div>
+						<div class="code-lines"><span class="line-no">01</span><span>{`"collections": [`}</span></div>
+						<div class="code-lines"><span class="line-no">02</span><span class="indent">{`{ "name": `}<em>"posts"</em>,</span></div>
+						<div class="code-lines"><span class="line-no">03</span><span class="indent double">{`"fields": [`}</span></div>
+						<div class="code-lines"><span class="line-no">04</span><span class="indent triple">{`{ "name": `}<em>"title"</em>{` },`}</span></div>
+						<div class="code-lines"><span class="line-no">05</span><span class="indent triple">{`{ "name": `}<em>"content"</em>{` }`}</span></div>
+						<div class="code-lines"><span class="line-no">06</span><span class="indent triple">{`{ "name": `}<em>"cover"</em>{` }`}</span></div>
+						<div class="code-lines"><span class="line-no">07</span><span class="indent double">{`]`}</span></div>
+						<div class="code-lines"><span class="line-no">08</span><span class="indent">{`}`}</span></div>
+						<div class="code-lines"><span class="line-no">09</span><span>{`]`}</span></div>
+					</div>
+					<div class="schema-result">
+						<div class="result-kicker"><span class="result-spark">✳</span> Generated from your schema</div>
+						<div class="result-title">Posts <span class="result-count">3 fields</span></div>
+						<div class="result-field"><span class="field-glyph">T</span><span>Title</span><small>Text</small></div>
+						<div class="result-field"><span class="field-glyph">≡</span><span>Content</span><small>Rich text</small></div>
+						<div class="result-field"><span class="field-glyph">▧</span><span>Cover</span><small>Media</small></div>
+					</div>
+				</div>
+			</>
+		)}
+		{scene === 1 && (
+			<>
+				<figcaption><span class="stage-dot"></span> One stack, globally distributed <span class="stage-meta">02 / deploy</span></figcaption>
+				<div class="cloud-art" aria-hidden="true">
+					<div class="cloud-grid"></div>
+					<svg class="cloud-wires" viewBox="0 0 680 350" preserveAspectRatio="none" fill="none">
+						<path class="wire" d="M340 138V96Q340 76 320 76H146Q126 76 126 96V111" />
+						<path class="wire" d="M340 138V96Q340 76 360 76H534Q554 76 554 96V111" />
+						<path class="wire" d="M340 198V252Q340 272 320 272H146Q126 272 126 252V237" />
+						<path class="wire" d="M340 198V252Q340 272 360 272H534Q554 272 554 252V237" />
+						<path class="wire-travel" d="M340 138V96Q340 76 320 76H146Q126 76 126 96V111" />
+						<path class="wire-travel" d="M340 198V252Q340 272 360 272H534Q554 272 554 252V237" />
+					</svg>
+					<div class="cloud-node cloud-node--center"><span class="node-mark">↗</span><strong>Workers</strong><small>Site + CMS</small></div>
+					<div class="cloud-node cloud-node--d1"><span class="node-mark">▤</span><strong>D1</strong><small>Content</small></div>
+					<div class="cloud-node cloud-node--r2"><span class="node-mark">◫</span><strong>R2</strong><small>Media</small></div>
+					<div class="cloud-node cloud-node--astro"><span class="node-mark">✳</span><strong>Astro</strong><small>Pages</small></div>
+					<div class="cloud-node cloud-node--editor"><span class="node-mark">☰</span><strong>EmDash</strong><small>Editor</small></div>
+				</div>
+			</>
+		)}
+		{scene === 2 && (
+			<>
+				<figcaption><span class="stage-dot"></span> The same content, two ways to work <span class="stage-meta">03 / collaborate</span></figcaption>
+				<div class="agent-art" aria-hidden="true">
+					<svg class="agent-wires" viewBox="0 0 680 340" preserveAspectRatio="none" fill="none">
+						<path d="M152 200V144Q152 120 176 120H256" />
+						<path d="M528 200V144Q528 120 504 120H424" />
+						<path class="agent-flow" d="M528 200V144Q528 120 504 120H424" />
+					</svg>
+					<div class="content-record"><span class="record-kicker">CONTENT / POSTS</span><span class="record-icon">▤</span><strong>EmDash is live</strong><span class="record-status"><i></i> Published</span></div>
+					<div class="actor actor--human"><span class="actor-icon">◎</span><span class="actor-name">Human editor</span><span class="actor-detail">Review · refine · publish</span></div>
+					<div class="actor actor--agent"><span class="actor-icon">✳</span><span class="actor-name">Agent via MCP</span><span class="actor-detail">Read · edit · publish</span></div>
+				</div>
+			</>
+		)}
+	</figure>
+)}
+
+<style>
+	.feature-stage {
+		--art-muted: color-mix(in srgb, var(--color-text) 55%, transparent);
+		--art-line: color-mix(in srgb, var(--color-text) 11%, transparent);
+		position: relative;
+		min-height: 27rem;
+		overflow: hidden;
+		margin: 0;
+		background: color-mix(in srgb, var(--color-surface) 78%, var(--color-bg));
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+	}
+	.feature-stage figcaption {
+		position: relative;
+		z-index: 2;
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		padding: 1.25rem clamp(1.25rem, 3vw, 2rem);
+		color: var(--art-muted);
+		font-size: 0.75rem;
+		font-weight: 550;
+		letter-spacing: 0.005em;
+	}
+	.stage-dot { width: 0.43rem; height: 0.43rem; flex: none; background: var(--color-primary); border-radius: 50%; box-shadow: 0 0 0 4px var(--heat-12); }
+	.stage-meta { margin-inline-start: auto; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.7rem; opacity: 0.75; white-space: nowrap; }
+	.schema-art, .cloud-art, .agent-art { position: relative; height: 22.5rem; }
+	.schema-art { background: radial-gradient(ellipse at 78% 48%, var(--heat-8), transparent 49%); }
+	.schema-wires, .cloud-wires, .agent-wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+	.schema-wires { color: var(--color-primary); }
+	.schema-code {
+		position: absolute; top: 1.15rem; left: 5%; width: 54%; min-width: 19.5rem;
+		padding-bottom: 1.5rem;
+		color: var(--color-text);
+		background: var(--color-surface);
+		border: 1px solid var(--art-line);
+		border-radius: 0.7rem;
+		box-shadow: 0 18px 48px color-mix(in srgb, var(--color-text) 7%, transparent);
+		transform: rotate(-2deg);
+	}
+	.panel-chrome { display: flex; align-items: center; gap: 0.55rem; padding: 0.85rem 1rem; border-bottom: 1px solid var(--art-line); font-size: 0.75rem; font-weight: 600; }
+	.panel-icon { display: grid; width: 1.25rem; height: 1.25rem; place-items: center; color: var(--color-primary); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.7rem; background: var(--heat-8); border-radius: 0.25rem; }
+	.panel-path { margin-inline-start: auto; color: var(--art-muted); font-weight: 400; }
+	.code-lines { display: flex; gap: 1rem; padding: 0.35rem 1rem; font-family: ui-monospace, SFMono-Regular, monospace; font-size: clamp(0.65rem, 1vw, 0.79rem); white-space: nowrap; }
+	.code-lines:first-of-type { padding-top: 1.05rem; }
+	.line-no { color: var(--art-muted); opacity: 0.6; }
+	.code-lines .indent { padding-left: 0.85rem; }
+	.code-lines .double { padding-left: 1.7rem; }
+	.code-lines .triple { padding-left: 2.55rem; }
+	.code-lines em { color: var(--color-primary); font-style: normal; }
+	.schema-result {
+		position: absolute; right: 5%; bottom: 1.2rem; width: 44%; min-width: 14rem;
+		padding: 1.1rem;
+		background: var(--color-surface);
+		border: 1px solid var(--art-line);
+		border-radius: 0.7rem;
+		box-shadow: 0 20px 55px color-mix(in srgb, var(--color-text) 10%, transparent);
+		transform: rotate(3deg);
+	}
+	.result-kicker { display: flex; align-items: center; gap: 0.4rem; color: var(--art-muted); font-size: 0.64rem; white-space: nowrap; }
+	.result-spark { color: var(--color-primary); font-size: 1rem; }
+	.result-title { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin: 0.75rem 0 0.6rem; font-size: 1.1rem; font-weight: 650; letter-spacing: -0.03em; }
+	.result-count { color: var(--art-muted); font-size: 0.65rem; font-weight: 400; letter-spacing: 0; white-space: nowrap; }
+	.result-field { display: flex; align-items: center; gap: 0.55rem; padding: 0.55rem 0; border-top: 1px solid var(--art-line); font-size: 0.7rem; }
+	.result-field small { margin-inline-start: auto; color: var(--art-muted); font-size: 0.62rem; }
+	.field-glyph { display: grid; width: 1.25rem; height: 1.25rem; place-items: center; color: var(--color-primary); background: var(--heat-8); border-radius: 0.2rem; font-size: 0.75rem; }
+	.cloud-art { background: radial-gradient(circle at 50% 49%, var(--heat-12), transparent 39%); }
+	.cloud-grid { position: absolute; inset: 0; background-image: radial-gradient(var(--art-line) 0.7px, transparent 0.7px); background-size: 18px 18px; mask-image: radial-gradient(ellipse at center, black, transparent 75%); }
+	.cloud-wires .wire, .agent-wires path { stroke: var(--art-line); stroke-width: 2; }
+	.cloud-wires .wire-travel, .agent-wires .agent-flow { stroke: var(--color-primary); stroke-width: 2; stroke-dasharray: 5 9; }
+	.cloud-node {
+		position: absolute; display: flex; min-width: 6.5rem; align-items: center; flex-direction: column;
+		gap: 0.16rem; padding: 0.9rem 1rem;
+		background: var(--color-surface); border: 1px solid var(--art-line);
+		border-radius: 0.8rem; box-shadow: 0 12px 35px color-mix(in srgb, var(--color-text) 6%, transparent);
+	}
+	.node-mark { color: var(--color-primary); font-size: 1.3rem; line-height: 1.1; }
+	.cloud-node strong { font-size: 0.78rem; font-weight: 650; }
+	.cloud-node small { color: var(--art-muted); font-size: 0.65rem; }
+	.cloud-node--center { top: 39%; left: 50%; min-width: 8.5rem; padding: 1.1rem; border-color: var(--heat-40); transform: translate(-50%, -50%); box-shadow: 0 0 0 7px var(--heat-8), 0 18px 44px color-mix(in srgb, var(--color-text) 8%, transparent); }
+	.cloud-node--d1 { top: 9%; left: 10%; }
+	.cloud-node--r2 { top: 9%; right: 10%; }
+	.cloud-node--astro { bottom: 10%; left: 10%; }
+	.cloud-node--editor { bottom: 10%; right: 10%; }
+	.agent-art { background: radial-gradient(ellipse at 50% 29%, var(--heat-8), transparent 55%); }
+	.agent-wires { top: 0; height: 95%; }
+	.content-record {
+		position: absolute; top: 1.5rem; left: 50%; display: flex; width: min(48%, 16rem); min-width: 12.5rem; flex-direction: column; align-items: flex-start;
+		padding: 1.15rem; background: var(--color-surface); border: 1px solid var(--heat-40); border-radius: 0.75rem;
+		box-shadow: 0 0 0 7px var(--heat-8), 0 18px 50px color-mix(in srgb, var(--color-text) 7%, transparent); transform: translateX(-50%);
+	}
+	.record-kicker { color: var(--art-muted); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.61rem; letter-spacing: 0.05em; }
+	.record-icon { margin: 1rem 0 0.5rem; color: var(--color-primary); font-size: 1.5rem; }
+	.content-record strong { font-size: 0.95rem; letter-spacing: -0.02em; }
+	.record-status { display: flex; align-items: center; gap: 0.35rem; margin-top: 0.85rem; color: var(--art-muted); font-size: 0.66rem; }
+	.record-status i { width: 0.4rem; height: 0.4rem; background: var(--color-primary); border-radius: 50%; }
+	.actor { position: absolute; bottom: 1.7rem; display: flex; width: 37%; max-width: 13rem; flex-direction: column; gap: 0.32rem; padding: 1rem; background: var(--color-surface); border: 1px solid var(--art-line); border-radius: 0.7rem; box-shadow: 0 12px 35px color-mix(in srgb, var(--color-text) 5%, transparent); }
+	.actor--human { left: 5%; transform: rotate(-3deg); }
+	.actor--agent { right: 5%; transform: rotate(3deg); }
+	.actor-icon { color: var(--color-primary); font-size: 1.35rem; }
+	.actor-name { font-size: 0.78rem; font-weight: 650; }
+	.actor-detail { color: var(--art-muted); font-size: 0.63rem; }
+	.feature-compact { width: 100%; padding-top: 2rem; color: var(--color-text); }
+	.compact-pipeline { display: flex; min-height: 7rem; align-items: center; gap: 0.65rem; padding: 1rem; background: color-mix(in srgb, var(--color-bg) 70%, var(--color-surface)); border: 1px solid var(--color-border); border-radius: 0.65rem; }
+	.pipeline-file { padding: 0.7rem; color: var(--color-primary); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.4rem; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.7rem; white-space: nowrap; }
+	.compact-pipeline svg { width: 2.5rem; flex: 1 1 2.5rem; color: var(--color-primary); }
+	.pipeline-page { display: flex; width: 4rem; height: 3.7rem; flex: none; flex-direction: column; gap: 0.35rem; padding: 0.75rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.4rem; }
+	.pipeline-page span { display: block; height: 0.22rem; background: var(--color-border); border-radius: 1rem; }
+	.pipeline-page span:first-child { width: 65%; background: var(--color-primary); }
+	.compact-editor { padding: 1rem; background: color-mix(in srgb, var(--color-bg) 70%, var(--color-surface)); border: 1px solid var(--color-border); border-radius: 0.65rem; }
+	.mini-editor-bar { display: flex; justify-content: space-between; gap: 0.5rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--color-border); font-size: 0.68rem; font-weight: 600; }
+	.mini-draft { color: var(--color-primary); font-size: 0.65rem; }
+	.mini-editor-title { display: flex; align-items: center; margin: 1.1rem 0 0.8rem; font-size: 0.84rem; font-weight: 600; letter-spacing: -0.02em; }
+	.mini-caret { width: 1px; height: 1rem; margin-inline-start: 0.16rem; background: var(--color-primary); }
+	.mini-editor-rule { width: 90%; height: 0.3rem; margin-top: 0.5rem; background: var(--color-border); border-radius: 1rem; }
+	.mini-editor-rule.short { width: 65%; }
+	.compact-plugins { display: grid; gap: 0.45rem; }
+	.compact-plugins span { display: flex; align-items: center; gap: 0.7rem; padding: 0.65rem 0.8rem; background: color-mix(in srgb, var(--color-bg) 70%, var(--color-surface)); border: 1px solid var(--color-border); border-radius: 0.5rem; font-size: 0.72rem; font-weight: 550; }
+	.compact-plugins b { display: grid; width: 1.5rem; height: 1.5rem; place-items: center; color: var(--color-primary); background: var(--heat-8); border-radius: 0.3rem; font-size: 0.9rem; font-weight: 500; }
+	@media (max-width: 600px) {
+		.feature-stage { min-height: 24rem; }
+		.schema-art, .cloud-art, .agent-art { height: 20rem; }
+		.schema-code { left: 4%; min-width: 0; width: 66%; }
+		.schema-result { right: 3%; min-width: 0; width: 51%; }
+		.code-lines { gap: 0.45rem; padding-inline: 0.65rem; font-size: 0.55rem; }
+		.code-lines .indent { padding-left: 0.5rem; }
+		.code-lines .double { padding-left: 1rem; }
+		.code-lines .triple { padding-left: 1.5rem; }
+		.panel-chrome { padding: 0.65rem; }
+		.result-kicker { font-size: 0.5rem; }
+		.result-field { font-size: 0.6rem; }
+		.result-field small { font-size: 0.53rem; }
+		.cloud-node { min-width: 4.8rem; padding: 0.65rem; }
+		.cloud-node--d1, .cloud-node--astro { left: 4%; }
+		.cloud-node--r2, .cloud-node--editor { right: 4%; }
+		.cloud-node--center { min-width: 6.5rem; }
+		.actor { width: 42%; padding: 0.7rem; }
+		.actor-detail { font-size: 0.56rem; }
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.schema-wires .signal { animation: signal 3s ease-in-out infinite; }
+		.cloud-wires .wire-travel, .agent-wires .agent-flow { animation: travel 5s linear infinite; }
+		.mini-caret { animation: blink 1.15s step-end infinite; }
+	}
+	@keyframes signal { 50% { opacity: 0.35; transform: translateY(18px); } }
+	@keyframes travel { to { stroke-dashoffset: -28; } }
+	@keyframes blink { 50% { opacity: 0; } }
+</style>
