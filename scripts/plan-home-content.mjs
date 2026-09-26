@@ -40,6 +40,7 @@ async function main() {
 	const hasCustomHeaders = [...headers].length > 0;
 	const token = process.env.EMDASH_TOKEN;
 	const isLocal = ["localhost", "127.0.0.1", "[::1]"].includes(site.hostname);
+	if (!isLocal && site.protocol !== "https:") throw new Error("Remote sites require HTTPS before sending credentials");
 	if (!isLocal && !token) throw new Error("Remote sites require EMDASH_TOKEN; Access headers alone do not authenticate EmDash");
 	if (!isLocal && headers.has("Cookie")) throw new Error("Cookie headers are only supported for localhost rehearsal");
 	if (!token && !hasCustomHeaders) throw new Error("Set EMDASH_TOKEN and any required EMDASH_HEADERS before reading site content");
@@ -62,7 +63,7 @@ async function main() {
 		revision: plan.revision,
 		planHash: plan.planHash,
 		heroHash: plan.heroHash,
-		preservedBlockCount: plan.preservedBlockCount,
+		preservedBlocks: plan.preservedBlocks,
 		changes: plan.changes,
 	}, null, 2));
 

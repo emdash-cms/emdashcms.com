@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import { planHomeContent } from "./home-content-plan.mjs";
 
 function fixtures() {
@@ -39,7 +41,8 @@ test("replaces only three marketing blocks and keeps the live Hero and unknown c
 	assert.equal(plan.nextData.content[1]._key, "live-features");
 	assert.equal(plan.nextData.content[1].headline, "New features");
 	assert.equal(plan.nextData.customField, "unchanged");
-	assert.equal(plan.preservedBlockCount, 2);
+	assert.deepEqual(plan.preservedBlocks.map((block) => [block.index, block.type, block.key]), [[0, "marketing.hero", "live-hero"], [2, "custom.notice", "custom-notice"]]);
+	assert.ok(plan.preservedBlocks.every((block) => block.beforeHash === block.afterHash));
 	assert.deepEqual(currentEntry, original);
 });
 
@@ -71,4 +74,20 @@ test("refuses a non-published entry or malformed Portable Text", () => {
 	const { currentEntry, seedHome } = fixtures();
 	assert.throws(() => planHomeContent({ ...currentEntry, status: "draft" }, seedHome), /published Home/);
 	assert.throws(() => planHomeContent({ ...currentEntry, data: { content: "not blocks" } }, seedHome), /block array/);
+	assert.throws(() => planHomeContent({ ...currentEntry, data: { content: [null] } }, seedHome), /malformed block/);
+});
+
+test("refuses a scheduled Home entry before preparing a draft", () => {
+	const { currentEntry, seedHome } = fixtures();
+	assert.throws(() => planHomeContent({ ...currentEntry, scheduledAt: "2026-10-01T00:00:00Z" }, seedHome), /scheduled publication/);
+});
+
+test("refuses remote HTTP before sending a token", () => {
+	const result = spawnSync(process.execPath, [fileURLToPath(new URL("./plan-home-content.mjs", import.meta.url)), "--url", "http://example.invalid"], {
+		env: { ...process.env, EMDASH_TOKEN: "test-token", EMDASH_HEADERS: "" },
+		encoding: "utf8",
+		timeout: 5000,
+	});
+	assert.equal(result.status, 1);
+	assert.match(result.stderr, /Remote sites require HTTPS/);
 });
