@@ -177,4 +177,7 @@ import Base from "../layouts/Base.astro";
 		.delivery-list > div { grid-template-columns: 1fr; gap: 0.4rem; }
 		.astro-cta .page-shell { align-items: flex-start; flex-direction: column; }
 	}
+	@media (max-width: 380px) {
+		.code-shell pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+	}
 </style>
