@@ -54,12 +54,17 @@ import Base from "../layouts/Base.astro";
 					<p>Draft, revise, and publish in the built-in EmDash admin. Developers can keep shaping the Astro page while editors manage the words and media.</p>
 					<figure class="editor-sketch">
 						<div aria-hidden="true">
-							<div class="editor-bar"><span>← &nbsp; Edit post</span><span class="draft-badge">Draft</span></div>
-							<div class="editor-field"><span>Title</span><strong>A new chapter for the team</strong></div>
-							<div class="editor-field editor-field--body"><span>Content</span><i></i><i></i><i></i></div>
-							<div class="editor-action">Save draft</div>
+							<div class="editor-bar"><span>← &nbsp; New Post</span><span class="editor-bar-actions"><span class="editor-settings-toggle">Settings</span><span class="editor-action">Save</span></span></div>
+							<div class="editor-layout">
+							<div class="editor-main">
+								<div class="editor-field"><span>Title</span><strong>A new chapter for the team</strong></div>
+								<div class="editor-field"><span>Excerpt</span><strong>A look at what comes next.</strong></div>
+								<div class="editor-field editor-field--body"><span>Content</span><div class="editor-toolbar"><b>B</b><i>I</i><span>H⌄</span><span>≡</span><span>▧</span></div><div class="editor-content">The next chapter starts with a simpler way to publish.</div></div>
+							</div>
+							<div class="editor-settings"><strong>Publish</strong><div class="editor-setting"><span>Slug</span><span>a-new-chapter</span></div><div class="editor-setting"><span>Content locale</span><span>EN</span></div></div>
+							</div>
 						</div>
-						<figcaption>An illustration of an EmDash editing moment, not an admin screenshot.</figcaption>
+						<figcaption>Illustrative EmDash editor with post fields and publishing controls.</figcaption>
 					</figure>
 					<a class="card-link" href="https://docs.emdashcms.com/guides/working-with-content/">Explore editing <span aria-hidden="true">↗</span></a>
 				</article>
@@ -132,15 +137,22 @@ import Base from "../layouts/Base.astro";
 	.code-shell pre { overflow-x: auto; padding: 1.3rem 1rem; font-family: ui-monospace, SFMono-Regular, monospace; font-size: clamp(0.69rem, 1vw, 0.8rem); line-height: 1.75; }
 	.code-shell code { font: inherit; }
 	.code-shell code span, .code-shell code em { color: var(--color-primary); font-style: normal; }
-	.editor-sketch { padding-bottom: 0.7rem; }
+	.editor-sketch { padding-bottom: 0.25rem; }
 	.editor-sketch figcaption { padding: 0.6rem 1rem; color: var(--color-muted); font-size: 0.62rem; line-height: 1.4; }
-	.draft-badge { padding: 0.25rem 0.5rem; color: var(--color-primary); background: var(--heat-8); border-radius: 1rem; font-size: 0.62rem; }
-	.editor-field { display: flex; flex-direction: column; gap: 0.45rem; margin: 0.9rem 1rem 0; font-size: 0.68rem; font-weight: 600; }
-	.editor-field strong { display: block; padding: 0.7rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.35rem; font-size: 0.78rem; font-weight: 500; }
-	.editor-field--body { min-height: 5rem; padding: 0.7rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.35rem; }
-	.editor-field--body i { width: 92%; height: 0.25rem; background: var(--color-border); border-radius: 1rem; }
-	.editor-field--body i:last-child { width: 61%; }
-	.editor-action { width: fit-content; margin: 0.9rem 1rem 0; padding: 0.45rem 0.65rem; color: var(--button-primary-fg); background: var(--heat-100); border-radius: 0.35rem; font-size: 0.66rem; font-weight: 600; }
+	.editor-bar-actions { display: flex; align-items: center; gap: 0.35rem; }
+	.editor-bar .editor-action { padding: 0.35rem 0.8rem; color: #fff; background: #2755d8; border-radius: 0.3rem; font-size: 0.65rem; }
+	.editor-settings-toggle { display: none; padding: 0.35rem 0.5rem; border: 1px solid var(--color-border); border-radius: 0.3rem; font-size: 0.62rem; }
+	.editor-layout { display: grid; grid-template-columns: minmax(0, 1fr) 7.5rem; }
+	.editor-main { min-width: 0; padding: 0.8rem; }
+	.editor-field { display: flex; min-width: 0; flex-direction: column; gap: 0.3rem; margin-bottom: 0.7rem; font-size: 0.64rem; font-weight: 600; }
+	.editor-field strong { display: block; overflow: hidden; padding: 0.55rem 0.6rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.3rem; font-size: 0.7rem; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+	.editor-field--body { margin-bottom: 0; }
+	.editor-toolbar { display: flex; align-items: center; gap: 0.7rem; padding: 0.4rem 0.6rem; background: var(--color-surface); border: 1px solid var(--color-border); border-bottom: 0; border-radius: 0.3rem 0.3rem 0 0; font-size: 0.64rem; font-weight: 500; }
+	.editor-content { min-height: 4.2rem; padding: 0.55rem 0.6rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0 0 0.3rem 0.3rem; font-size: 0.65rem; font-weight: 400; line-height: 1.5; }
+	.editor-settings { min-width: 0; padding: 0.85rem 0.65rem; background: var(--color-surface); border-left: 1px solid var(--color-border); }
+	.editor-settings > strong { font-size: 0.68rem; }
+	.editor-setting { display: flex; min-width: 0; flex-direction: column; gap: 0.3rem; margin-top: 0.9rem; color: var(--color-muted); font-size: 0.57rem; }
+	.editor-setting span:last-child { overflow: hidden; padding: 0.4rem; color: var(--color-text); border: 1px solid var(--color-border); border-radius: 0.3rem; text-overflow: ellipsis; white-space: nowrap; }
 	.delivery-section { padding: clamp(5rem, 9vw, 9rem) 0; background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface)); border-block: 1px solid var(--color-border); }
 	.delivery-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(3rem, 8vw, 8rem); }
 	.delivery-copy h2 { max-width: 33rem; margin: 1rem 0; }
@@ -166,14 +178,16 @@ import Base from "../layouts/Base.astro";
 	.astro-cta h2 { max-width: 42rem; margin-top: 0.8rem; font-size: clamp(2rem, 3.5vw, 3.5rem); }
 	.astro-cta .btn { flex: none; }
 	@media (max-width: 950px) {
-		.hero-grid, .delivery-grid, .faq-grid { grid-template-columns: 1fr; }
+		.hero-grid, .proof-grid, .delivery-grid, .faq-grid { grid-template-columns: 1fr; }
 		.hero-copy { max-width: 42rem; }
 	}
-	@media (max-width: 800px) { .proof-grid { grid-template-columns: 1fr; } }
 	@media (max-width: 600px) {
 		.page-shell { width: min(calc(100% - 2rem), var(--wide-width)); }
 		.astro-hero { padding-top: 7rem; }
 		.proof-card { min-height: 31rem; }
+		.editor-layout { grid-template-columns: 1fr; }
+		.editor-settings { display: none; }
+		.editor-settings-toggle { display: inline-flex; }
 		.delivery-list > div { grid-template-columns: 1fr; gap: 0.4rem; }
 		.astro-cta .page-shell { align-items: flex-start; flex-direction: column; }
 	}
