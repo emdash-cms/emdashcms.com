@@ -1,0 +1,19 @@
+src/components/blocks/FAQ.astro
+  s_bf6c4e65e38922::t_2bdad676051674 15,18-36,38-54,56-57,154-157,160-180,183-187,192-201,204,207-210,216-218,220-223,225-236,239-240,243
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "fa456498575291ef4107b1a2d09a3554fe460a5a",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
