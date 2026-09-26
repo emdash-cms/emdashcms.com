@@ -3,12 +3,10 @@ import { EmDashClient } from "emdash/client";
 import { planHomeContent } from "./home-content-plan.mjs";
 
 function parseArgs(args) {
-	const options = { apply: false };
+	const options = {};
 	for (let index = 0; index < args.length; index++) {
 		const argument = args[index];
-		if (argument === "--apply") {
-			options.apply = true;
-		} else if (["--url", "--expected-rev", "--expected-hash"].includes(argument)) {
+		if (argument === "--url") {
 			const value = args[++index];
 			if (!value || value.startsWith("--")) throw new Error(`Missing value for ${argument}`);
 			options[argument.slice(2)] = value;
@@ -17,7 +15,6 @@ function parseArgs(args) {
 		}
 	}
 	if (!options.url) throw new Error("Pass --url for the EmDash site to inspect");
-	if (options.apply && (!options["expected-rev"] || !options["expected-hash"])) throw new Error("--apply requires --expected-rev and --expected-hash from a reviewed dry run");
 	return options;
 }
 
@@ -67,20 +64,7 @@ async function main() {
 		changes: plan.changes,
 	}, null, 2));
 
-	if (plan.changes.length === 0) {
-		console.error("Home marketing content is already aligned; nothing to update.");
-		return;
-	}
-	if (!options.apply) {
-		console.error("Dry run only. Review the changes, then pass --apply with this revision and planHash to create a draft.");
-		return;
-	}
-	if (options["expected-rev"] !== plan.revision || options["expected-hash"] !== plan.planHash) throw new Error("Home or seed changed since the reviewed plan; run a new dry run");
-	const collection = await client.collection("pages");
-	if (!collection.supports?.includes("drafts") || !collection.supports?.includes("revisions")) throw new Error("Pages must support drafts and revisions before applying");
-	const updated = await client.update("pages", plan.entryId, { data: plan.nextData, _rev: plan.revision, locale: plan.locale });
-	if (!updated.draftRevisionId) throw new Error("Update did not return a draft; inspect the entry before taking any further action");
-	console.error(`Draft created. Review ${site.origin}/_emdash/admin/content/pages/${encodeURIComponent(plan.entryId)} and publish manually when ready.`);
+	console.error(plan.changes.length === 0 ? "Home marketing content is already aligned." : "Read-only plan. Review the diff and make the approved changes in the Home editor.");
 }
 
 main().catch((error) => {

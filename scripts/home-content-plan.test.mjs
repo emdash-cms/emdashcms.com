@@ -91,3 +91,13 @@ test("refuses remote HTTP before sending a token", () => {
 	assert.equal(result.status, 1);
 	assert.match(result.stderr, /Remote sites require HTTPS/);
 });
+
+test("the content planner rejects write flags", () => {
+	const result = spawnSync(process.execPath, [fileURLToPath(new URL("./plan-home-content.mjs", import.meta.url)), "--url", "http://localhost:4333", "--apply"], {
+		env: { ...process.env, EMDASH_TOKEN: "test-token", EMDASH_HEADERS: "" },
+		encoding: "utf8",
+		timeout: 5000,
+	});
+	assert.equal(result.status, 1);
+	assert.match(result.stderr, /Unknown argument: --apply/);
+});
