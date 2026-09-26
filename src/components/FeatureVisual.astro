@@ -84,16 +84,23 @@ const { scene, compact = false } = Astro.props;
 		)}
 		{scene === 2 && (
 			<>
-				<figcaption><span class="stage-dot"></span> The same content, two ways to work <span class="stage-meta">03 / collaborate</span></figcaption>
+				<figcaption><span class="stage-dot"></span> Agent drafts. Editor reviews and publishes. <span class="stage-meta">03 / collaborate</span></figcaption>
 				<div class="agent-art" aria-hidden="true">
 					<svg class="agent-wires" viewBox="0 0 680 340" preserveAspectRatio="none" fill="none">
-						<path d="M152 200V144Q152 120 176 120H256" />
-						<path d="M528 200V144Q528 120 504 120H424" />
-						<path class="agent-flow" d="M528 200V144Q528 120 504 120H424" />
+						<path d="M148 235V160Q148 125 183 125H254" />
+						<path d="M426 125H497Q532 125 532 160V235" />
+						<path class="agent-flow" d="M148 235V160Q148 125 183 125H254" />
+						<path class="agent-flow agent-flow--review" d="M426 125H497Q532 125 532 160V235" />
 					</svg>
-					<div class="content-record"><span class="record-kicker">CONTENT / POSTS</span><span class="record-icon">▤</span><strong>EmDash is live</strong><span class="record-status"><i></i> Published</span></div>
-					<div class="actor actor--human"><span class="actor-icon">◎</span><span class="actor-name">Human editor</span><span class="actor-detail">Review · refine · publish</span></div>
-					<div class="actor actor--agent"><span class="actor-icon">✳</span><span class="actor-name">Agent via MCP</span><span class="actor-detail">Read · edit · publish</span></div>
+					<div class="content-record">
+						<div class="record-top"><span class="record-kicker">CONTENT / POSTS</span><span class="record-version">DRAFT</span></div>
+						<span class="record-icon">▤</span>
+						<strong>EmDash is live</strong>
+						<div class="record-preview"><span>Excerpt</span><i></i><i></i></div>
+						<span class="record-next">Next: human review <span>→</span></span>
+					</div>
+					<div class="actor actor--agent"><span class="actor-step">01 / CREATE</span><span class="actor-icon">✳</span><span class="actor-name">Agent via MCP</span><span class="actor-detail">Writes a draft</span></div>
+					<div class="actor actor--human"><span class="actor-step">02 / REVIEW</span><span class="actor-icon">◎</span><span class="actor-name">Human editor</span><span class="actor-detail">Reviews and publishes</span></div>
 				</div>
 			</>
 		)}
@@ -184,21 +191,39 @@ const { scene, compact = false } = Astro.props;
 	.cloud-node--r2 { top: 9%; right: 10%; }
 	.cloud-node--astro { bottom: 10%; left: 10%; }
 	.cloud-node--editor { bottom: 10%; right: 10%; }
-	.agent-art { background: radial-gradient(ellipse at 50% 29%, var(--heat-8), transparent 55%); }
-	.agent-wires { top: 0; height: 95%; }
-	.content-record {
-		position: absolute; top: 1.5rem; left: 50%; display: flex; width: min(48%, 16rem); min-width: 12.5rem; flex-direction: column; align-items: flex-start;
-		padding: 1.15rem; background: var(--color-surface); border: 1px solid var(--heat-40); border-radius: 0.75rem;
-		box-shadow: 0 0 0 7px var(--heat-8), 0 18px 50px color-mix(in srgb, var(--color-text) 7%, transparent); transform: translateX(-50%);
+	.feature-stage--2 {
+		--art-muted: #bfc0c5;
+		--art-line: #ffffff24;
+		--color-text: #f7f7f8;
+		--color-surface: #25262b;
+		--color-primary: #ff8553;
+		background: #1b1c20;
+		border-color: #36373b;
 	}
-	.record-kicker { color: var(--art-muted); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.61rem; letter-spacing: 0.05em; }
-	.record-icon { margin: 1rem 0 0.5rem; color: var(--color-primary); font-size: 1.5rem; }
+	.agent-art { height: 27rem; background: radial-gradient(ellipse at 50% 25%, #ff5e1f20, transparent 60%); }
+	.agent-wires { top: 0; height: 100%; color: #ffffff38; }
+	.agent-wires path { stroke: currentColor; stroke-width: 1.5; }
+	.agent-wires .agent-flow { color: #ff8553; stroke-dasharray: 3 9; stroke-width: 2; }
+	.content-record {
+		position: absolute; top: 1.25rem; left: 50%; display: flex; width: min(52%, 17rem); min-width: 12.5rem; flex-direction: column; align-items: flex-start;
+		padding: 1.1rem; color: var(--color-text); background: var(--color-surface); border: 1px solid #ff85536b; border-radius: 0.75rem;
+		box-shadow: 0 0 0 7px #ff5e1f12, 0 24px 48px #0005; transform: translateX(-50%);
+	}
+	.record-top { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 0.5rem; }
+	.record-kicker, .record-version { color: var(--art-muted); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.57rem; letter-spacing: 0.04em; white-space: nowrap; }
+	.record-version { color: var(--color-primary); }
+	.record-icon { margin: 0.8rem 0 0.35rem; color: var(--color-primary); font-size: 1.3rem; }
 	.content-record strong { font-size: 0.95rem; letter-spacing: -0.02em; }
-	.record-status { display: flex; align-items: center; gap: 0.35rem; margin-top: 0.85rem; color: var(--art-muted); font-size: 0.66rem; }
-	.record-status i { width: 0.4rem; height: 0.4rem; background: var(--color-primary); border-radius: 50%; }
-	.actor { position: absolute; bottom: 1.7rem; display: flex; width: 37%; max-width: 13rem; flex-direction: column; gap: 0.32rem; padding: 1rem; background: var(--color-surface); border: 1px solid var(--art-line); border-radius: 0.7rem; box-shadow: 0 12px 35px color-mix(in srgb, var(--color-text) 5%, transparent); }
-	.actor--human { left: 5%; transform: rotate(-3deg); }
-	.actor--agent { right: 5%; transform: rotate(3deg); }
+	.record-preview { display: flex; width: 100%; flex-direction: column; gap: 0.35rem; margin-top: 0.85rem; padding: 0.65rem; border: 1px solid var(--art-line); border-radius: 0.35rem; }
+	.record-preview span { color: var(--art-muted); font-size: 0.57rem; }
+	.record-preview i { width: 93%; height: 0.25rem; background: #ffffff29; border-radius: 1rem; }
+	.record-preview i:last-child { width: 64%; }
+	.record-next { display: flex; width: 100%; align-items: center; justify-content: space-between; margin-top: 0.75rem; color: var(--art-muted); font-size: 0.66rem; }
+	.record-next span { color: var(--color-primary); font-size: 0.9rem; }
+	.actor { position: absolute; bottom: 1.7rem; display: flex; width: 37%; max-width: 13rem; flex-direction: column; gap: 0.2rem; padding: 1rem; color: var(--color-text); background: var(--color-surface); border: 1px solid var(--art-line); border-radius: 0.7rem; box-shadow: 0 12px 35px #0003; }
+	.actor--agent { left: 5%; transform: rotate(-3deg); }
+	.actor--human { right: 5%; transform: rotate(3deg); }
+	.actor-step { color: var(--art-muted); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.58rem; letter-spacing: 0.04em; }
 	.actor-icon { color: var(--color-primary); font-size: 1.35rem; }
 	.actor-name { font-size: 0.78rem; font-weight: 650; }
 	.actor-detail { color: var(--art-muted); font-size: 0.63rem; }
@@ -238,6 +263,8 @@ const { scene, compact = false } = Astro.props;
 		.cloud-node--center { min-width: 6.5rem; }
 		.actor { width: 42%; padding: 0.7rem; }
 		.actor-detail { font-size: 0.56rem; }
+		.feature-stage--2 { min-height: 28rem; }
+		.feature-stage--2 .agent-art { height: 25rem; }
 	}
 	@media (max-width: 380px) {
 		.schema-art { height: 31rem; }
@@ -246,10 +273,14 @@ const { scene, compact = false } = Astro.props;
 		.code-lines { padding-block: 0.18rem; line-height: 1.35; }
 		.schema-result { right: 5%; bottom: 0.5rem; width: 78%; padding: 0.8rem; transform: none; }
 		.result-kicker { font-size: 0.58rem; }
+		.feature-stage--2 figcaption { align-items: flex-start; }
+		.feature-stage--2 .stage-dot { margin-top: 0.3rem; }
+		.feature-stage--2 .stage-meta { display: none; }
 	}
 	@media (prefers-reduced-motion: no-preference) {
 		.schema-wires .signal { animation: signal 3s ease-in-out infinite; }
 		.cloud-wires .wire-travel, .agent-wires .agent-flow { animation: travel 5s linear infinite; }
+		.agent-wires .agent-flow--review { animation-delay: -2.5s; }
 		.mini-caret { animation: blink 1.15s step-end infinite; }
 	}
 	@keyframes signal { 50% { opacity: 0.35; transform: translateY(18px); } }
