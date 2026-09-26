@@ -14,12 +14,13 @@
 	--heat-12: #ff5e1f1f;
 	--heat-8: #ff5e1f14;
 	--heat-4: #ff5e1f0a;
-	--color-primary: var(--heat-100);
+	--color-primary: #b84312;
 	--color-primary-dark: var(--heat-90);
 	--color-primary-light: var(--heat-12);
 	--color-accent: var(--heat-100);
 	--color-accent-light: var(--heat-12);
-	--button-primary-fg: #fffbf5;
+	--color-muted: #262626a8;
+	--button-primary-fg: #141414;
 }
 
 :root.dark {
@@ -35,7 +36,8 @@
 	--color-primary-light: var(--heat-12);
 	--color-accent: var(--heat-100);
 	--color-accent-light: var(--heat-12);
-	--button-primary-fg: #fffbf5;
+	--color-muted: #ffffff8f;
+	--button-primary-fg: #141414;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -52,6 +54,7 @@
 		--color-primary-light: var(--heat-12);
 		--color-accent: var(--heat-100);
 		--color-accent-light: var(--heat-12);
-		--button-primary-fg: #fffbf5;
+		--color-muted: #ffffff8f;
+		--button-primary-fg: #141414;
 	}
 }
