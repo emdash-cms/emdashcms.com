@@ -109,6 +109,9 @@ const socialLinks = rawSocialLinks.map((item) => ({
 								<span>{item.label}</span>
 							</a>
 						))}
+						{column.heading === "Product" && !column.menu.items.some((item) => item.url === "/media-library") && (
+							<a href="/media-library">Media library</a>
+						)}
 					</div>
 				))}
 			</nav>
