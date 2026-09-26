@@ -1,0 +1,131 @@
+<div class="intro-visual" aria-hidden="true">
+	<div class="intro-canvas">
+		<svg class="intro-path" viewBox="0 0 510 350" fill="none" preserveAspectRatio="none">
+			<path d="M281 132H367Q391 132 391 156V230" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 7" />
+			<circle class="intro-signal" cx="391" cy="184" r="3" fill="currentColor" />
+		</svg>
+		<div class="editor-window">
+			<div class="editor-toolbar">
+				<span class="editor-mark">—</span>
+				<span>EmDash</span>
+				<span class="toolbar-separator"></span>
+				<span class="toolbar-section">Posts</span>
+				<span class="toolbar-draft">Draft</span>
+			</div>
+			<div class="editor-body">
+				<div class="editor-sidebar">
+					<span class="sidebar-overline">CONTENT</span>
+					<span class="sidebar-active"><span class="sidebar-glyph">▤</span> Posts</span>
+					<span class="sidebar-item"><span class="sidebar-glyph">▧</span> Media</span>
+				</div>
+				<div class="editor-form">
+					<div class="form-overline">POST / EDIT</div>
+					<div class="form-heading">EmDash is live</div>
+					<div class="field-label">Title</div>
+					<div class="field-value">EmDash is live<span class="text-caret"></span></div>
+					<div class="field-label">Excerpt</div>
+					<div class="field-lines"><span></span><span></span></div>
+				</div>
+			</div>
+		</div>
+		<div class="agent-note"><span class="note-symbol">✳</span><span><strong>Agent</strong><small>Draft ready for review</small></span><span class="note-check">✓</span></div>
+		<div class="site-preview">
+			<div class="preview-top"><span class="preview-dot"></span> Site preview <span class="preview-arrow">↗</span></div>
+			<div class="preview-cover"><span class="preview-site-name">MY BLOG</span><span class="preview-mark">—</span></div>
+			<div class="preview-title">EmDash is live</div>
+			<div class="preview-line"></div>
+		</div>
+		<div class="intro-caption"><span class="caption-line"></span> One entry. Every workflow.</div>
+	</div>
+</div>
+
+<style>
+	.intro-visual { min-width: 0; width: 100%; }
+	.intro-canvas {
+		position: relative;
+		width: 100%;
+		max-width: 35rem;
+		min-height: 22rem;
+		margin-inline: auto;
+		background: radial-gradient(ellipse at 56% 46%, var(--heat-12), transparent 62%);
+	}
+	.intro-canvas::before {
+		position: absolute;
+		inset: 1rem 0 1.5rem;
+		background-image: linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+		background-size: 2.4rem 2.4rem;
+		content: "";
+		mask-image: radial-gradient(ellipse at 50% 50%, #0005, transparent 72%);
+	}
+	.intro-path { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--color-primary); }
+	.editor-window {
+		position: absolute;
+		top: 1rem;
+		left: 1%;
+		width: 73%;
+		height: 15.8rem;
+		overflow: hidden;
+		color: var(--color-text);
+		background: var(--color-surface-raised);
+		border: 1px solid var(--color-border);
+		border-radius: 0.8rem;
+		box-shadow: 0 20px 50px color-mix(in srgb, var(--color-text) 9%, transparent);
+		transform: rotate(-3deg);
+	}
+	.editor-toolbar { display: flex; height: 2.55rem; align-items: center; gap: 0.55rem; padding: 0 0.85rem; border-bottom: 1px solid var(--color-border); font-size: 0.64rem; font-weight: 600; white-space: nowrap; }
+	.editor-mark { display: grid; width: 1.3rem; height: 1.3rem; place-items: center; color: var(--color-primary); border: 1px solid var(--color-primary); border-radius: 0.25rem; font-size: 1rem; line-height: 1; }
+	.toolbar-separator { width: 1px; height: 0.9rem; margin-inline: 0.2rem; background: var(--color-border); }
+	.toolbar-section { color: var(--color-muted); font-weight: 450; }
+	.toolbar-draft { margin-inline-start: auto; padding: 0.22rem 0.45rem; color: var(--color-primary); background: var(--heat-8); border-radius: 0.25rem; font-size: 0.56rem; }
+	.editor-body { display: flex; height: calc(100% - 2.55rem); }
+	.editor-sidebar { display: flex; width: 27%; min-width: 5.8rem; flex-direction: column; gap: 0.25rem; padding: 1rem 0.5rem; border-right: 1px solid var(--color-border); font-size: 0.58rem; }
+	.sidebar-overline { margin: 0 0.3rem 0.45rem; color: var(--color-muted); font-size: 0.45rem; font-weight: 650; letter-spacing: 0.06em; }
+	.sidebar-active, .sidebar-item { display: flex; align-items: center; gap: 0.45rem; padding: 0.42rem 0.45rem; border-radius: 0.3rem; white-space: nowrap; }
+	.sidebar-active { color: var(--color-primary); background: var(--heat-8); font-weight: 600; }
+	.sidebar-item { color: var(--color-muted); }
+	.sidebar-glyph { font-size: 0.7rem; }
+	.editor-form { min-width: 0; flex: 1; padding: 1.2rem 1.15rem; }
+	.form-overline { color: var(--color-primary); font-size: 0.5rem; font-weight: 650; letter-spacing: 0.07em; }
+	.form-heading { overflow: hidden; margin-top: 0.55rem; font-size: 1.12rem; font-weight: 650; letter-spacing: -0.04em; text-overflow: ellipsis; white-space: nowrap; }
+	.field-label { margin-top: 1.05rem; color: var(--color-muted); font-size: 0.57rem; font-weight: 600; }
+	.field-value { overflow: hidden; margin-top: 0.35rem; padding: 0.5rem 0.6rem; border: 1px solid var(--heat-40); border-radius: 0.3rem; box-shadow: 0 0 0 2px var(--heat-8); font-size: 0.62rem; white-space: nowrap; }
+	.text-caret { display: inline-block; width: 1px; height: 0.7rem; margin-inline-start: 0.2rem; background: var(--color-primary); vertical-align: -0.1rem; }
+	.field-lines { display: grid; gap: 0.3rem; margin-top: 0.45rem; padding: 0.6rem; border: 1px solid var(--color-border); border-radius: 0.3rem; }
+	.field-lines span { width: 91%; height: 0.25rem; background: var(--color-border); border-radius: 1rem; }
+	.field-lines span:last-child { width: 63%; }
+	.agent-note { position: absolute; z-index: 2; bottom: 2.8rem; left: 4%; display: flex; align-items: center; gap: 0.6rem; width: 47%; padding: 0.65rem 0.75rem; color: var(--color-text); background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: 0.55rem; box-shadow: 0 12px 30px color-mix(in srgb, var(--color-text) 10%, transparent); transform: rotate(2deg); }
+	.note-symbol { display: grid; width: 1.5rem; height: 1.5rem; flex: none; place-items: center; color: var(--color-primary); background: var(--heat-8); border-radius: 0.35rem; }
+	.agent-note strong, .agent-note small { display: block; white-space: nowrap; }
+	.agent-note strong { font-size: 0.59rem; }
+	.agent-note small { margin-top: 0.13rem; color: var(--color-muted); font-size: 0.49rem; }
+	.note-check { margin-inline-start: auto; color: var(--color-primary); font-size: 0.8rem; }
+	.site-preview { position: absolute; z-index: 1; top: 7.9rem; right: 0; width: 37%; min-height: 11.9rem; padding: 0.65rem; color: var(--color-text); background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: 0.65rem; box-shadow: 0 18px 38px color-mix(in srgb, var(--color-text) 11%, transparent); transform: rotate(5deg); }
+	.preview-top { display: flex; align-items: center; gap: 0.3rem; padding-bottom: 0.55rem; border-bottom: 1px solid var(--color-border); color: var(--color-muted); font-size: 0.52rem; white-space: nowrap; }
+	.preview-dot { width: 0.4rem; height: 0.4rem; flex: none; background: var(--color-primary); border-radius: 50%; }
+	.preview-arrow { margin-inline-start: auto; font-size: 0.85rem; }
+	.preview-cover { position: relative; display: flex; height: 5.3rem; flex-direction: column; justify-content: space-between; overflow: hidden; margin-top: 0.65rem; padding: 0.65rem; color: #fff; background: #25252a; border-radius: 0.25rem; }
+	.preview-cover::after { position: absolute; right: -0.9rem; bottom: -2.8rem; width: 7rem; height: 7rem; border: 1px solid #ff5e1f; border-radius: 1.4rem; content: ""; transform: rotate(28deg); }
+	.preview-site-name { position: relative; z-index: 1; font-size: 0.44rem; font-weight: 650; letter-spacing: 0.06em; }
+	.preview-mark { position: relative; z-index: 1; display: grid; width: 1.4rem; height: 1.4rem; place-items: center; color: #ff8553; border: 1px solid #ff8553; border-radius: 0.3rem; font-size: 1rem; line-height: 1; }
+	.preview-title { overflow: hidden; margin-top: 0.6rem; font-size: 0.7rem; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+	.preview-line { width: 72%; height: 0.2rem; margin-top: 0.4rem; background: var(--color-border); border-radius: 1rem; }
+	.intro-caption { position: absolute; right: 0.5rem; bottom: 0.2rem; display: flex; align-items: center; gap: 0.5rem; color: var(--color-muted); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.62rem; white-space: nowrap; }
+	.caption-line { width: 1.3rem; height: 1px; background: var(--color-primary); }
+	@media (max-width: 899px) { .intro-canvas { max-width: 32rem; } }
+	@media (max-width: 420px) {
+		.intro-canvas { min-height: 18rem; }
+		.editor-window { height: 13.5rem; }
+		.editor-sidebar { min-width: 4.9rem; padding-inline: 0.3rem; }
+		.editor-form { padding: 1rem 0.6rem; }
+		.site-preview { top: 6.5rem; min-height: 10.8rem; }
+		.agent-note { bottom: 1.7rem; width: 52%; padding: 0.5rem; }
+		.agent-note small { font-size: 0.44rem; }
+		.intro-caption { display: none; }
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.intro-signal { animation: intro-travel 3s ease-in-out infinite; }
+		.text-caret { animation: intro-blink 1.1s step-end infinite; }
+	}
+	@keyframes intro-travel { 50% { transform: translateY(40px); opacity: 0.45; } }
+	@keyframes intro-blink { 50% { opacity: 0; } }
+</style>
