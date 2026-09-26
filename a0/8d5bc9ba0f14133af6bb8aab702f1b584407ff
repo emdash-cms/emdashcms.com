@@ -1,0 +1,27 @@
+src/components/blocks/Hero.astro
+  s_bf6c4e65e38922::t_280deb0b13ff2d 219
+src/pages/astro-cms.astro
+  s_bf6c4e65e38922::t_6410d4597a1983 143
+src/pages/for-agents.astro
+  s_bf6c4e65e38922::t_0b5860f1051b5c 198
+src/pages/media-library.astro
+  s_bf6c4e65e38922::t_a247a418ec00d2 84
+src/styles/theme.css
+  s_bf6c4e65e38922::t_7619a3005069ef 17,22-23,39-40,57-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a08d5bc9ba0f14133af6bb8aab702f1b584407ff",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
