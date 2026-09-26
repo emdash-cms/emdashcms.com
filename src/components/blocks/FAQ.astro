@@ -1,9 +1,17 @@
 ---
+import { sanitizeHref } from "emdash";
+
 interface Props {
 	node: {
 		_key?: string;
 		headline?: string;
-		items: Array<{
+		ctaHeadline?: string;
+		ctaDescription?: string;
+		ctaPrimaryLabel?: string;
+		ctaPrimaryUrl?: string;
+		ctaSecondaryLabel?: string;
+		ctaSecondaryUrl?: string;
+		items?: Array<{
 			question: string;
 			answer: string;
 		}>;
@@ -11,11 +19,21 @@ interface Props {
 }
 
 const { node } = Astro.props;
-const { _key, headline, items } = node;
+const { _key, headline } = node;
+const items = Array.isArray(node.items) ? node.items : [];
 const headingId = `${_key ?? "faq"}-heading`;
+const ctaHeadingId = `${_key ?? "faq"}-cta-heading`;
+const markGradientId = `${_key ?? "faq"}-closing-gradient`;
+const ctaHeadline = node.ctaHeadline?.trim() || "The site is yours. The work is shared.";
+const ctaDescription = node.ctaDescription?.trim() || "Build in Astro, manage content in EmDash, and let authorized agents help without handing over control.";
+const primaryLabel = node.ctaPrimaryLabel?.trim() || "Try the playground";
+const primaryUrl = sanitizeHref(node.ctaPrimaryUrl?.trim() || "https://try.emdashcms.com/");
+const secondaryLabel = node.ctaSecondaryLabel?.trim() || "Read the docs";
+const secondaryUrl = sanitizeHref(node.ctaSecondaryUrl?.trim() || "https://docs.emdashcms.com/getting-started/");
 ---
 
 {items.length > 0 && (
+	<>
 	<section class="faq" id={_key} aria-labelledby={headingId}>
 		<div class="faq-container container">
 			<div class="faq-intro">
@@ -54,6 +72,36 @@ const headingId = `${_key ?? "faq"}-heading`;
 			</div>
 		</div>
 	</section>
+	<section class="closing-cta" aria-labelledby={ctaHeadingId}>
+		<div class="closing-panel container">
+			<div class="closing-copy">
+				<p class="closing-eyebrow">Built for what comes next</p>
+				<h2 id={ctaHeadingId}>{ctaHeadline}</h2>
+				<p class="closing-description">{ctaDescription}</p>
+				<div class="closing-actions">
+					<a class="closing-primary" href={primaryUrl}>{primaryLabel} <span aria-hidden="true">↗</span></a>
+					<a class="closing-secondary" href={secondaryUrl}>{secondaryLabel} <span aria-hidden="true">↗</span></a>
+				</div>
+			</div>
+			<div class="closing-art" aria-hidden="true">
+				<svg viewBox="0 0 420 420" fill="none">
+					<defs>
+						<linearGradient id={markGradientId} x1="70" y1="340" x2="345" y2="45" gradientUnits="userSpaceOnUse">
+							<stop stop-color="#ff5e1f" /><stop offset="0.55" stop-color="#ffb25c" /><stop offset="1" stop-color="#fff4e8" />
+						</linearGradient>
+					</defs>
+					<circle cx="210" cy="210" r="181" stroke="#ffffff19" stroke-width="1" stroke-dasharray="2 9" />
+					<path class="closing-trace" d="M20 210h73m234 0h73" stroke="#ff9568" stroke-width="1.5" stroke-dasharray="3 7" />
+					<rect x="101" y="101" width="218" height="218" rx="33" stroke={`url(#${markGradientId})`} stroke-width="12" />
+					<path d="M145 210h130" stroke={`url(#${markGradientId})`} stroke-width="12" stroke-linecap="round" />
+				</svg>
+				<span class="closing-label closing-label--astro"><span>{`{}`}</span> Astro</span>
+				<span class="closing-label closing-label--editor"><span>◎</span> Editor</span>
+				<span class="closing-label closing-label--agent"><span>✳</span> Agent</span>
+			</div>
+		</div>
+	</section>
+	</>
 )}
 
 <script is:inline>
@@ -243,4 +291,44 @@ const headingId = `${_key ?? "faq"}-heading`;
 	@media (prefers-reduced-motion: reduce) {
 		.faq-question, .faq-icon { transition: none; }
 	}
+	.closing-cta { padding: 0 clamp(1rem, 2.5vw, 2rem) clamp(5rem, 8vw, 8rem); background: var(--color-bg); }
+	.closing-panel {
+		display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); align-items: center; gap: 2rem;
+		min-height: 30rem; max-width: var(--wide-width); overflow: hidden; padding: clamp(2rem, 5vw, 5rem);
+		color: #f6f7f8; background: #1b1c20; border: 1px solid #ffffff25; border-radius: 1.25rem;
+	}
+	.closing-eyebrow { color: #ff9568; font-size: 0.72rem; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase; }
+	.closing-copy h2 { max-width: 12ch; margin-top: 1.2rem; font-size: clamp(2.6rem, 4.7vw, 4.9rem); font-weight: 600; line-height: 1.05; letter-spacing: -0.055em; text-wrap: balance; }
+	.closing-description { max-width: 33rem; margin-top: 1.4rem; color: #c1c3c8; font-size: clamp(1rem, 1.2vw, 1.13rem); line-height: 1.6; }
+	.closing-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1.3rem; margin-top: 2rem; }
+	.closing-actions a { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 2.8rem; font-size: 0.91rem; font-weight: 600; text-decoration: none; }
+	.closing-actions a:focus-visible { outline: 2px solid #ff9568; outline-offset: 4px; border-radius: 0.35rem; }
+	.closing-primary { padding: 0.7rem 1.1rem; color: #171717; background: #ff6d35; border-radius: 0.45rem; }
+	.closing-primary:hover { background: #ff8956; }
+	.closing-secondary { color: #f6f7f8; }
+	.closing-secondary:hover { color: #ffb48e; }
+	.closing-secondary span { color: #ff9568; }
+	.closing-art { position: relative; width: min(100%, 27rem); margin-inline: auto; aspect-ratio: 1; background: radial-gradient(circle at 50% 50%, #ff5e1f12, transparent 62%); }
+	.closing-art svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 15px 40px #ff5e1f23); }
+	.closing-label { position: absolute; display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.7rem; color: #f6f7f8; background: #282a30; border: 1px solid #ffffff30; border-radius: 0.45rem; box-shadow: 0 12px 35px #0004; font-size: 0.72rem; font-weight: 600; }
+	.closing-label > span { color: #ff9568; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.9rem; }
+	.closing-label--astro { top: 12%; left: 0; transform: rotate(-4deg); }
+	.closing-label--editor { top: 24%; right: 0; transform: rotate(4deg); }
+	.closing-label--agent { right: 10%; bottom: 7%; transform: rotate(-3deg); }
+	@media (max-width: 850px) {
+		.closing-panel { grid-template-columns: 1fr; gap: 0; }
+		.closing-copy h2 { max-width: 15ch; }
+		.closing-art { width: min(100%, 21rem); margin-top: 1rem; }
+	}
+	@media (max-width: 600px) {
+		.closing-cta { padding-inline: 1rem; }
+		.closing-panel { width: 100%; padding: 2rem 1.5rem 1rem; }
+		.closing-copy h2 { font-size: clamp(2.35rem, 10vw, 3.6rem); }
+		.closing-actions { gap: 0.4rem 1rem; }
+		.closing-art { width: min(100%, 18rem); }
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.closing-trace { animation: closing-travel 8s linear infinite; }
+	}
+	@keyframes closing-travel { to { stroke-dashoffset: -40; } }
 </style>

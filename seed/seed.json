@@ -190,6 +190,12 @@
 							"_type": "marketing.faq",
 							"_key": "faq",
 							"headline": "Frequently asked questions",
+							"ctaHeadline": "The site is yours. The work is shared.",
+							"ctaDescription": "Build in Astro, manage content in EmDash, and let authorized agents help without handing over control.",
+							"ctaPrimaryLabel": "Try the playground",
+							"ctaPrimaryUrl": "https://try.emdashcms.com/",
+							"ctaSecondaryLabel": "Read the docs",
+							"ctaSecondaryUrl": "https://docs.emdashcms.com/getting-started/",
 							"items": [
 								{
 									"question": "What is EmDash?",
