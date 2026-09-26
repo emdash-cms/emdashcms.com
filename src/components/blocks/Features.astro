@@ -20,12 +20,17 @@ interface Props {
 const { node } = Astro.props;
 const { _key, headline, subheadline, features } = node;
 const headingId = `${_key ?? "features"}-heading`;
+const chapterLinks: Record<string, { label: string; href: string }> = {
+	code: { label: "Start building with EmDash", href: "https://docs.emdashcms.com/getting-started/" },
+	cloud: { label: "Explore the media library", href: "/media-library" },
+	shield: { label: "See agent workflows", href: "/for-agents" },
+};
 const chapterCount = Math.min(3, features.length);
 const chapters = Array.from({ length: chapterCount }, (_, index) => {
 	const start = Math.floor((index * features.length) / chapterCount);
 	const end = Math.floor(((index + 1) * features.length) / chapterCount);
 	const [lead, ...support] = features.slice(start, end);
-	return { index, lead, support, headingId: `${headingId}-${index + 1}` };
+	return { index, lead, support, headingId: `${headingId}-${index + 1}`, link: chapterLinks[lead.icon] };
 });
 
 const iconMap: Record<string, string> = {
@@ -52,7 +57,7 @@ const iconMap: Record<string, string> = {
 		</header>
 	)}
 	<div class="features-chapters">
-		{chapters.map(({ index, lead, support, headingId: chapterHeadingId }) => (
+		{chapters.map(({ index, lead, support, headingId: chapterHeadingId, link }) => (
 			<section class="feature-chapter" aria-labelledby={chapterHeadingId}>
 				<div class="chapter-inner container">
 					<header class="chapter-heading">
@@ -60,7 +65,17 @@ const iconMap: Record<string, string> = {
 							<span class="chapter-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
 							<h3 id={chapterHeadingId}>{lead.title}</h3>
 						</div>
-						<p>{lead.description}</p>
+						<div class="chapter-summary">
+							<p>{lead.description}</p>
+							{link && (
+								<a href={link.href}>
+									{link.label}
+									<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+										<path d="M4 10h11m-5-5 5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
+									</svg>
+								</a>
+							)}
+						</div>
 					</header>
 					<div class="chapter-bento">
 						<div class="chapter-scene"><FeatureVisual scene={index} /></div>
@@ -127,7 +142,26 @@ const iconMap: Record<string, string> = {
 		letter-spacing: -0.045em;
 		text-wrap: balance;
 	}
-	.chapter-heading > p { max-width: 35rem; color: var(--color-muted); font-size: var(--font-size-lg); line-height: 1.6; }
+	.chapter-summary p { max-width: 35rem; color: var(--color-muted); font-size: var(--font-size-lg); line-height: 1.6; }
+	.chapter-summary a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.55rem;
+		margin-top: 1rem;
+		padding-block: 0.4rem;
+		color: var(--color-text);
+		font-size: 0.9rem;
+		font-weight: 600;
+		text-decoration: none;
+		transition: color var(--transition-fast);
+	}
+	.chapter-summary a:hover { color: var(--color-primary); }
+	.chapter-summary a:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: 2px; }
+	.chapter-summary a svg { width: 1rem; height: 1rem; color: var(--color-primary); }
+	@media (prefers-reduced-motion: no-preference) {
+		.chapter-summary a svg { transition: transform var(--transition-fast); }
+		.chapter-summary a:hover svg { transform: translateX(3px); }
+	}
 	.chapter-bento { display: grid; gap: 1rem; }
 	.chapter-scene, .chapter-support { min-width: 0; }
 	.chapter-support { display: grid; gap: 1rem; }
@@ -159,7 +193,7 @@ const iconMap: Record<string, string> = {
 	.support-card :global(.feature-compact) { margin-top: auto; }
 	@media (min-width: 900px) {
 		.features-intro { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); align-items: end; gap: 5rem; }
-		.chapter-heading { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); align-items: end; gap: 5rem; }
+		.chapter-heading { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); align-items: start; gap: 5rem; }
 		.chapter-bento { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
 		.feature-chapter:nth-child(even) .chapter-bento { grid-template-columns: minmax(0, 1fr) minmax(0, 1.65fr); }
 		.feature-chapter:nth-child(even) .chapter-scene { order: 1; }
