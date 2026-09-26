@@ -20,10 +20,11 @@ import Base from "../layouts/Base.astro";
 			</div>
 			<figure class="media-stage">
 				<div class="library-window" aria-hidden="true">
-					<div class="window-bar"><span class="window-brand"><span class="brand-mark">▤</span> Media</span><span class="window-location">All files <span>›</span> Campaign</span><span class="window-upload">＋ Upload</span></div>
+					<div class="window-bar"><span class="window-brand"><span class="brand-mark">▤</span> Media Library</span><span class="window-upload">＋ Upload Files</span></div>
 					<div class="library-body">
-						<div class="folder-rail"><span class="rail-label">LIBRARY</span><span>▦ &nbsp; All files</span><span class="folder-active">▣ &nbsp; Campaign</span><span>▣ &nbsp; Editorial</span><span>▣ &nbsp; Brand</span><span class="rail-bottom">＋ New folder</span></div>
-						<div class="asset-area"><div class="asset-toolbar"><strong>Campaign</strong><span>4 assets <span class="toolbar-grid">▦</span></span></div>
+						<div class="library-filters"><span class="library-search"><svg viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="m13 13 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Search by filename...</span><span class="library-type">All types ⌄</span><span class="library-view">▦</span></div>
+						<div class="library-folders"><div class="folder-heading"><strong>Folders</strong><span>＋ Add new folder</span></div><div class="folder-tiles"><span class="folder-tile"><svg viewBox="0 0 20 20" fill="none"><path d="M2.5 5.5h5l1.5 1.8h8.5v8.2H2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg> Campaign</span><span class="folder-tile"><svg viewBox="0 0 20 20" fill="none"><path d="M2.5 5.5h5l1.5 1.8h8.5v8.2H2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg> Editorial</span><span class="folder-tile"><svg viewBox="0 0 20 20" fill="none"><path d="M2.5 5.5h5l1.5 1.8h8.5v8.2H2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg> Brand</span></div></div>
+						<div class="asset-area"><div class="asset-toolbar"><strong>Files</strong><span>4 files</span></div>
 							<div class="asset-grid">
 								<div class="asset"><svg viewBox="0 0 190 134" preserveAspectRatio="xMidYMid slice"><rect width="190" height="134" fill="#e8ddd0"/><circle cx="148" cy="30" r="13" fill="#ff7840"/><path d="M0 106 59 49l38 41 29-30 64 60v14H0Z" fill="#aaa897"/><path d="M0 117 51 76l48 43 42-28 49 39v4H0Z" fill="#606e62"/></svg><span>landscape.jpg</span></div>
 								<div class="asset"><svg viewBox="0 0 190 134" preserveAspectRatio="xMidYMid slice"><rect width="190" height="134" fill="#d9d9c7"/><rect x="16" y="15" width="158" height="104" rx="3" fill="#f3eee4"/><path d="M16 89h158v30H16Z" fill="#303e32"/><path d="M30 40h75M30 52h55" stroke="#334b39" stroke-width="5"/><circle cx="139" cy="53" r="19" fill="#ff7439"/></svg><span>launch-cover.png</span></div>
@@ -42,7 +43,7 @@ import Base from "../layouts/Base.astro";
 		<div class="media-container">
 			<header class="section-heading"><p class="eyebrow">More than storage</p><h2 id="details-heading">The file is only half the story.</h2><p>A useful library holds the information people need to find, understand, and safely reuse an asset.</p></header>
 			<div class="detail-grid">
-				<article class="detail-feature detail-feature--wide"><span class="feature-kicker">01 / Organize</span><h3>Find the right file.</h3><p>Keep assets in folders, browse the library, and filter by filename or file type. Images and documents belong in the same place as your content.</p><div class="folder-illustration" aria-hidden="true"><span>▣ &nbsp; Campaign</span><span>▣ &nbsp; Editorial</span><span>▣ &nbsp; Brand assets</span><div class="folder-search">⌕ &nbsp; Search files</div></div></article>
+				<article class="detail-feature detail-feature--wide"><div class="organize-copy"><span class="feature-kicker">01 / Organize</span><h3>Find the right file.</h3><p>Keep assets in folders, browse the library, and filter by filename or file type. Images and documents belong in the same place as your content.</p></div><div class="organize-scene" aria-hidden="true"><div class="organize-filter"><svg viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="m13 13 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>landscape</span><span>All types ⌄</span></div><div class="organize-flow"><span class="organize-folder"><svg viewBox="0 0 20 20" fill="none"><path d="M2.5 5.5h5l1.5 1.8h8.5v8.2H2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg> Campaign</span><svg class="organize-wire" viewBox="0 0 120 40" fill="none"><path d="M3 20h111m-8-7 8 7-8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="organize-result"><svg viewBox="0 0 70 56" preserveAspectRatio="xMidYMid slice"><rect width="70" height="56" fill="#e8ddd0"/><circle cx="54" cy="13" r="7" fill="#ff7840"/><path d="M0 46 22 18l17 20 12-14 19 23v9H0Z" fill="#667665"/></svg><span><strong>landscape.jpg</strong><small>Image</small></span></span></div></div></article>
 				<article class="detail-feature"><span class="feature-kicker">02 / Describe</span><h3>Make every image useful.</h3><p>Add alt text and captions as part of the media workflow—not as an afterthought in each page.</p><div class="alt-illustration" aria-hidden="true"><span>ALT TEXT</span><strong>Mountain ridge at sunset</strong><span class="alt-caret"></span></div></article>
 				<article class="detail-feature"><span class="feature-kicker">03 / Trace</span><h3>See where it appears.</h3><p>Check supported content references and site settings before replacing or removing an image. Usage coverage is shown in the admin so you know when the index is incomplete.</p><div class="usage-illustration" aria-hidden="true"><span>landscape.jpg</span><svg viewBox="0 0 220 66" fill="none"><path d="M10 0v40q0 8 8 8h190M10 18h198" stroke="currentColor" stroke-width="1.5"/><circle cx="208" cy="18" r="5" fill="currentColor"/><circle cx="208" cy="48" r="5" fill="currentColor"/></svg><span>About page &nbsp;·&nbsp; Launch post</span></div></article>
 			</div>
@@ -79,20 +80,23 @@ import Base from "../layouts/Base.astro";
 	.window-bar { height: 3.2rem; padding-inline: 1.2rem; border-bottom: 1px solid var(--color-border); font-size: 0.76rem; }
 	.window-brand { display: inline-flex; align-items: center; gap: 0.55rem; font-weight: 650; }
 	.brand-mark { display: grid; width: 1.35rem; height: 1.35rem; place-items: center; color: var(--color-primary); background: var(--heat-8); border-radius: 0.3rem; }
-	.window-location { margin-inline-start: auto; color: var(--color-muted); }
-	.window-location span { margin-inline: 0.4rem; }
-	.window-upload { padding: 0.35rem 0.6rem; color: var(--button-primary-fg); background: var(--heat-100); border-radius: 0.35rem; font-size: 0.68rem; font-weight: 600; }
-	.library-body { display: grid; grid-template-columns: 10.5rem minmax(0, 1fr); min-height: 25rem; }
-	.folder-rail { display: flex; flex-direction: column; gap: 0.25rem; padding: 1.15rem 0.65rem; border-right: 1px solid var(--color-border); color: var(--color-muted); font-size: 0.71rem; }
-	.folder-rail > span:not(.rail-label) { padding: 0.57rem 0.7rem; white-space: nowrap; }
-	.folder-rail .rail-label { padding: 0.4rem 0.7rem; font-size: 0.58rem; letter-spacing: 0.08em; }
-	.folder-rail .folder-active { color: var(--color-primary); background: var(--heat-8); border-radius: 0.35rem; font-weight: 650; }
-	.folder-rail .rail-bottom { margin-top: auto; }
-	.asset-area { min-width: 0; padding: 1.2rem; }
-	.asset-toolbar { justify-content: space-between; margin-bottom: 1.3rem; font-size: 0.8rem; }
+	.window-upload { margin-inline-start: auto; padding: 0.35rem 0.6rem; color: var(--button-primary-fg); background: var(--heat-100); border-radius: 0.35rem; font-size: 0.68rem; font-weight: 600; }
+	.library-body { display: flex; min-height: 25rem; flex-direction: column; gap: 1.1rem; padding: 1rem; }
+	.library-filters { display: flex; align-items: center; gap: 0.45rem; color: var(--color-muted); font-size: 0.65rem; }
+	.library-search, .library-type, .library-view { display: flex; height: 2rem; align-items: center; padding: 0 0.55rem; border: 1px solid var(--color-border); border-radius: 0.35rem; white-space: nowrap; }
+	.library-search { min-width: 0; flex: 1; gap: 0.35rem; overflow: hidden; }
+	.library-search svg { width: 0.9rem; flex: none; }
+	.library-type, .library-view { flex: none; }
+	.library-view { color: var(--color-text); font-size: 0.95rem; }
+	.folder-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; font-size: 0.72rem; }
+	.folder-heading span { color: var(--color-muted); font-size: 0.61rem; }
+	.folder-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.45rem; }
+	.folder-tile { display: flex; min-width: 0; align-items: center; gap: 0.3rem; overflow: hidden; padding: 0.7rem 0.5rem; border: 1px solid var(--color-border); border-radius: 0.35rem; font-size: 0.65rem; font-weight: 600; white-space: nowrap; }
+	.folder-tile svg { width: 1rem; flex: none; color: var(--color-primary); }
+	.asset-area { min-width: 0; }
+	.asset-toolbar { justify-content: space-between; margin-bottom: 0.65rem; font-size: 0.76rem; }
 	.asset-toolbar span { color: var(--color-muted); font-size: 0.68rem; }
-	.toolbar-grid { display: inline-block; margin-inline-start: 0.8rem; font-size: 1rem; }
-	.asset-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+	.asset-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
 	.asset { min-width: 0; overflow: hidden; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 0.55rem; }
 	.asset svg { display: block; width: 100%; aspect-ratio: 190 / 134; object-fit: cover; }
 	.asset > span { display: block; overflow: hidden; padding: 0.65rem; font-size: 0.68rem; font-weight: 550; text-overflow: ellipsis; white-space: nowrap; }
@@ -116,14 +120,26 @@ import Base from "../layouts/Base.astro";
 	.section-heading > p:last-child { max-width: 30rem; color: var(--color-muted); font-size: 1.05rem; line-height: 1.6; }
 	.detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 	.detail-feature { display: flex; min-height: 24rem; flex-direction: column; overflow: hidden; padding: clamp(1.6rem, 3vw, 2.5rem); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
-	.detail-feature--wide { grid-column: 1 / -1; min-height: 22rem; }
+	.detail-feature--wide { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: stretch; gap: 2rem; min-height: 22rem; }
 	.feature-kicker { color: var(--color-primary); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.68rem; }
 	h3 { margin-top: 1.3rem; font-size: clamp(1.7rem, 3vw, 2.6rem); line-height: 1.12; }
 	.detail-feature > p { max-width: 31rem; margin-top: 0.7rem; color: var(--color-muted); font-size: 0.94rem; line-height: 1.6; }
-	.folder-illustration { display: flex; align-items: center; flex-wrap: wrap; gap: 0.65rem; margin-top: auto; padding-top: 2.3rem; }
-	.folder-illustration > span, .folder-search { padding: 0.75rem 1rem; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 0.55rem; font-size: 0.76rem; }
-	.folder-illustration > span:first-child { color: var(--color-primary); border-color: var(--heat-40); }
-	.folder-search { margin-inline-start: auto; color: var(--color-muted); }
+	.organize-copy p { max-width: 31rem; margin-top: 0.7rem; color: var(--color-muted); font-size: 0.94rem; line-height: 1.6; }
+	.organize-scene { display: flex; min-width: 0; min-height: 17rem; flex-direction: column; gap: 1rem; padding: 1.2rem; background: radial-gradient(ellipse at 68% 65%, var(--heat-8), transparent 65%), var(--color-bg); border: 1px solid var(--color-border); border-radius: 0.75rem; }
+	.organize-filter { display: flex; min-width: 0; height: 2.5rem; align-items: center; gap: 0.55rem; padding: 0 0.7rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.4rem; color: var(--color-muted); font-size: 0.7rem; }
+	.organize-filter svg { width: 1rem; flex: none; }
+	.organize-filter span:nth-child(2) { min-width: 0; flex: 1; overflow: hidden; color: var(--color-text); text-overflow: ellipsis; white-space: nowrap; }
+	.organize-filter span:last-child { padding-inline-start: 0.6rem; border-inline-start: 1px solid var(--color-border); white-space: nowrap; }
+	.organize-flow { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-block: auto; }
+	.organize-folder, .organize-result { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.55rem; box-shadow: 0 12px 28px color-mix(in srgb, var(--color-text) 5%, transparent); }
+	.organize-folder { flex: none; font-size: 0.77rem; font-weight: 600; transform: rotate(-3deg); }
+	.organize-folder svg { width: 1.3rem; color: var(--color-primary); }
+	.organize-wire { min-width: 1rem; max-width: 7rem; flex: 1; color: var(--color-primary); }
+	.organize-result { min-width: 0; transform: rotate(2deg); }
+	.organize-result > svg { width: 3.5rem; flex: none; border-radius: 0.3rem; }
+	.organize-result > span { display: flex; min-width: 0; flex-direction: column; gap: 0.25rem; }
+	.organize-result strong { overflow: hidden; font-size: 0.72rem; text-overflow: ellipsis; white-space: nowrap; }
+	.organize-result small { color: var(--color-muted); font-size: 0.62rem; white-space: nowrap; }
 	.alt-illustration, .usage-illustration { display: flex; min-height: 9rem; flex-direction: column; justify-content: center; margin-top: auto; padding-top: 2rem; }
 	.alt-illustration span:first-child { color: var(--color-muted); font-size: 0.64rem; font-weight: 600; letter-spacing: 0.06em; }
 	.alt-illustration strong { width: fit-content; max-width: 100%; margin-top: 0.6rem; padding: 0.85rem 1rem; background: var(--color-bg); border: 1px solid var(--heat-40); border-radius: 0.5rem; font-size: 0.8rem; font-weight: 550; }
@@ -171,18 +187,27 @@ import Base from "../layouts/Base.astro";
 		.detail-card { right: 1rem; width: 39%; }
 		.media-stage figcaption { left: 1rem; }
 	}
+	@media (max-width: 720px) {
+		.detail-feature--wide { display: flex; flex-direction: column; }
+		.organize-scene { min-height: 14rem; margin-top: 1rem; }
+	}
 	@media (max-width: 600px) {
 		.hero-copy { margin-block: 3.5rem; }
 		.media-stage { min-height: 31rem; padding: 1rem 1rem 4rem; }
 		.library-window { width: 100%; min-height: 23rem; }
-		.library-body { grid-template-columns: 5rem minmax(0, 1fr); min-height: 20rem; }
-		.folder-rail { padding-inline: 0.2rem; font-size: 0.52rem; }
-		.folder-rail > span:not(.rail-label) { overflow: hidden; padding: 0.55rem 0.25rem; text-overflow: ellipsis; }
-		.folder-rail .rail-label { padding-inline: 0.25rem; font-size: 0.48rem; }
+		.library-body { min-height: 20rem; gap: 0.65rem; padding: 0.6rem; }
+		.library-filters { gap: 0.25rem; font-size: 0.5rem; }
+		.library-search, .library-type, .library-view { height: 1.7rem; padding-inline: 0.35rem; }
+		.library-search svg { width: 0.7rem; }
+		.folder-heading { margin-bottom: 0.4rem; font-size: 0.6rem; }
+		.folder-heading span { font-size: 0.48rem; }
+		.folder-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.3rem; }
+		.folder-tile { padding: 0.45rem 0.3rem; font-size: 0.53rem; }
+		.folder-tile:nth-child(3) { display: none; }
+		.folder-tile svg { width: 0.8rem; }
 		.window-bar { padding-inline: 0.5rem; font-size: 0.61rem; }
-		.window-location { display: none; }
-		.window-upload { margin-inline-start: auto; }
-		.asset-area { padding: 0.6rem; }
+		.window-upload { font-size: 0.52rem; }
+		.asset-toolbar { margin-bottom: 0.4rem; font-size: 0.61rem; }
 		.asset-grid { gap: 0.4rem; }
 		.asset > span { padding: 0.4rem; font-size: 0.5rem; }
 		.detail-card { top: auto; right: 0.8rem; bottom: 4rem; width: 53%; min-width: 0; }
@@ -194,8 +219,24 @@ import Base from "../layouts/Base.astro";
 		.media-stage figcaption { right: 1rem; font-size: 0.6rem; }
 		.detail-grid { grid-template-columns: 1fr; }
 		.detail-feature--wide { grid-column: auto; }
-		.folder-search { margin-inline-start: 0; }
+		.organize-scene { padding: 0.75rem; }
+		.organize-flow { gap: 0.25rem; }
+		.organize-folder { gap: 0.25rem; padding: 0.5rem; font-size: 0.6rem; }
+		.organize-folder svg { width: 0.9rem; }
+		.organize-wire { min-width: 0.8rem; }
+		.organize-result { gap: 0.3rem; padding: 0.4rem; }
+		.organize-result > svg { width: 2rem; }
+		.organize-result strong { font-size: 0.59rem; }
+		.organize-result small { font-size: 0.5rem; }
 		.media-cta .media-container { align-items: flex-start; flex-direction: column; }
+	}
+	@media (max-width: 380px) {
+		.organize-scene { min-height: 17rem; }
+		.organize-flow { align-items: stretch; flex-direction: column; gap: 0.35rem; }
+		.organize-folder { align-self: flex-start; }
+		.organize-wire { width: 2.5rem; height: 1.5rem; flex: none; align-self: center; transform: rotate(90deg); }
+		.organize-result { align-self: flex-end; }
+		.organize-result > svg { width: 2.5rem; }
 	}
 	@media (prefers-reduced-motion: no-preference) { .alt-caret { animation: blink 1.15s step-end infinite; } }
 	@keyframes blink { 50% { opacity: 0; } }
