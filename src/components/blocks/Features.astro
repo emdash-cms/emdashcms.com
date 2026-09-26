@@ -21,7 +21,7 @@ const { node } = Astro.props;
 const { _key, headline, subheadline, features } = node;
 const headingId = `${_key ?? "features"}-heading`;
 const chapterLinks: Record<string, { label: string; href: string }> = {
-	code: { label: "Start building with EmDash", href: "https://docs.emdashcms.com/getting-started/" },
+	code: { label: "Explore the Astro workflow", href: "/astro-cms" },
 	cloud: { label: "Explore the media library", href: "/media-library" },
 	shield: { label: "See agent workflows", href: "/for-agents" },
 };
