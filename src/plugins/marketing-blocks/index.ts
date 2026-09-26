@@ -180,7 +180,7 @@ const definition: PluginDefinition = {
 			{
 				type: "marketing.faq",
 				label: "FAQ",
-				description: "Frequently asked questions",
+				description: "Frequently asked questions and closing call to action",
 				fields: [
 					{ type: "text_input", action_id: "headline", label: "Headline" },
 					{
@@ -189,6 +189,7 @@ const definition: PluginDefinition = {
 						label: "Questions",
 						item_label: "Question",
 						min_items: 1,
+						initial_value: [{ question: "What is EmDash?", answer: "EmDash is an open source Astro CMS for humans and agents." }],
 						fields: [
 							{ type: "text_input", action_id: "question", label: "Question" },
 							{
@@ -199,6 +200,12 @@ const definition: PluginDefinition = {
 							},
 						],
 					},
+					{ type: "text_input", action_id: "ctaHeadline", label: "Closing headline", initial_value: "The site is yours. The work is shared." },
+					{ type: "text_input", action_id: "ctaDescription", label: "Closing description", multiline: true, initial_value: "Build in Astro, manage content in EmDash, and let authorized agents help without handing over control." },
+					{ type: "text_input", action_id: "ctaPrimaryLabel", label: "Primary CTA label", initial_value: "Try the playground" },
+					{ type: "text_input", action_id: "ctaPrimaryUrl", label: "Primary CTA URL", initial_value: "https://try.emdashcms.com/" },
+					{ type: "text_input", action_id: "ctaSecondaryLabel", label: "Secondary CTA label", initial_value: "Read the docs" },
+					{ type: "text_input", action_id: "ctaSecondaryUrl", label: "Secondary CTA URL", initial_value: "https://docs.emdashcms.com/getting-started/" },
 				],
 			},
 		],
