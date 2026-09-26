@@ -103,7 +103,7 @@ const iconMap: Record<string, string> = {
 </section>
 
 <style>
-	.features { background: var(--color-bg); }
+	.features { scroll-margin-top: 5.5rem; background: var(--color-bg); }
 	.features-intro {
 		display: grid;
 		gap: 1.5rem;
@@ -126,6 +126,7 @@ const iconMap: Record<string, string> = {
 	}
 	.feature-chapter { border-top: 1px solid var(--color-border); }
 	.chapter-inner { padding-top: clamp(3rem, 5.5vw, 5.5rem); padding-bottom: clamp(4.5rem, 7vw, 7rem); }
+	.feature-chapter:last-child .chapter-inner { padding-bottom: clamp(4.5rem, 5vw, 5rem); }
 	.chapter-heading { display: grid; gap: 1.25rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
 	.chapter-title { display: flex; align-items: baseline; gap: clamp(1rem, 2vw, 2rem); }
 	.chapter-index {
