@@ -8,6 +8,12 @@
 - [Create your first site](https://docs.emdashcms.com/getting-started/): Scaffold a new Astro and EmDash site.
 - [Add EmDash to an Astro project](https://docs.emdashcms.com/existing-project/): Keep an existing site and add the CMS.
 
+## Product workflows
+
+- [Astro CMS](https://emdashcms.com/astro-cms): See how a content seed, generated types, an editor, and server-rendered Astro pages fit in one project.
+- [Media library](https://emdashcms.com/media-library): Organize assets, add alt text, and inspect supported content usage.
+- [Agent workflows](https://emdashcms.com/for-agents): Distinguish building a site with a coding agent from managing site content through authenticated MCP.
+
 ## Work with agents
 
 - [Connect AI tools to a site](https://docs.emdashcms.com/guides/ai-tools/): Authenticated MCP access to content after setup.
