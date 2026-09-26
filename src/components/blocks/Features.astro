@@ -47,40 +47,40 @@ const iconMap: Record<string, string> = {
 <section class="features" id={_key} aria-labelledby={headline ? headingId : undefined}>
 	{(headline || subheadline) && (
 		<header class="features-intro container">
-			{headline && <h2 id={headingId} class="features-headline">{headline}</h2>}
-			{subheadline && <p class="features-subheadline">{subheadline}</p>}
+			{headline && <h2 id={headingId}>{headline}</h2>}
+			{subheadline && <p>{subheadline}</p>}
 		</header>
 	)}
 	<div class="features-chapters">
 		{chapters.map(({ index, lead, support, headingId: chapterHeadingId }) => (
 			<section class="feature-chapter" aria-labelledby={chapterHeadingId}>
-				<div class="chapter-layout container">
-					<div class="chapter-content">
-						<span class="chapter-number" aria-hidden="true">
-							{String(index + 1).padStart(2, "0")} / {String(chapterCount).padStart(2, "0")}
-						</span>
-						<div class="chapter-lead">
-							<span class="chapter-icon" aria-hidden="true">
-								<Icon name={iconMap[lead.icon] || "ph:sparkle"} />
-							</span>
+				<div class="chapter-inner container">
+					<header class="chapter-heading">
+						<div class="chapter-title">
+							<span class="chapter-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
 							<h3 id={chapterHeadingId}>{lead.title}</h3>
-							<p>{lead.description}</p>
 						</div>
+						<p>{lead.description}</p>
+					</header>
+					<div class="chapter-bento">
+						<div class="chapter-scene"><FeatureVisual scene={index} /></div>
 						{support.length > 0 && (
 							<div class="chapter-support">
 								{support.map((feature) => (
-									<div class="support-feature">
-										<span class="support-icon" aria-hidden="true">
+									<article class="support-card">
+										<div class="support-symbol" aria-hidden="true">
 											<Icon name={iconMap[feature.icon] || "ph:sparkle"} />
-										</span>
-										<h4>{feature.title}</h4>
-										<p>{feature.description}</p>
-									</div>
+										</div>
+										<div class="support-copy">
+											<h4>{feature.title}</h4>
+											<p>{feature.description}</p>
+										</div>
+										<FeatureVisual scene={index} compact />
+									</article>
 								))}
 							</div>
 						)}
 					</div>
-					<div class="chapter-visual"><FeatureVisual scene={index} /></div>
 				</div>
 			</section>
 		))}
@@ -88,140 +88,80 @@ const iconMap: Record<string, string> = {
 </section>
 
 <style>
-	.features {
-		background: var(--color-bg);
-	}
-
+	.features { background: var(--color-bg); }
 	.features-intro {
 		display: grid;
-		gap: var(--spacing-lg);
-		padding-top: var(--spacing-5xl);
-		padding-bottom: var(--spacing-4xl);
+		gap: 1.5rem;
+		padding-top: clamp(5rem, 9vw, 8rem);
+		padding-bottom: clamp(3rem, 6vw, 5rem);
 	}
-
-	.features-headline {
-		max-width: 40rem;
-		font-size: clamp(2.25rem, 4vw, 3.75rem);
-		font-weight: 600;
-		line-height: 1.07;
-		letter-spacing: -0.04em;
-		text-wrap: balance;
-	}
-
-	.features-subheadline {
-		max-width: 29rem;
-		color: var(--color-muted);
-		font-size: var(--font-size-base);
-		line-height: 1.65;
-	}
-
-	.feature-chapter {
-		border-top: 1px solid var(--color-border);
-	}
-
-	.feature-chapter:nth-child(even) {
-		background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
-	}
-
-	.chapter-layout {
-		display: grid;
-		gap: var(--spacing-3xl);
-		padding-top: var(--spacing-4xl);
-		padding-bottom: var(--spacing-4xl);
-	}
-
-	.chapter-content {
-		align-self: center;
-	}
-
-	.chapter-number {
-		display: block;
-		margin-bottom: var(--spacing-3xl);
-		color: var(--color-primary);
-		font-size: var(--font-size-xs);
-		font-weight: 600;
-		line-height: 1.5;
-	}
-
-	.chapter-icon,
-	.support-icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		color: var(--color-primary);
-	}
-
-	.chapter-icon {
-		width: 2rem;
-		height: 2rem;
-		margin-bottom: var(--spacing-lg);
-		font-size: 1.75rem;
-	}
-
-	.chapter-lead h3 {
-		max-width: 35rem;
-		margin-bottom: var(--spacing-md);
-		font-size: clamp(2rem, 3.5vw, 3.25rem);
-		font-weight: 600;
-		line-height: 1.1;
-		letter-spacing: -0.035em;
-		text-wrap: balance;
-	}
-
-	.chapter-lead p {
+	.features-intro h2 {
 		max-width: 38rem;
-		color: var(--color-muted);
-		font-size: var(--font-size-lg);
-		line-height: 1.6;
-	}
-
-	.chapter-support {
-		margin-top: var(--spacing-3xl);
-		border-top: 1px solid var(--color-border);
-		padding-top: var(--spacing-lg);
-	}
-
-	.support-feature + .support-feature {
-		margin-top: var(--spacing-xl);
-		border-top: 1px solid var(--color-border);
-		padding-top: var(--spacing-xl);
-	}
-
-	.support-icon {
-		width: 1.25rem;
-		height: 1.25rem;
-		margin-bottom: var(--spacing-md);
-		font-size: 1.25rem;
-	}
-
-	.support-feature h4 {
-		margin-bottom: 0.5rem;
-		font-size: var(--font-size-base);
+		font-size: clamp(2.5rem, 5.5vw, 5.25rem);
 		font-weight: 600;
-		line-height: 1.35;
+		line-height: 1.04;
+		letter-spacing: -0.055em;
+		text-wrap: balance;
 	}
-
-	.support-feature p {
-		max-width: 27rem;
+	.features-intro p {
+		max-width: 31rem;
 		color: var(--color-muted);
-		font-size: var(--font-size-sm);
+		font-size: clamp(1rem, 1.25vw, 1.125rem);
 		line-height: 1.65;
 	}
-
+	.feature-chapter { border-top: 1px solid var(--color-border); }
+	.chapter-inner { padding-top: clamp(3rem, 5.5vw, 5.5rem); padding-bottom: clamp(4.5rem, 7vw, 7rem); }
+	.chapter-heading { display: grid; gap: 1.25rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+	.chapter-title { display: flex; align-items: baseline; gap: clamp(1rem, 2vw, 2rem); }
+	.chapter-index {
+		color: var(--color-primary);
+		font-size: 0.8rem;
+		font-weight: 650;
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.02em;
+	}
+	.chapter-title h3 {
+		font-size: clamp(2rem, 3.5vw, 3.75rem);
+		font-weight: 600;
+		line-height: 1.08;
+		letter-spacing: -0.045em;
+		text-wrap: balance;
+	}
+	.chapter-heading > p { max-width: 35rem; color: var(--color-muted); font-size: var(--font-size-lg); line-height: 1.6; }
+	.chapter-bento { display: grid; gap: 1rem; }
+	.chapter-scene, .chapter-support { min-width: 0; }
+	.chapter-support { display: grid; gap: 1rem; }
+	.support-card {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		overflow: hidden;
+		min-height: 25rem;
+		padding: clamp(1.5rem, 3vw, 2.5rem);
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+	}
+	.support-symbol {
+		display: grid;
+		width: 2.25rem;
+		height: 2.25rem;
+		place-items: center;
+		color: var(--color-primary);
+		font-size: 1.35rem;
+		background: var(--heat-8);
+		border: 1px solid var(--heat-12);
+		border-radius: 0.7rem;
+	}
+	.support-copy { margin-top: 1.6rem; }
+	.support-copy h4 { font-size: 1.35rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.03em; }
+	.support-copy p { margin-top: 0.65rem; color: var(--color-muted); font-size: var(--font-size-sm); line-height: 1.65; }
+	.support-card :global(.feature-compact) { margin-top: auto; }
 	@media (min-width: 900px) {
-		.features-intro {
-			grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-			align-items: end;
-			gap: var(--spacing-3xl);
-		}
-
-		.chapter-layout {
-			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-			gap: clamp(3rem, 5vw, 5rem);
-		}
-
-		.feature-chapter:nth-child(even) .chapter-visual {
-			order: -1;
-		}
+		.features-intro { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); align-items: end; gap: 5rem; }
+		.chapter-heading { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); align-items: end; gap: 5rem; }
+		.chapter-bento { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
+		.feature-chapter:nth-child(even) .chapter-bento { grid-template-columns: minmax(0, 1fr) minmax(0, 1.65fr); }
+		.feature-chapter:nth-child(even) .chapter-scene { order: 1; }
 	}
 </style>

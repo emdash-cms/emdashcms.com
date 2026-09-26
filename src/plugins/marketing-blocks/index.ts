@@ -72,7 +72,7 @@ const definition: PluginDefinition = {
 			{
 				type: "marketing.features",
 				label: "Features",
-				description: "Grid of feature cards with icons",
+				description: "Three illustrated feature sections with supporting cards",
 				fields: [
 					{ type: "text_input", action_id: "headline", label: "Headline" },
 					{
