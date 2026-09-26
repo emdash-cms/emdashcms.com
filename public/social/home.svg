@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none" font-family="Inter, Arial, sans-serif">
+		<title>A CMS for humans and agents — EmDash</title>
+		<defs><linearGradient id="orange-mark" x1="0%" y1="100%" x2="100%" y2="0%"><stop stop-color="#ff5e1f"/><stop offset="0.6" stop-color="#ffae58"/><stop offset="1" stop-color="#fff2e3"/></linearGradient></defs>
+		<rect width="1200" height="630" fill="#f7f7f6"/>
+		<rect x="28" y="28" width="1144" height="574" rx="28" fill="#fff" stroke="#e4e4e1" stroke-width="2"/>
+		<rect x="80" y="72" width="34" height="34" rx="6" stroke="#ff7a42" stroke-width="3"/><path d="M88 89h18" stroke="#ff7a42" stroke-width="3" stroke-linecap="round"/>
+		<text x="128" y="100" fill="#1b1c20" font-size="28" font-weight="700" letter-spacing="-1">EmDash</text>
+		<text x="80" y="185" fill="#a94b25" font-family="monospace" font-size="16" font-weight="700" letter-spacing="1.2">A CMS FOR HUMANS + AGENTS</text>
+		<text x="80" y="263" fill="#1b1c20" font-size="62" font-weight="700" letter-spacing="-2.8">A CMS for humans</text><text x="80" y="335" fill="#1b1c20" font-size="62" font-weight="700" letter-spacing="-2.8">and agents</text><text x="80" y="447" fill="#5d6166" font-size="22">Code the site. Edit content.</text><text x="80" y="478" fill="#5d6166" font-size="22">Let agents help.</text>
+		<g transform="translate(690 162)">
+		<rect width="450" height="340" rx="22" fill="#1b1c20"/>
+		<circle cx="225" cy="170" r="145" stroke="#ffffff20" stroke-dasharray="2 9"/>
+		<rect x="128" y="73" width="194" height="194" rx="28" fill="#24252b" stroke="url(#orange-mark)" stroke-width="10"/>
+		<path d="M166 170h118" stroke="url(#orange-mark)" stroke-width="10" stroke-linecap="round"/>
+		<g transform="rotate(-5 82 88)"><rect x="19" y="60" width="137" height="56" rx="10" fill="#2d2e34" stroke="#ffffff45"/><text x="39" y="94" fill="#f7f7f8" font-size="17" font-weight="600">Human editor</text></g>
+		<g transform="rotate(5 370 255)"><rect x="321" y="230" width="112" height="54" rx="10" fill="#2d2e34" stroke="#ffffff45"/><text x="341" y="264" fill="#f7f7f8" font-size="17" font-weight="600">Agent</text></g>
+		<path d="M23 170h80m244 0h81" stroke="#ff9568" stroke-width="2" stroke-dasharray="3 8"/></g>
+		<path d="M80 530h1040" stroke="#e8e8e5" stroke-width="2"/>
+		<text x="80" y="566" fill="#6f7377" font-family="monospace" font-size="17">emdashcms.com</text>
+		<text x="1120" y="566" fill="#a94b25" font-family="monospace" font-size="17" text-anchor="end">OPEN SOURCE CMS</text>
+	</svg>
