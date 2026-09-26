@@ -3,7 +3,7 @@ import { getEmDashCollection } from "emdash";
 
 export const prerender = false;
 
-const staticPaths = ["/", "/blog", "/media-library", "/for-agents"];
+const staticPaths = ["/", "/blog", "/astro-cms", "/media-library", "/for-agents"];
 
 function escapeXml(value: string) {
 	return value.replace(/[&<>"']/g, (character) => {

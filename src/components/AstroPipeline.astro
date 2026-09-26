@@ -1,0 +1,118 @@
+<figure class="astro-pipeline">
+	<div class="pipeline-label"><span class="pipeline-dot"></span> One Astro project <span class="pipeline-path">schema / types / page</span></div>
+	<div class="pipeline-stage" aria-hidden="true">
+		<svg class="pipeline-wires" viewBox="0 0 660 440" preserveAspectRatio="none" fill="none">
+			<path d="M282 129h85q24 0 24 24v53" />
+			<path d="M391 260v43q0 22 22 22h74" />
+			<path class="wire-signal" d="M282 129h85q24 0 24 24v53" />
+			<path class="wire-signal wire-signal--late" d="M391 260v43q0 22 22 22h74" />
+		</svg>
+		<div class="seed-card">
+			<div class="artifact-bar"><span class="artifact-mark">{`{ }`}</span><strong>seed.json</strong><span>content model</span></div>
+			<div class="code-row"><span>01</span><code>{`"collections": [`}</code></div>
+			<div class="code-row"><span>02</span><code>{`  { "slug": `}<em>"posts"</em>{`,`}</code></div>
+			<div class="code-row"><span>03</span><code>{`    "fields": [`}</code></div>
+			<div class="code-row"><span>04</span><code>{`      { "slug": `}<em>"title"</em>{` }`}</code></div>
+			<div class="code-row"><span>05</span><code>{`    ]`}</code></div>
+			<div class="code-row"><span>06</span><code>{`  }`}</code></div>
+			<div class="code-row"><span>07</span><code>{`]`}</code></div>
+		</div>
+		<div class="type-card">
+			<div class="type-kicker"><span>✳</span> Generated type</div>
+			<strong>Post</strong>
+			<code><span>title:</span> string</code>
+			<code><span>excerpt?:</span> string</code>
+		</div>
+		<div class="page-card">
+			<div class="artifact-bar"><span class="page-mark">↗</span><strong>blog/[slug].astro</strong><span>published page</span></div>
+			<div class="page-content"><span>EDITORIAL / POSTS</span><strong>A new chapter</strong><i></i><i></i><i></i></div>
+		</div>
+	</div>
+	<figcaption>Illustrative flow: model content in a seed, generate types, and render published entries in Astro.</figcaption>
+</figure>
+
+<style>
+	.astro-pipeline {
+		--line: color-mix(in srgb, var(--color-text) 12%, transparent);
+		--muted: color-mix(in srgb, var(--color-text) 55%, transparent);
+		position: relative;
+		min-width: 0;
+		overflow: hidden;
+		margin: 0;
+		background: radial-gradient(ellipse at 67% 58%, var(--heat-12), transparent 52%), var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+	}
+	.astro-pipeline::before {
+		position: absolute;
+		inset: 0;
+		background-image: radial-gradient(var(--line) 0.7px, transparent 0.7px);
+		background-size: 18px 18px;
+		content: "";
+		mask-image: radial-gradient(ellipse at center, black, transparent 76%);
+	}
+	.pipeline-label {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 1.25rem 1.5rem;
+		color: var(--muted);
+		font-size: 0.72rem;
+		font-weight: 550;
+	}
+	.pipeline-dot { width: 0.42rem; height: 0.42rem; background: var(--color-primary); border-radius: 50%; box-shadow: 0 0 0 4px var(--heat-12); }
+	.pipeline-path { margin-inline-start: auto; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.62rem; white-space: nowrap; }
+	.pipeline-stage { position: relative; min-height: 29rem; }
+	.pipeline-wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+	.pipeline-wires path { stroke: var(--line); stroke-width: 1.5; }
+	.pipeline-wires .wire-signal { stroke: var(--color-primary); stroke-dasharray: 5 9; }
+	.seed-card, .type-card, .page-card {
+		position: absolute;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 0.7rem;
+		box-shadow: 0 18px 45px color-mix(in srgb, var(--color-text) 8%, transparent);
+	}
+	.seed-card { top: 5%; left: 5%; width: 51%; padding-bottom: 1rem; transform: rotate(-2deg); }
+	.artifact-bar { display: flex; align-items: center; gap: 0.55rem; padding: 0.8rem 0.9rem; border-bottom: 1px solid var(--line); font-size: 0.67rem; }
+	.artifact-bar strong { font-weight: 600; }
+	.artifact-bar > span:last-child { margin-inline-start: auto; color: var(--muted); font-size: 0.56rem; white-space: nowrap; }
+	.artifact-mark, .page-mark { color: var(--color-primary); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.72rem; }
+	.code-row { display: flex; gap: 0.85rem; padding: 0.23rem 0.9rem; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.65rem; white-space: nowrap; }
+	.code-row:nth-child(2) { padding-top: 0.95rem; }
+	.code-row > span { color: var(--muted); opacity: 0.72; }
+	.code-row code { font: inherit; }
+	.code-row em { color: var(--color-primary); font-style: normal; }
+	.type-card { top: 35%; right: 5%; display: flex; width: 38%; flex-direction: column; gap: 0.45rem; padding: 1rem; transform: rotate(3deg); }
+	.type-kicker { color: var(--muted); font-size: 0.65rem; }
+	.type-kicker span { color: var(--color-primary); }
+	.type-card strong { margin: 0.15rem 0 0.4rem; font-size: 1.05rem; letter-spacing: -0.02em; }
+	.type-card code { padding: 0.3rem 0.4rem; background: var(--color-bg); border: 1px solid var(--line); border-radius: 0.25rem; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.62rem; }
+	.type-card code span { color: var(--color-primary); }
+	.page-card { right: 8%; bottom: 3%; width: 56%; overflow: hidden; transform: rotate(-2deg); }
+	.page-content { display: flex; min-height: 8.8rem; flex-direction: column; gap: 0.55rem; padding: 1.2rem; }
+	.page-content span { color: var(--color-primary); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.04em; }
+	.page-content strong { margin-bottom: 0.35rem; font-size: 1rem; letter-spacing: -0.025em; }
+	.page-content i { width: 82%; height: 0.25rem; background: var(--line); border-radius: 1rem; }
+	.page-content i:last-child { width: 56%; }
+	.astro-pipeline figcaption { position: relative; padding: 0.5rem 1.5rem 1.3rem; color: var(--muted); font-size: 0.64rem; line-height: 1.5; }
+	@media (max-width: 600px) {
+		.pipeline-label { padding-inline: 1rem; }
+		.pipeline-path { display: none; }
+		.pipeline-stage { min-height: 28rem; }
+		.pipeline-wires { display: none; }
+		.seed-card { left: 4%; width: 67%; }
+		.type-card { top: 38%; right: 3%; width: 48%; }
+		.page-card { right: 5%; width: 69%; }
+		.code-row { gap: 0.55rem; padding-inline: 0.6rem; font-size: 0.52rem; }
+		.artifact-bar { padding-inline: 0.6rem; }
+		.astro-pipeline figcaption { padding-inline: 1rem; }
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.pipeline-wires .wire-signal { animation: flow 5s linear infinite; }
+		.pipeline-wires .wire-signal--late { animation-delay: -2.5s; }
+	}
+	@keyframes flow { to { stroke-dashoffset: -28; } }
+</style>
