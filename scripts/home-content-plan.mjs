@@ -23,6 +23,8 @@ function onlyBlock(blocks, type) {
 export function planHomeContent(currentEntry, seedHome) {
 	if (currentEntry?.slug !== "home" || currentEntry?.status !== "published") throw new Error("Expected the published Home entry");
 	if (!currentEntry.id || !currentEntry._rev) throw new Error("Home entry needs an ID and revision token");
+	if (!Object.hasOwn(currentEntry, "draftRevisionId")) throw new Error("Home draft state is hidden; use an account that can read drafts");
+	if (currentEntry.draftRevisionId) throw new Error("Home already has an unpublished draft; review it first");
 	if (currentEntry.scheduledAt) throw new Error("Home has a scheduled publication; clear or review it before updating");
 
 	const currentBlocks = contentBlocks(currentEntry);

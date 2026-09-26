@@ -2,7 +2,7 @@
 
 The marketing redesign is rendered from the published Home entry in EmDash. Updating `seed/seed.json` alone does not change an existing site. This command is read-only: it compares the current Home entry against the reviewed seed, preserving the live Hero and any unrelated blocks.
 
-After the stacked code PRs are merged, deployed, and verified on the production site, authenticate to the site's content API with a read-only token. Set `EMDASH_TOKEN` in the environment and, if Cloudflare Access protects the API, set `EMDASH_HEADERS` with one required header per line. Do not put credentials in the command or a tracked file. The planner refuses credentialed remote HTTP; localhost is allowed for disposable rehearsal only.
+After the stacked code PRs are merged, deployed, and verified on the production site, authenticate to the site's content API with a token that has read access and belongs to an account with at least the Contributor role (`content:read_drafts`). The planner checks the draft comparison endpoint, so a token that cannot see unpublished work fails closed. Set `EMDASH_TOKEN` in the environment and, if Cloudflare Access protects the API, set `EMDASH_HEADERS` with one required header per line. Do not put credentials in the command or a tracked file. The planner refuses credentialed remote HTTP; localhost is allowed for disposable rehearsal only.
 
 1. Generate a read-only plan and review the complete before/after values for Features, Testimonials, and FAQ:
 

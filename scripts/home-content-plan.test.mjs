@@ -14,6 +14,7 @@ function fixtures() {
 		id: "entry-id",
 		slug: "home",
 		status: "published",
+		draftRevisionId: null,
 		locale: "en",
 		_rev: "revision-1",
 		data: { title: "Home", customField: "unchanged", content: [hero, feature, unknown, testimonials, faq] },
@@ -80,6 +81,14 @@ test("refuses a non-published entry or malformed Portable Text", () => {
 test("refuses a scheduled Home entry before preparing a draft", () => {
 	const { currentEntry, seedHome } = fixtures();
 	assert.throws(() => planHomeContent({ ...currentEntry, scheduledAt: "2026-10-01T00:00:00Z" }, seedHome), /scheduled publication/);
+});
+
+test("refuses an existing or hidden draft state", () => {
+	const { currentEntry, seedHome } = fixtures();
+	assert.throws(() => planHomeContent({ ...currentEntry, draftRevisionId: "draft-id" }, seedHome), /unpublished draft/);
+	const hidden = { ...currentEntry };
+	delete hidden.draftRevisionId;
+	assert.throws(() => planHomeContent(hidden, seedHome), /draft state is hidden/);
 });
 
 test("refuses remote HTTP before sending a token", () => {
