@@ -167,22 +167,28 @@
 							"_key": "testimonials",
 							"testimonials": [
 								{
-									"quote": "The entire functionality of WordPress, and then some.",
-									"author": "Matt Mullenweg",
-									"role": "Co-founder",
-									"company": "WordPress"
+									"quote": "For the first time, I can build a genuinely modern-looking website without being the one who has to know how to build it.",
+									"author": "Bart Platteeuw",
+									"role": "EmDash site owner",
+									"context": "Building with EmDash and Claude Code",
+									"referenceUrl": "https://bartplatteeuw.com/blog/why-i-migrated-my-website-to-emdash-cms/",
+									"referenceLabel": "Read full story"
 								},
 								{
 									"quote": "The most interesting thing to happen to content management in years.",
 									"author": "Joost de Valk",
 									"role": "Founder",
-									"company": "Yoast"
+									"company": "Yoast",
+									"referenceUrl": "https://joost.blog/wordpress-refactor-not-redecorate/",
+									"referenceLabel": "Read original"
 								},
 								{
 									"quote": "Getting from zero to a basic design is fast. I mean, really fast.",
 									"author": "Brian Coords",
 									"role": "Developer Advocate",
-									"company": "Automattic"
+									"company": "Automattic",
+									"referenceUrl": "https://www.briancoords.com/emdash-first-thoughts-and-takeaways-for-wordpress/",
+									"referenceLabel": "Read original"
 								}
 							]
 						},
