@@ -1,9 +1,14 @@
 ---
+import { sanitizeHref } from "emdash";
+
 interface Testimonial {
 	quote: string;
 	author: string;
 	role?: string;
 	company?: string;
+	context?: unknown;
+	referenceUrl?: unknown;
+	referenceLabel?: unknown;
 }
 
 interface Props {
@@ -33,11 +38,52 @@ function getAttribution(testimonial: Testimonial) {
 	return testimonial.role || testimonial.company;
 }
 
-const testimonialItems = testimonials.map((testimonial) => ({
-	...testimonial,
-	attribution: getAttribution(testimonial),
-	initials: getInitials(testimonial.author),
-}));
+function trimmedString(value: unknown) {
+	return typeof value === "string" ? value.trim() : undefined;
+}
+
+function getHttpReference(value: unknown) {
+	const candidate = trimmedString(value);
+	if (!candidate) return undefined;
+	try {
+		const parsed = new URL(sanitizeHref(candidate));
+		return (parsed.protocol === "http:" || parsed.protocol === "https:") && parsed.hostname ? parsed.href : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+const knownReferences: Record<string, { quote: string; context?: string; url: string; label: string }> = {
+	"Joost de Valk": {
+		quote: "The most interesting thing to happen to content management in years.",
+		url: "https://joost.blog/wordpress-refactor-not-redecorate/",
+		label: "Read original",
+	},
+	"Brian Coords": {
+		quote: "Getting from zero to a basic design is fast. I mean, really fast.",
+		url: "https://www.briancoords.com/emdash-first-thoughts-and-takeaways-for-wordpress/",
+		label: "Read original",
+	},
+};
+
+function getReference(testimonial: Testimonial) {
+	const known = knownReferences[testimonial.author];
+	const fallback = known?.quote === testimonial.quote ? known : undefined;
+	return {
+		context: trimmedString(testimonial.context) || fallback?.context,
+		referenceUrl: getHttpReference(testimonial.referenceUrl) || getHttpReference(fallback?.url),
+		referenceLabel: trimmedString(testimonial.referenceLabel) || fallback?.label || "Read source",
+	};
+}
+
+const testimonialItems = testimonials
+	.map((testimonial) => ({
+		...testimonial,
+		...getReference(testimonial),
+		attribution: getAttribution(testimonial),
+		initials: getInitials(testimonial.author),
+	}))
+	.filter((testimonial) => !(testimonial.author === "Matt Mullenweg" && testimonial.quote === "The entire functionality of WordPress, and then some." && !testimonial.referenceUrl));
 ---
 
 {testimonialItems.length > 0 && (
@@ -58,12 +104,14 @@ const testimonialItems = testimonials.map((testimonial) => ({
 						<svg class="quote-mark" viewBox="0 0 120 90" aria-hidden="true" fill="currentColor">
 							<path d="M8 45C8 22 23 7 49 4v14c-13 2-20 10-20 20h21v39H8V45Zm60 0C68 22 83 7 109 4v14c-13 2-20 10-20 20h21v39H68V45Z" />
 						</svg>
+						{testimonial.context && <p class="quote-context">{testimonial.context}</p>}
 						<blockquote><p>“{testimonial.quote}”</p></blockquote>
 						<figcaption>
 							<span class="testimonial-avatar" aria-hidden="true">{testimonial.initials}</span>
 							<span class="testimonial-meta">
 								<cite>{testimonial.author}</cite>
 								{testimonial.attribution && <span>{testimonial.attribution}</span>}
+								{testimonial.referenceUrl && <a class="testimonial-reference" href={testimonial.referenceUrl} aria-label={`${testimonial.referenceLabel} by ${testimonial.author}`}>{testimonial.referenceLabel} <span aria-hidden="true">↗</span></a>}
 							</span>
 						</figcaption>
 					</figure>
@@ -135,6 +183,7 @@ const testimonialItems = testimonials.map((testimonial) => ({
 	.testimonials-grid--pair .testimonial-item:last-child { grid-row: span 2; }
 	.quote-mark { width: 1.5rem; height: 1.15rem; flex: none; color: var(--color-primary); opacity: 0.65; }
 	.testimonial-item--featured .quote-mark { width: 3.5rem; height: 2.65rem; opacity: 0.75; }
+	.quote-context { margin-top: 1.4rem; color: var(--color-primary); font-size: 0.68rem; font-weight: 650; letter-spacing: 0.045em; text-transform: uppercase; }
 	.testimonial-item blockquote { margin: 1.1rem 0 1.5rem; }
 	.testimonial-item blockquote p { font-size: clamp(1.1rem, 1.45vw, 1.45rem); font-weight: 500; line-height: 1.42; letter-spacing: -0.022em; text-wrap: pretty; }
 	.testimonial-item--featured blockquote { max-width: 37rem; margin-top: 2rem; }
@@ -165,6 +214,10 @@ const testimonialItems = testimonials.map((testimonial) => ({
 	.testimonial-meta { display: flex; min-width: 0; flex-direction: column; gap: 0.15rem; }
 	.testimonial-meta cite { font-size: 0.85rem; font-style: normal; font-weight: 600; line-height: 1.3; }
 	.testimonial-meta span { color: var(--color-muted); font-size: 0.76rem; line-height: 1.35; }
+	.testimonial-reference { width: fit-content; margin-top: 0.35rem; color: var(--color-primary); font-size: 0.72rem; font-weight: 600; text-decoration: none; }
+	.testimonial-reference:hover { text-decoration: underline; text-underline-offset: 3px; }
+	.testimonial-reference:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: 2px; }
+	.testimonial-reference span { color: inherit; }
 	@media (max-width: 760px) {
 		.testimonials-grid { grid-template-columns: 1fr; }
 		.testimonial-item--featured, .testimonials-grid--pair .testimonial-item:last-child { grid-row: auto; }
