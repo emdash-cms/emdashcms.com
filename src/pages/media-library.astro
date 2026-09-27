@@ -74,7 +74,7 @@ import Base from "../layouts/Base.astro";
 	.hero-actions .btn { display: inline-flex; align-items: center; gap: 0.7rem; }
 	.text-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--color-text); font-size: 0.9rem; font-weight: 600; text-decoration: none; }
 	.text-link:hover { color: var(--marketing-text-accent); }
-	.text-link:focus-visible, .breadcrumbs a:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 5px; border-radius: 2px; }
+	.text-link:focus-visible, .breadcrumbs a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 5px; border-radius: 2px; }
 	.media-stage { position: relative; min-width: 0; min-height: 35rem; margin: 0; padding: 3rem 2rem 5rem; overflow: hidden; border: 1px solid var(--color-border); border-radius: 1.25rem; background: radial-gradient(ellipse at 72% 45%, var(--heat-12), transparent 54%), var(--color-surface); }
 	.media-stage::before { position: absolute; inset: 0; background-image: radial-gradient(color-mix(in srgb, var(--color-text) 12%, transparent) 0.7px, transparent 0.7px); background-size: 19px 19px; content: ""; mask-image: linear-gradient(90deg, transparent, black 50%, transparent); }
 	.library-window { position: relative; width: 76%; min-height: 28rem; overflow: hidden; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.8rem; box-shadow: 0 24px 80px color-mix(in srgb, var(--color-text) 11%, transparent); }
@@ -82,7 +82,7 @@ import Base from "../layouts/Base.astro";
 	.window-bar { height: 3.2rem; padding-inline: 1.2rem; border-bottom: 1px solid var(--color-border); font-size: 0.76rem; }
 	.window-brand { display: inline-flex; align-items: center; gap: 0.55rem; font-weight: 650; }
 	.brand-mark { display: grid; width: 1.35rem; height: 1.35rem; place-items: center; color: var(--color-primary); background: var(--heat-8); border-radius: 0.3rem; }
-	.window-upload { margin-inline-start: auto; padding: 0.35rem 0.6rem; color: var(--button-primary-fg); background: var(--heat-100); border-radius: 0.35rem; font-size: 0.68rem; font-weight: 600; }
+	.window-upload { margin-inline-start: auto; padding: 0.35rem 0.6rem; color: #fff; background: #b84312; border-radius: 0.35rem; font-size: 0.68rem; font-weight: 600; }
 	.library-body { display: flex; min-height: 25rem; flex-direction: column; gap: 1.1rem; padding: 1rem; }
 	.library-filters { display: flex; align-items: center; gap: 0.45rem; color: var(--color-muted); font-size: 0.65rem; }
 	.library-search, .library-type, .library-view { display: flex; height: 2rem; align-items: center; padding: 0 0.55rem; border: 1px solid var(--color-border); border-radius: 0.35rem; white-space: nowrap; }
@@ -168,9 +168,9 @@ import Base from "../layouts/Base.astro";
 	.faq-list details:first-child { border-top: 1px solid var(--color-border); }
 	.faq-list summary { cursor: pointer; font-weight: 600; list-style: none; }
 	.faq-list summary::-webkit-details-marker { display: none; }
-	.faq-list summary::after { float: right; margin-inline-start: 1rem; color: var(--color-primary); content: "+"; }
+	.faq-list summary::after { float: right; margin-inline-start: 1rem; color: var(--marketing-text-accent); content: "+"; }
 	.faq-list details[open] summary::after { content: "−"; }
-	.faq-list summary:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 5px; }
+	.faq-list summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 5px; }
 	.faq-list details p { max-width: 36rem; padding-top: 1rem; color: var(--color-muted); font-size: 0.9rem; line-height: 1.65; }
 	.media-cta { padding: 4rem 0; border-top: 1px solid var(--color-border); }
 	.media-cta .media-container { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }

@@ -121,7 +121,7 @@ import Base from "../layouts/Base.astro";
 	.hero-actions .btn, .astro-cta .btn { display: inline-flex; align-items: center; gap: 0.65rem; }
 	.text-link, .card-link { display: inline-flex; width: fit-content; align-items: center; gap: 0.5rem; color: var(--color-text); font-size: 0.9rem; font-weight: 600; text-decoration: none; }
 	.text-link:hover, .card-link:hover { color: var(--marketing-text-accent); }
-	.text-link:focus-visible, .card-link:focus-visible, .breadcrumbs a:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 5px; border-radius: 2px; }
+	.text-link:focus-visible, .card-link:focus-visible, .breadcrumbs a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 5px; border-radius: 2px; }
 	.proof-section, .astro-faq { padding: clamp(5rem, 9vw, 9rem) 0; }
 	#how-it-works { scroll-margin-top: 6rem; }
 	.section-heading { max-width: 55rem; margin-bottom: 3rem; }
@@ -138,7 +138,7 @@ import Base from "../layouts/Base.astro";
 	.code-shell-bar span:last-child { color: var(--color-muted); font-size: 0.57rem; }
 	.code-shell pre { overflow-x: auto; padding: 1.3rem 1rem; font-family: ui-monospace, SFMono-Regular, monospace; font-size: clamp(0.69rem, 1vw, 0.8rem); line-height: 1.75; }
 	.code-shell code { font: inherit; }
-	.code-shell code span, .code-shell code em { color: var(--color-primary); font-style: normal; }
+	.code-shell code span, .code-shell code em { color: var(--marketing-text-accent); font-style: normal; }
 	.editor-sketch { padding-bottom: 0.25rem; }
 	.editor-sketch figcaption { padding: 0.6rem 1rem; color: var(--color-muted); font-size: 0.62rem; line-height: 1.4; }
 	.editor-bar-actions { display: flex; align-items: center; gap: 0.35rem; }
@@ -171,9 +171,9 @@ import Base from "../layouts/Base.astro";
 	.faq-list details:first-child { border-top: 1px solid var(--color-border); }
 	.faq-list summary { cursor: pointer; font-weight: 600; list-style: none; }
 	.faq-list summary::-webkit-details-marker { display: none; }
-	.faq-list summary::after { float: right; margin-inline-start: 1rem; color: var(--color-primary); content: "+"; }
+	.faq-list summary::after { float: right; margin-inline-start: 1rem; color: var(--marketing-text-accent); content: "+"; }
 	.faq-list details[open] summary::after { content: "−"; }
-	.faq-list summary:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 5px; }
+	.faq-list summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 5px; }
 	.faq-list details p { max-width: 37rem; padding-top: 1rem; color: var(--color-muted); font-size: 0.9rem; line-height: 1.65; }
 	.astro-cta { padding: 4rem 0; background: var(--color-text); color: var(--color-bg); }
 	.astro-cta .page-shell { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
