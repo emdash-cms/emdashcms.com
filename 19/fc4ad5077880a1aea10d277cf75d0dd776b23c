@@ -1,0 +1,120 @@
+public/brand/products/SOURCES.md
+  s_bf6c4e65e38922::t_256774ea10e7c7 1-3
+public/brand/products/astro-logo-dark.svg
+  s_bf6c4e65e38922::t_6366fd53aecc93 1-9
+public/brand/products/astro-logo-light-gradient.svg
+  s_bf6c4e65e38922::t_4747cfa926a6d3 1-16
+public/brand/products/d1.svg
+  s_bf6c4e65e38922::t_de1a83c948a56d 1
+public/brand/products/r2.svg
+  s_bf6c4e65e38922::t_6d3c44a11bbe76 1
+public/brand/products/workers.svg
+  s_bf6c4e65e38922::t_0b6b25e2a94af4 1
+public/start.md
+  s_bf6c4e65e38922::t_9349c8ed340f47 1-23
+seed/seed.json
+  s_bf6c4e65e38922::t_8b01a9d20733d0 122-124,130-131,134-135,140-141,144-145,150-151,154-156,159-161,168,174,181,188,200,203-204,207-208,212
+  s_bf6c4e65e38922::t_60616a7e675b61 136,146
+  s_bf6c4e65e38922::t_5473208becb38e 125
+  s_bf6c4e65e38922::t_d414d44890c756 175
+  s_bf6c4e65e38922::t_6639d18fb74e7a 182,189
+src/components/CopyPromptButton.astro
+  s_bf6c4e65e38922::t_1926ec92f38659 1,4-18,20-162,164-177,178-241
+  s_bf6c4e65e38922::t_ae83b69d5917e8 2-3,19
+  s_bf6c4e65e38922::t_120b3aed2ace06 163
+src/components/FeatureIntroVisual.astro
+  s_bf6c4e65e38922::t_8448e14dba0067 1-63
+src/components/FeatureVisual.astro
+  s_bf6c4e65e38922::t_3c751f6fe17539 1,4-15,22-33,41-105,107-115,117-150,152,154-191,203,206,208-209,212-215,217-222,224-225,230-231,233-235,251-261,274-305,307-314
+  s_bf6c4e65e38922::t_3cf2044499a11b 151,153
+  s_bf6c4e65e38922::t_b9b0ad60495576 2-3,16-21,34-40,106,116,192-202,204-205,207,210-211,216,223,226-229,232,236-250,262-273,306
+src/components/blocks/FAQ.astro
+  s_bf6c4e65e38922::t_02f41148bfee2e 6,14-16,19-39,41-43,45-46,143-147,150-158,160-170,174-175,178,181-184,192,194-197,199-201,203-205,207-209,212-213,216
+  s_bf6c4e65e38922::t_0ae8635cdb57cd 159,190-191
+  s_bf6c4e65e38922::t_e201c3e51de496 173,206
+src/components/blocks/Features.astro
+  s_bf6c4e65e38922::t_8f65fc0bd65a13 3-10,17,23-30,48-90,93-94,99-105,107-113,116-117,119,122-127,129-139,142-145,147,149-151,154,156-171,173-177,179-183,188-189
+  s_bf6c4e65e38922::t_2e46e98201cbe5 128
+  s_bf6c4e65e38922::t_133499caebd3c7 118,141,178
+  s_bf6c4e65e38922::t_1082d925366c68 184-187
+src/components/blocks/Hero.astro
+  s_bf6c4e65e38922::t_9267aaec0199d3 7,14-15,18,31-32,43,85,164,257,281-282,376-379,381-405,407-409,411-453
+  s_bf6c4e65e38922::t_3cf6f4aef4e7e0 206
+  s_bf6c4e65e38922::t_4876604340a34d 182,406,410
+  s_bf6c4e65e38922::t_4261c3681eff61 84,114-140,289-290,294-297,300-304,305,306,310-324,326-327,329-375,583-584
+  s_bf6c4e65e38922::t_dc9daa1555f2bf 52-58,83,261,263,264-265,283,293,521-522
+  s_bf6c4e65e38922::t_87cd8abf87a626 299,325
+  s_bf6c4e65e38922::t_46fc2b3cd9589e 59-82,262,275-278,291,298,328,380,519-520,525-526,533-544,533-537,538,542,544,549
+  s_bf6c4e65e38922::t_8a58e1dd8b56cb 307-309,546-548,546,548
+  s_bf6c4e65e38922::t_f9fdce04015e32 545
+src/components/blocks/Testimonials.astro
+  s_bf6c4e65e38922::t_8f43363969644a 2-3,9-10,23,26,34-36,38-45,47,55-57,58-61,62-72,73-76,78,80-86,88-93,94-101,103-110,119,121-122,124,131-133,138-139,141-145
+  s_bf6c4e65e38922::t_c1b3d27f844856 130
+  s_bf6c4e65e38922::t_f62f78cee01972 140
+  s_bf6c4e65e38922::t_08c89c8e4b2822 49,51-53,54,77,87
+  s_bf6c4e65e38922::t_db7d66578b47f9 50
+src/pages/index.astro
+  s_bf6c4e65e38922::t_1f5ede568424aa 16
+  s_bf6c4e65e38922::t_f9dc7273316a06 17-18
+src/plugins/marketing-blocks/index.ts
+  s_bf6c4e65e38922::t_d92a9bc5a16b00 51,64-66,75,127-128,194
+src/styles/theme.css
+  s_bf6c4e65e38922::t_c63a7f8a9ec8bb 27,48,70
+  s_bf6c4e65e38922::t_49743ac51bbdaa 18,20,39,41,61,63
+  s_bf6c4e65e38922::t_02a3f82116f5c9 19,40,62
+  s_bf6c4e65e38922::t_15bc14bcd7dd4f 25-26,46-47,68-69
+src/components/AgentLogos.astro
+  s_bf6c4e65e38922::t_3fde5897f7de18 1-21
+package.json
+  s_bf6c4e65e38922::t_9877ef1a496704 9-11,13,30
+pnpm-lock.yaml
+  s_bf6c4e65e38922::t_e7fecb5cca195c 203-205
+public/social/astro-cms.svg
+  s_bf6c4e65e38922::t_66135f933e33f2 1-26
+public/social/for-agents.svg
+  s_bf6c4e65e38922::t_28b5d489525291 1-19
+public/social/home.svg
+  s_bf6c4e65e38922::t_45f5f53707b512 1-21
+public/social/media-library.svg
+  s_bf6c4e65e38922::t_32e21cefa24d86 1-21
+scripts/generate-social-cards.mjs
+  s_bf6c4e65e38922::t_95fde7ee37c2a7 1-155
+scripts/social-cards.manifest.json
+  s_bf6c4e65e38922::t_ea9db84477ca6b 1-21
+src/components/AgentJourney.astro
+  s_bf6c4e65e38922::t_46dcf994c20eeb 1-113
+src/components/AstroPipeline.astro
+  s_bf6c4e65e38922::t_307848a74e4d02 1-124
+src/components/SiteFooter.astro
+  s_bf6c4e65e38922::t_f26e34e5e2c0eb 70-75,118-120
+src/components/SiteHeader.astro
+  s_bf6c4e65e38922::t_84f8725cb20d86 58-62,110-145,148-155,170-171,209-210,217,229-240,248-254,429-475,480-481,488,502-506,511,612,615,637
+src/layouts/Base.astro
+  s_bf6c4e65e38922::t_2d5ea365fd4e53 14,28,97-102
+src/pages/astro-cms.astro
+  s_bf6c4e65e38922::t_18dd7c976ab3a8 1-199
+src/pages/for-agents.astro
+  s_bf6c4e65e38922::t_a78a7bec34431e 1-240
+src/pages/media-library.astro
+  s_bf6c4e65e38922::t_348b60c2bc777a 1-245
+src/pages/sitemap-[collection].xml.ts
+  s_bf6c4e65e38922::t_c6af90fb25973a 1-5
+src/pages/sitemap.xml.ts
+  s_bf6c4e65e38922::t_971c3c988929f4 1-83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "19fc4ad5077880a1aea10d277cf75d0dd776b23c",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
