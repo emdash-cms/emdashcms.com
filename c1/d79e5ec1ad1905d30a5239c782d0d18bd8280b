@@ -1,0 +1,22 @@
+src/components/blocks/Testimonials.astro
+  s_bf6c4e65e38922::t_c4a1e88261f8dd 18-19
+seed/seed.json
+  s_bf6c4e65e38922::t_13eba63d99e0bd 169
+  s_bf6c4e65e38922::t_c8d8d059903386 131-132,135-137,141-142,145-147,151-152,156-157,161-162
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c1d79e5ec1ad1905d30a5239c782d0d18bd8280b",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
