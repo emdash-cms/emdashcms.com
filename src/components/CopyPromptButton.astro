@@ -1,0 +1,248 @@
+---
+import AgentLogos from "./AgentLogos.astro";
+
+interface Props {
+	prompt: string;
+}
+
+const { prompt } = Astro.props;
+---
+
+<div class="copy-prompt">
+	<button
+		type="button"
+		class="copy-prompt-button"
+		aria-label="Copy a prompt to build an EmDash site with your agent"
+		data-copy-prompt-button
+		data-prompt={prompt}
+	>
+		<AgentLogos />
+		<span class="copy-prompt-labels" data-copy-prompt-labels aria-hidden="true">
+			<span class="copy-prompt-label copy-prompt-label--default" data-copy-prompt-label-default>Copy prompt</span>
+			<span class="copy-prompt-label" data-copy-prompt-label-copied>Copied</span>
+			<span class="copy-prompt-label" data-copy-prompt-label-failed>Try again</span>
+		</span>
+	</button>
+	<span class="copy-prompt-status" role="status" data-copy-prompt-status></span>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>("[data-copy-prompt-button]").forEach((button) => {
+		const status = button.parentElement?.querySelector<HTMLElement>("[data-copy-prompt-status]");
+		if (!status) return;
+		const feedback = button.closest("[data-copy-prompt-root]")?.querySelector<HTMLElement>("[data-copy-prompt-feedback]");
+		const preview = feedback?.querySelector<HTMLElement>("[data-copy-prompt-preview]");
+		const copied = feedback?.querySelector<HTMLElement>("[data-copy-prompt-copied]");
+		const failed = feedback?.querySelector<HTMLElement>("[data-copy-prompt-failed]");
+		const manualPrompt = feedback?.querySelector<HTMLInputElement>("[data-copy-prompt-manual]");
+		const labels = button.querySelector<HTMLElement>("[data-copy-prompt-labels]");
+		const defaultLabel = button.querySelector<HTMLElement>("[data-copy-prompt-label-default]");
+		const copiedLabel = button.querySelector<HTMLElement>("[data-copy-prompt-label-copied]");
+		const failedLabel = button.querySelector<HTMLElement>("[data-copy-prompt-label-failed]");
+		let hovered = false;
+		let keyboardFocused = false;
+		let copyState: "idle" | "copied" | "failed" = "idle";
+		const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const shown = new WeakMap<HTMLElement, boolean>();
+		const exitTimers = new WeakMap<HTMLElement, number>();
+		if (defaultLabel) shown.set(defaultLabel, true);
+		const show = (element: HTMLElement | null | undefined, visible: boolean, delay = 0) => {
+			if (!element) return;
+			if ((shown.get(element) ?? false) === visible) return;
+			shown.set(element, visible);
+			const exitTimer = exitTimers.get(element);
+			if (exitTimer !== undefined) window.clearTimeout(exitTimer);
+
+			if (reducedMotion) {
+				element.style.transition = "none";
+				element.style.opacity = visible ? "1" : "0";
+				element.style.transform = "none";
+				element.style.filter = "none";
+			} else if (visible) {
+				const ease = "cubic-bezier(0.22, 1, 0.36, 1)";
+				element.style.transition = ["opacity", "transform", "filter"]
+					.map((property) => `${property} 500ms ${ease} ${delay}ms`)
+					.join(", ");
+				element.style.opacity = "1";
+				element.style.transform = "translateY(0)";
+				element.style.filter = "blur(0)";
+			} else {
+				element.style.transition = "opacity 200ms ease, transform 0s linear, filter 0s linear";
+				element.style.opacity = "0";
+				element.style.transform = "translateY(0)";
+				element.style.filter = "blur(0)";
+				exitTimers.set(element, window.setTimeout(() => {
+					if (shown.get(element) === false) {
+						element.style.transition = "none";
+						element.style.transform = "translateY(12px)";
+						element.style.filter = "blur(3px)";
+					}
+				}, 200));
+			}
+
+			if (element === preview || element === failed) element.setAttribute("aria-hidden", String(!visible));
+			if (element === failed) element.inert = !visible;
+		};
+		const resizeActiveLabel = () => {
+			const activeLabel = copyState === "copied" ? copiedLabel : copyState === "failed" ? failedLabel : defaultLabel;
+			if (labels && activeLabel) labels.style.inlineSize = `${activeLabel.scrollWidth}px`;
+		};
+		const updateFeedback = () => {
+			show(preview, copyState === "idle" && (hovered || keyboardFocused), 40);
+			show(copied, copyState === "copied", 40);
+			show(failed, copyState === "failed", 40);
+			show(defaultLabel, copyState === "idle");
+			show(copiedLabel, copyState === "copied");
+			show(failedLabel, copyState === "failed");
+			resizeActiveLabel();
+		};
+		resizeActiveLabel();
+		void document.fonts?.ready.then(resizeActiveLabel);
+
+		button.addEventListener("pointerenter", () => {
+			hovered = true;
+			updateFeedback();
+		});
+		button.addEventListener("pointerleave", () => {
+			hovered = false;
+			updateFeedback();
+		});
+		button.addEventListener("focus", () => {
+			keyboardFocused = button.matches(":focus-visible");
+			updateFeedback();
+		});
+		button.addEventListener("blur", () => {
+			keyboardFocused = false;
+			updateFeedback();
+		});
+
+		let resetTimer: number | undefined;
+		button.addEventListener("click", async () => {
+			window.clearTimeout(resetTimer);
+			status.textContent = "";
+			copyState = "idle";
+			updateFeedback();
+
+			try {
+				const prompt = button.dataset.prompt;
+				if (!prompt || !navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+				await navigator.clipboard.writeText(prompt);
+				copyState = "copied";
+				status.textContent = "Prompt copied. Paste it into your coding agent to begin.";
+			} catch {
+				copyState = "failed";
+				status.textContent = "Clipboard unavailable. Prompt selected for manual copy.";
+			}
+			updateFeedback();
+			if (copyState === "failed") {
+				manualPrompt?.focus();
+				manualPrompt?.select();
+				return;
+			}
+
+			resetTimer = window.setTimeout(() => {
+				copyState = "idle";
+				status.textContent = "";
+				updateFeedback();
+			}, 4000);
+		});
+	});
+</script>
+
+<style>
+	.copy-prompt {
+		position: relative;
+		display: inline-flex;
+		width: 100%;
+	}
+
+	.copy-prompt-button {
+		display: inline-flex;
+		width: 100%;
+		min-height: 48px;
+		align-items: center;
+		justify-content: center;
+		gap: 0.75rem;
+		padding: 0 1.25rem;
+		color: var(--color-bg);
+		background: var(--color-text);
+		border: 0;
+		border-radius: var(--button-radius);
+		box-shadow:
+			0 0 0 1px var(--color-text),
+			0 1px 3px rgba(0, 0, 0, 0.12);
+		font: inherit;
+		font-size: var(--font-size-base);
+		font-weight: 500;
+		white-space: nowrap;
+		cursor: copy;
+	}
+
+	.copy-prompt-button:hover {
+		background: color-mix(in srgb, var(--color-text) 86%, var(--color-bg));
+	}
+
+	.copy-prompt-labels {
+		display: inline-grid;
+		min-inline-size: 0;
+		align-items: center;
+		justify-items: start;
+	}
+
+	.copy-prompt-label {
+		grid-area: 1 / 1;
+		white-space: nowrap;
+		opacity: 0;
+		filter: blur(3px);
+		transform: translateY(12px);
+	}
+
+	.copy-prompt-label--default {
+		opacity: 1;
+		filter: none;
+		transform: none;
+	}
+
+	.copy-prompt-status {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	:global(:root.dark) .copy-prompt-button {
+		color: var(--color-text);
+		background: var(--color-bg);
+		box-shadow: 0 0 0 1px var(--color-border);
+	}
+
+	:global(:root.dark) .copy-prompt-button:hover {
+		background: var(--color-surface);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .copy-prompt-button {
+			color: var(--color-text);
+			background: var(--color-bg);
+			box-shadow: 0 0 0 1px var(--color-border);
+		}
+
+		:global(:root:not(.light)) .copy-prompt-button:hover {
+			background: var(--color-surface);
+		}
+	}
+
+	@media (min-width: 640px) {
+		.copy-prompt {
+			width: auto;
+		}
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.copy-prompt-labels {
+			transition: inline-size 500ms cubic-bezier(0.22, 1, 0.36, 1);
+		}
+	}
+</style>

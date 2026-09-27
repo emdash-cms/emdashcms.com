@@ -4,18 +4,21 @@ import { Image } from "astro:assets";
 import heroDashDark from "../../../public/landing/hero/hero-dash-dark.png";
 import heroDashLight from "../../../public/landing/hero/hero-dash-light.png";
 import arrowRightSvg from "../../icons/arrow-right.svg?raw";
+import CopyPromptButton from "../CopyPromptButton.astro";
 
 interface Props {
 	node: {
 		_key?: string;
 		headline: string;
 		subheadline?: string;
-		// CTAs are flattened to sibling fields because Block Kit has no
-		// object-group element. Empty strings mean "no CTA".
+		// CTA fields are flattened because Block Kit has no object-group element.
+		// Empty strings mean "no CTA".
 		primaryCtaLabel?: string;
 		primaryCtaUrl?: string;
 		secondaryCtaLabel?: string;
 		secondaryCtaUrl?: string;
+		showAgentActions?: boolean;
+		agentPrompt?: string;
 		centered?: boolean;
 	};
 }
@@ -28,6 +31,8 @@ const announcement = {
 	tag: "Announcement",
 	label: "EmDash is live",
 };
+const defaultCopyPrompt = `I want to build a site with EmDash. Read https://emdashcms.com/start.md, inspect my project, and use what I have already told you. If my goal is unclear, ask one focused question. Make the content editable, run the site locally, and let me review it before deployment.`;
+const copyPrompt = node.agentPrompt?.trim() || defaultCopyPrompt;
 
 const primaryCta =
 	node.primaryCtaLabel && node.primaryCtaUrl
@@ -37,12 +42,13 @@ const secondaryCta =
 	node.secondaryCtaLabel && node.secondaryCtaUrl
 		? { label: node.secondaryCtaLabel, url: sanitizeHref(node.secondaryCtaUrl.trim()) }
 		: undefined;
+const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" && _key === "hero");
 ---
 
-<section class:list={["hero", { "hero-centered": centered }]} id={_key} aria-labelledby={headingId}>
+<section class:list={["hero", { "hero-centered": centered, "hero--split": Astro.url.pathname === "/" && !centered }]} id={_key} aria-labelledby={headingId}>
 	<div class="hero-section">
 		<div class="hero-container">
-			<div class="hero-copy">
+			<div class="hero-copy" data-copy-prompt-root>
 				<a href={announcement.href} class="hero-announcement">
 					<span class="hero-announcement-tag">{announcement.tag}</span>
 					<span class="hero-announcement-text">{announcement.label}</span>
@@ -51,17 +57,55 @@ const secondaryCta =
 				</a>
 				<h1 id={headingId} class="hero-headline">{headline}</h1>
 				{subheadline && <p class="hero-subheadline">{subheadline}</p>}
-				{(primaryCta || secondaryCta) && (
-					<div class="hero-actions">
-						{primaryCta && (
-							<a href={primaryCta.url} class="btn btn-primary btn-lg">
-								<span>{primaryCta.label}</span>
-							</a>
-						)}
-						{secondaryCta && (
-							<a href={secondaryCta.url} class="btn btn-secondary btn-lg">
-								<span>{secondaryCta.label}</span>
-							</a>
+				{(primaryCta || secondaryCta || showAgentActions) && (
+					<div class="hero-cta-group">
+						<div class="hero-actions">
+							{primaryCta && (
+								<a href={primaryCta.url} class="btn btn-primary btn-lg">
+									<span>{primaryCta.label}</span>
+								</a>
+							)}
+							{!showAgentActions && secondaryCta && (
+								<a href={secondaryCta.url} class="btn btn-secondary btn-lg">
+									<span>{secondaryCta.label}</span>
+								</a>
+							)}
+							{showAgentActions && (
+								<div class="hero-local-start">
+									<div class="hero-install-command">
+										<span class="hero-command-prompt" aria-hidden="true">$</span>
+										<code>npm create <span class="hero-command-package">emdash@latest</span></code>
+										<input type="text" readonly hidden aria-label="Scaffold command to copy manually" data-install-manual />
+										<button type="button" aria-label="Copy scaffold command" data-copy-install-command>
+											<svg class="hero-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
+											<svg class="hero-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+										</button>
+									</div>
+									<span class="hero-install-status" role="status" data-install-status></span>
+								</div>
+							)}
+						</div>
+						{showAgentActions && (
+							<div class="hero-agent-row">
+								<span class="hero-agent-label">Or build with an agent</span>
+								<div class="hero-copy-action">
+									<CopyPromptButton prompt={copyPrompt} />
+									<div class="hero-prompt-feedback" data-copy-prompt-feedback>
+										<p class="hero-prompt-preview" data-copy-prompt-preview aria-hidden="true">
+											<span class="hero-prompt-dash" aria-hidden="true"></span>
+											<span class="hero-prompt-preview-text">An EmDash starter for your agent: plan, build, preview locally.</span>
+										</p>
+										<p class="hero-prompt-copied" data-copy-prompt-copied aria-hidden="true">
+											<span class="hero-prompt-check">✓</span>
+											<span class="hero-prompt-message">Prompt copied. Paste it into your coding agent to begin.</span>
+										</p>
+										<p class="hero-prompt-failed" data-copy-prompt-failed aria-hidden="true" inert>
+											<span>Copy manually:</span>
+											<input type="text" value={copyPrompt} readonly aria-label="EmDash agent prompt to copy manually" data-copy-prompt-manual />
+										</p>
+									</div>
+								</div>
+							</div>
 						)}
 					</div>
 				)}
@@ -71,19 +115,19 @@ const secondaryCta =
 				<div class="hero-image-frame">
 					<Image
 						src={heroDashLight}
-						alt="EmDash CMS dashboard"
+						alt="EmDash post editor with draft content and publishing controls"
 						class="hero-image hero-image--light"
 						widths={[640, 960, 1280, 1600, 2000]}
-						sizes="(min-width: 1140px) 1096px, calc(100vw - 32px)"
+							sizes="(min-width: 1120px) 850px, calc(100vw - 32px)"
 						loading="eager"
 						fetchpriority="high"
 					/>
 					<Image
 						src={heroDashDark}
-						alt="EmDash CMS dashboard"
+						alt="EmDash post editor with draft content and publishing controls"
 						class="hero-image hero-image--dark"
 						widths={[640, 960, 1280, 1600, 2000]}
-						sizes="(min-width: 1140px) 1096px, calc(100vw - 32px)"
+							sizes="(min-width: 1120px) 850px, calc(100vw - 32px)"
 						loading="eager"
 						fetchpriority="high"
 					/>
@@ -93,10 +137,60 @@ const secondaryCta =
 	</div>
 </section>
 
+<script>
+	document.querySelectorAll<HTMLButtonElement>("[data-copy-install-command]").forEach((button) => {
+		const code = button.parentElement?.querySelector("code");
+		const manual = button.parentElement?.querySelector<HTMLInputElement>("[data-install-manual]");
+		const command = code?.textContent?.trim();
+		const status = button.closest(".hero-local-start")?.querySelector<HTMLElement>("[data-install-status]");
+		let resetTimer: number | undefined;
+		button.addEventListener("click", async () => {
+			window.clearTimeout(resetTimer);
+			try {
+				if (!command || !navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+				await navigator.clipboard.writeText(command);
+				if (manual) manual.hidden = true;
+				if (code) code.hidden = false;
+				button.classList.add("is-copied");
+				button.setAttribute("aria-label", "Scaffold command copied");
+				if (status) status.textContent = "Scaffold command copied";
+			} catch {
+				button.classList.remove("is-copied");
+				button.setAttribute("aria-label", "Copy scaffold command");
+				if (status) status.textContent = "Clipboard unavailable. Command selected for manual copy.";
+				if (command && manual && code) {
+					manual.value = command;
+					code.hidden = true;
+					manual.hidden = false;
+					manual.focus();
+					manual.select();
+				}
+				return;
+			}
+			resetTimer = window.setTimeout(() => {
+				button.classList.remove("is-copied");
+				button.setAttribute("aria-label", "Copy scaffold command");
+				if (status) status.textContent = "";
+			}, 3000);
+		});
+	});
+</script>
+
 <style>
 	.hero {
+		--marketing-text-secondary: #626262;
 		overflow: hidden;
 		background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+	}
+
+	:global(:root.dark) .hero {
+		--marketing-text-secondary: #b0b0b0;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .hero {
+			--marketing-text-secondary: #b0b0b0;
+		}
 	}
 
 	.hero-section {
@@ -115,11 +209,8 @@ const secondaryCta =
 		text-align: center;
 	}
 
-	.hero-centered .hero-actions {
-		justify-content: center;
-	}
-
 	.hero-copy {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
@@ -212,8 +303,13 @@ const secondaryCta =
 		margin-top: 0.75rem;
 		font-size: 0.9375rem;
 		line-height: 1.5;
-		color: color-mix(in srgb, var(--color-text) 62%, transparent);
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
 		text-wrap: balance;
+	}
+
+	.hero-cta-group {
+		position: relative;
+		width: 100%;
 	}
 
 	.hero-actions {
@@ -225,9 +321,244 @@ const secondaryCta =
 		gap: 0.75rem;
 	}
 
+	.hero-centered .hero-actions {
+		justify-content: center;
+	}
+
+	.hero-agent-label {
+		color: var(--marketing-text-secondary);
+		font-size: var(--font-size-sm);
+		line-height: 1.5;
+		white-space: nowrap;
+	}
+
+	.hero-agent-row {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.75rem;
+		margin-top: 1rem;
+	}
+
+	.hero-centered .hero-agent-row {
+		align-items: center;
+	}
+
 	.hero-actions :global(.btn) {
 		width: 100%;
+		min-height: 48px;
+		padding: 0.75rem 1.25rem;
+		border-radius: var(--button-radius);
 		white-space: nowrap;
+	}
+
+	.hero-actions :global(.btn-primary) {
+		color: #fff;
+	}
+
+	.hero-copy-action,
+	.hero-local-start {
+		width: 100%;
+	}
+
+	.hero-install-command {
+		display: inline-flex;
+		width: 100%;
+		min-height: 48px;
+		align-items: center;
+		gap: 0.5rem;
+		padding-inline-start: 0.75rem;
+		color: var(--color-text);
+		background: color-mix(in srgb, var(--color-surface) 94%, var(--color-text));
+		border: 0;
+		border-radius: var(--radius);
+		box-shadow:
+			0 0 0 1px var(--color-border),
+			0 1px 3px rgba(0, 0, 0, 0.12);
+	}
+
+	.hero-command-prompt {
+		color: var(--marketing-text-secondary);
+	}
+
+	.hero-install-command code {
+		font-size: 0.8125rem;
+		white-space: nowrap;
+		user-select: text;
+	}
+
+	.hero-install-command input {
+		min-width: 0;
+		flex: 1;
+		padding: 0;
+		color: var(--color-text);
+		background: transparent;
+		border: 0;
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+	}
+
+	.hero-install-command input[hidden] {
+		display: none;
+	}
+
+	.hero-install-command input:focus {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+
+	.hero-command-package {
+		color: var(--color-primary);
+		font-weight: 600;
+	}
+
+	.hero-install-command button {
+		display: grid;
+		width: 38px;
+		height: 48px;
+		flex: 0 0 auto;
+		place-items: center;
+		margin-inline-start: auto;
+		padding: 0;
+		color: var(--marketing-text-secondary);
+		background: transparent;
+		border: 0;
+		border-inline-start: 1px solid var(--color-border);
+		border-radius: 0 var(--radius) var(--radius) 0;
+		cursor: copy;
+	}
+
+	.hero-install-command button:hover,
+	.hero-install-command button.is-copied {
+		color: var(--color-primary);
+		background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+	}
+
+	.hero-install-command button:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+
+	.hero-install-command svg {
+		grid-area: 1 / 1;
+		width: 16px;
+		height: 16px;
+		transition: opacity var(--transition-fast), transform var(--transition-fast);
+	}
+
+	.hero-check-icon,
+	.hero-install-command .is-copied .hero-copy-icon {
+		opacity: 0;
+		transform: scale(0.7);
+	}
+
+	.hero-install-command .is-copied .hero-check-icon {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	.hero-install-status {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.hero-prompt-feedback {
+		position: absolute;
+		inset-block-start: calc(100% + var(--spacing-md));
+		inset-inline-start: 0;
+		width: min(43rem, calc(100vw - 2 * var(--spacing-lg)));
+		height: 1.5rem;
+		font-size: var(--font-size-sm);
+		line-height: 1.5;
+	}
+
+	.hero-centered .hero-prompt-feedback {
+		inset-inline-start: 50%;
+		transform: translateX(-50%);
+	}
+
+	.hero-prompt-feedback p {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		min-width: 0;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 0;
+		opacity: 0;
+		filter: blur(3px);
+		transform: translateY(12px);
+		pointer-events: none;
+	}
+
+	.hero-prompt-preview {
+		color: var(--marketing-text-secondary);
+	}
+
+	.hero-prompt-copied {
+		color: var(--marketing-text-secondary);
+	}
+
+	.hero-prompt-failed {
+		color: #b42318;
+	}
+
+	.hero-prompt-failed[aria-hidden="false"] {
+		pointer-events: auto;
+	}
+
+	.hero-prompt-failed input {
+		min-width: 0;
+		width: min(100%, 30rem);
+		height: 1.5rem;
+		padding: 0 0.5rem;
+		color: var(--color-text);
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		font: inherit;
+	}
+
+	:global(:root.dark) .hero-prompt-failed {
+		color: #f97066;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .hero-prompt-failed {
+			color: #f97066;
+		}
+	}
+
+	.hero-prompt-preview-text {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.hero-prompt-message {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.hero-prompt-dash {
+		width: 0.875rem;
+		height: 2px;
+		flex: 0 0 auto;
+		background: var(--color-primary);
+		border-radius: var(--radius-full);
+	}
+
+	.hero-prompt-check {
+		color: var(--color-primary);
+		font-weight: 600;
 	}
 
 	.hero-image-wrap {
@@ -288,7 +619,6 @@ const secondaryCta =
 		display: block;
 		width: 100%;
 		height: auto;
-		aspect-ratio: 5 / 3;
 	}
 
 	.hero-image-frame :global(.hero-image--dark) {
@@ -296,15 +626,30 @@ const secondaryCta =
 	}
 
 	@media (min-width: 640px) {
+		.hero-copy-action {
+			position: relative;
+		}
+
 		.hero-actions {
-			width: auto;
 			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: flex-start;
 		}
 
 		.hero-actions :global(.btn) {
 			width: fit-content;
 		}
 
+		.hero-copy-action,
+		.hero-local-start,
+		.hero-install-command {
+			width: auto;
+		}
+
+		.hero-prompt-feedback {
+			inset-inline-start: 0;
+			width: min(43rem, calc(100vw - 12rem));
+		}
 	}
 
 	@media (min-width: 1024px) {
@@ -327,6 +672,63 @@ const secondaryCta =
 		}
 	}
 
+	@media (min-width: 1120px) {
+		.hero--split .hero-container {
+			display: grid;
+			grid-template-columns: minmax(0, 535px) minmax(0, 1fr);
+			align-items: start;
+			gap: clamp(2rem, 3vw, 3.5rem);
+			min-height: 730px;
+			padding-top: 8rem;
+			padding-bottom: 0;
+		}
+
+		.hero--split .hero-container::before {
+			position: absolute;
+			z-index: 0;
+			inset-block-start: 3rem;
+			inset-inline-start: 48%;
+			width: min(80vw, 1000px);
+			height: 32rem;
+			background:
+				radial-gradient(ellipse 48% 32% at 43% 34%, color-mix(in srgb, var(--color-primary) 22%, transparent), transparent),
+				radial-gradient(ellipse 55% 50% at 69% 49%, color-mix(in srgb, var(--color-primary) 9%, transparent), transparent);
+			filter: blur(28px);
+			pointer-events: none;
+			content: "";
+		}
+
+		.hero--split .hero-copy {
+			z-index: 1;
+			padding-top: clamp(2rem, 4vw, 4rem);
+		}
+
+		.hero--split .hero-headline {
+			max-width: 32rem;
+			font-size: clamp(3.25rem, 4.4vw, 4.25rem);
+			line-height: 1.06;
+		}
+
+		.hero--split .hero-subheadline {
+			max-width: 30rem;
+			margin-top: 1.25rem;
+			font-size: 1.125rem;
+		}
+
+		.hero--split .hero-image-wrap {
+			z-index: 1;
+			width: clamp(780px, 57vw, 960px);
+			margin-top: 3rem;
+			padding: 4px;
+			-webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%);
+			mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%);
+		}
+
+		.hero--split .hero-image-frame {
+			border-radius: calc(var(--radius) + 8px);
+		}
+	}
+
 	@media (max-width: 640px) {
 		.hero-container {
 			padding-top: 7.5rem;
@@ -338,7 +740,8 @@ const secondaryCta =
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.hero-announcement {
+		.hero-announcement,
+		.hero-install-command svg {
 			transition: none;
 		}
 	}
