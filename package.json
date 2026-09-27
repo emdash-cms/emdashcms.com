@@ -6,10 +6,12 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "pnpm check:social && pnpm test:sitemap && astro build",
+    "build": "pnpm check:social && pnpm test:sitemap && pnpm test:home-content && astro build",
     "generate:social": "node scripts/generate-social-cards.mjs",
     "check:social": "node scripts/generate-social-cards.mjs --check",
     "test:sitemap": "node --test scripts/sitemap.test.mjs",
+    "test:home-content": "node --test scripts/home-content-plan.test.mjs",
+    "home:content": "node scripts/plan-home-content.mjs",
     "preview": "astro preview",
     "deploy": "pnpm build && wrangler deploy",
     "typecheck": "astro check"
