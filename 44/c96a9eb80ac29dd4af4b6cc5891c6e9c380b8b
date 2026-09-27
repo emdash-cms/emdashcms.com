@@ -1,0 +1,55 @@
+package.json
+  s_bf6c4e65e38922::t_9877ef1a496704 9-11,13,30
+pnpm-lock.yaml
+  s_bf6c4e65e38922::t_e7fecb5cca195c 203-205
+public/social/astro-cms.svg
+  s_bf6c4e65e38922::t_66135f933e33f2 1-26
+public/social/for-agents.svg
+  s_bf6c4e65e38922::t_28b5d489525291 1-19
+public/social/home.svg
+  s_bf6c4e65e38922::t_45f5f53707b512 1-21
+public/social/media-library.svg
+  s_bf6c4e65e38922::t_32e21cefa24d86 1-21
+scripts/generate-social-cards.mjs
+  s_bf6c4e65e38922::t_95fde7ee37c2a7 1-155
+scripts/social-cards.manifest.json
+  s_bf6c4e65e38922::t_ea9db84477ca6b 1-21
+src/components/AgentJourney.astro
+  s_bf6c4e65e38922::t_46dcf994c20eeb 1-113
+src/components/AstroPipeline.astro
+  s_bf6c4e65e38922::t_307848a74e4d02 1-124
+src/components/SiteFooter.astro
+  s_bf6c4e65e38922::t_f26e34e5e2c0eb 70-75,118-120
+src/components/SiteHeader.astro
+  s_bf6c4e65e38922::t_84f8725cb20d86 58-62,110-145,148-155,170-171,209-210,217,229-240,248-254,429-475,480-481,488,502-506,511,612,615,637
+src/layouts/Base.astro
+  s_bf6c4e65e38922::t_2d5ea365fd4e53 14,28,97-102
+src/pages/astro-cms.astro
+  s_bf6c4e65e38922::t_18dd7c976ab3a8 1-199
+src/pages/for-agents.astro
+  s_bf6c4e65e38922::t_a78a7bec34431e 1-240
+src/pages/index.astro
+  s_bf6c4e65e38922::t_f9dc7273316a06 17-18
+src/pages/media-library.astro
+  s_bf6c4e65e38922::t_348b60c2bc777a 1-245
+src/pages/sitemap-[collection].xml.ts
+  s_bf6c4e65e38922::t_c6af90fb25973a 1-5
+src/pages/sitemap.xml.ts
+  s_bf6c4e65e38922::t_971c3c988929f4 1-83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "44c96a9eb80ac29dd4af4b6cc5891c6e9c380b8b",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
