@@ -1,9 +1,13 @@
 ---
+import { sanitizeHref } from "emdash";
+
 interface Testimonial {
 	quote: string;
 	author: string;
 	role?: string;
 	company?: string;
+	context?: unknown;
+	referenceUrl?: unknown;
 }
 
 interface Props {
@@ -16,15 +20,10 @@ interface Props {
 
 const { node } = Astro.props;
 const { _key, headline, testimonials } = node;
+const headingId = `${_key ?? "testimonials"}-heading`;
 
 function getInitials(name: string) {
-	return name
-		.split(" ")
-		.map((part) => part[0])
-		.filter(Boolean)
-		.slice(0, 2)
-		.join("")
-		.toUpperCase();
+	return name.split(" ").map((part) => part[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
 }
 
 function getAttribution(testimonial: Testimonial) {
@@ -32,82 +31,83 @@ function getAttribution(testimonial: Testimonial) {
 	return testimonial.role || testimonial.company;
 }
 
-const testimonialItems = testimonials.map((testimonial) => ({
-	...testimonial,
-	attribution: getAttribution(testimonial),
-	initials: getInitials(testimonial.author),
-}));
+function trimmedString(value: unknown) {
+	return typeof value === "string" ? value.trim() : undefined;
+}
+
+function getHttpReference(value: unknown) {
+	const candidate = trimmedString(value);
+	if (!candidate) return undefined;
+	try {
+		const parsed = new URL(sanitizeHref(candidate));
+		return (parsed.protocol === "http:" || parsed.protocol === "https:") && parsed.hostname ? parsed.href : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+const mattQuote = "The entire functionality of WordPress, and then some.";
+const knownReferences: Record<string, { quote: string; url: string }> = {
+	"Matt Mullenweg": {
+		quote: mattQuote,
+		url: "https://www.therepository.email/matt-mullenweg-says-the-wheels-have-fallen-off-in-wide-ranging-wordpress-critique",
+	},
+	"Joost de Valk": {
+		quote: "The most interesting thing to happen to content management in years.",
+		url: "https://joost.blog/wordpress-refactor-not-redecorate/",
+	},
+	"Brian Coords": {
+		quote: "Getting from zero to a basic design is fast. I mean, really fast.",
+		url: "https://www.briancoords.com/emdash-first-thoughts-and-takeaways-for-wordpress/",
+	},
+};
+
+const testimonialItems = testimonials
+	.map((testimonial) => {
+		const known = knownReferences[testimonial.author];
+		const fallback = known?.quote === testimonial.quote ? known : undefined;
+		return {
+			...testimonial,
+			context: trimmedString(testimonial.context),
+			referenceUrl: getHttpReference(testimonial.referenceUrl) || getHttpReference(fallback?.url),
+			attribution: getAttribution(testimonial),
+			initials: getInitials(testimonial.author),
+		};
+	})
+	.filter((testimonial) => !(testimonial.author === "Matt Mullenweg" && testimonial.quote === mattQuote && !testimonial.referenceUrl));
 ---
 
-<section class="testimonials section" id={_key}>
-	<div class="testimonials-container container">
-		{headline && (
-			<header class="testimonials-header">
-				<h2 class="testimonials-headline">{headline}</h2>
-			</header>
-		)}
-		<div class="testimonials-grid">
-			{testimonialItems.map((testimonial) => (
-				<figure class="testimonial-item">
-					<blockquote class="testimonial-bubble">
-						<p>"{testimonial.quote}"</p>
-					</blockquote>
-					<figcaption class="testimonial-author">
-						<span class="testimonial-avatar testimonial-avatar-fallback" aria-hidden="true">
-							{testimonial.initials}
-						</span>
-						<span class="testimonial-meta">
-							<span class="testimonial-name">{testimonial.author}</span>
-							{testimonial.attribution && <span class="testimonial-role">{testimonial.attribution}</span>}
-						</span>
-					</figcaption>
-				</figure>
-			))}
+{testimonialItems.length > 0 && (
+	<section class="testimonials section" id={_key} aria-labelledby={headline ? headingId : undefined}>
+		<div class="testimonials-container container">
+			{headline && <header class="testimonials-header"><h2 id={headingId}>{headline}</h2></header>}
+			<div class="testimonials-grid">
+				{testimonialItems.map((testimonial) => (
+					<figure class="testimonial-item">
+						<blockquote class="testimonial-bubble" cite={testimonial.referenceUrl}><p>“{testimonial.quote}”</p></blockquote>
+						<figcaption class="testimonial-author">
+							<span class="testimonial-avatar" aria-hidden="true">{testimonial.initials}</span>
+							<span class="testimonial-meta">
+								<span class="testimonial-name">{testimonial.author}</span>
+								{testimonial.attribution && <span class="testimonial-role">{testimonial.attribution}</span>}
+								{testimonial.context && <span class="testimonial-context">{testimonial.context}</span>}
+							</span>
+						</figcaption>
+					</figure>
+				))}
+			</div>
 		</div>
-	</div>
-</section>
+	</section>
+)}
 
 <style>
-	.testimonials {
-		background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
-	}
-
-	.testimonials.section {
-		padding: var(--spacing-4xl) 0;
-	}
-
-	.testimonials-container {
-		max-width: var(--wide-width);
-	}
-
-	.testimonials-header {
-		max-width: none;
-		margin: 0 auto var(--spacing-3xl);
-		text-align: center;
-	}
-
-	.testimonials-headline {
-		font-size: clamp(1.25rem, 6vw, var(--font-size-4xl));
-		font-weight: 700;
-		line-height: 1.03;
-		letter-spacing: -0.045em;
-		text-wrap: balance;
-		white-space: nowrap;
-	}
-
-	.testimonials-grid {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: var(--spacing-lg);
-		align-items: stretch;
-	}
-
-	.testimonial-item {
-		display: flex;
-		flex-direction: column;
-		min-width: 0;
-	}
-
+	.testimonials { scroll-margin-top: 5.5rem; background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface)); }
+	.testimonials.section { padding: var(--spacing-4xl) 0; }
+	.testimonials-container { max-width: var(--wide-width); }
+	.testimonials-header { margin: 0 auto var(--spacing-3xl); text-align: center; }
+	.testimonials-header h2 { font-size: clamp(1.25rem, 6vw, var(--font-size-4xl)); font-weight: 700; line-height: 1.03; letter-spacing: -0.045em; text-wrap: balance; }
+	.testimonials-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--spacing-lg); align-items: stretch; }
+	.testimonial-item { display: flex; min-width: 0; flex-direction: column; }
 	.testimonial-bubble {
 		flex: 1;
 		padding: 0.75rem var(--spacing-md);
@@ -116,106 +116,31 @@ const testimonialItems = testimonials.map((testimonial) => ({
 		border: 1px solid transparent;
 		border-radius: var(--radius-lg);
 		border-bottom-left-radius: var(--radius-sm);
-		box-shadow:
-			0 0 0 1px color-mix(in srgb, var(--color-text) 10%, transparent),
-			var(--shadow-sm);
+		box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-text) 10%, transparent), var(--shadow-sm);
 	}
-
-	.testimonial-bubble p {
-		font-size: var(--font-size-base);
-		line-height: 1.65;
-	}
-
-	.testimonial-author {
-		display: flex;
-		align-items: center;
-		gap: 0.625rem;
-		margin-top: var(--spacing-md);
-		min-width: 0;
-	}
-
+	.testimonial-bubble p { font-size: var(--font-size-base); line-height: 1.65; }
+	.testimonial-author { display: flex; align-items: center; gap: 0.625rem; min-width: 0; margin-top: var(--spacing-md); }
 	.testimonial-avatar {
-		display: block;
+		display: inline-flex;
 		width: 2rem;
 		height: 2rem;
-		aspect-ratio: 1;
 		flex: 0 0 auto;
-		background: var(--color-surface);
-		border-radius: var(--radius-full);
-		object-fit: cover;
-		object-position: center;
-		border: 1px solid transparent;
-		box-shadow:
-			0 1px 2px rgba(0, 0, 0, 0.06),
-			0 0 0 1px color-mix(in srgb, var(--color-text) 10%, transparent);
-	}
-
-	.testimonial-avatar-fallback {
-		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		color: var(--color-primary);
+		color: var(--marketing-text-accent);
+		background: var(--heat-8);
+		border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+		border-radius: var(--radius-full);
 		font-size: 0.625rem;
 		font-weight: 700;
 		line-height: 1;
-		background: var(--heat-8);
 	}
-
-	.testimonial-meta {
-		display: flex;
-		width: 100%;
-		min-width: 0;
-		flex-direction: column;
-		gap: 0.125rem;
-	}
-
-	.testimonial-name {
-		font-weight: 600;
-		font-size: var(--font-size-sm);
-		line-height: 1.35;
-	}
-
-	.testimonial-role {
-		font-size: var(--font-size-sm);
-		line-height: 1.4;
-		color: var(--color-muted);
-	}
-
-	:global(:root.dark) .testimonial-bubble {
-		box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-text) 10%, transparent);
-	}
-
-	@media (prefers-color-scheme: dark) {
-		:global(:root:not(.light)) .testimonial-bubble {
-			box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-text) 10%, transparent);
-		}
-	}
-
-	@media (min-width: 768px) {
-		.testimonials.section {
-			padding: var(--spacing-4xl) 0;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.testimonials-headline {
-			font-size: 3.25rem;
-		}
-	}
-
-	@media (max-width: 900px) {
-		.testimonials-grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-
-	@media (max-width: 600px) {
-		.testimonials-header {
-			margin-bottom: var(--spacing-xl);
-		}
-
-		.testimonials-grid {
-			grid-template-columns: 1fr;
-		}
-	}
+	.testimonial-meta { display: flex; min-width: 0; flex-direction: column; gap: 0.125rem; }
+	.testimonial-name { font-size: var(--font-size-sm); font-weight: 600; line-height: 1.35; }
+	.testimonial-role, .testimonial-context { color: var(--marketing-text-secondary); font-size: var(--font-size-sm); line-height: 1.4; }
+	:global(:root.dark) .testimonial-bubble { box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-text) 10%, transparent); }
+	@media (prefers-color-scheme: dark) { :global(:root:not(.light)) .testimonial-bubble { box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-text) 10%, transparent); } }
+	@media (min-width: 1024px) { .testimonials-header h2 { font-size: 3.25rem; } }
+	@media (max-width: 900px) { .testimonials-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+	@media (max-width: 600px) { .testimonials-grid { grid-template-columns: 1fr; } .testimonials-header { margin-bottom: var(--spacing-xl); } }
 </style>

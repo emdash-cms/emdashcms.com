@@ -72,7 +72,7 @@ const definition: PluginDefinition = {
 			{
 				type: "marketing.features",
 				label: "Features",
-				description: "Grid of feature cards with icons",
+				description: "Three illustrated feature sections with supporting cards",
 				fields: [
 					{ type: "text_input", action_id: "headline", label: "Headline" },
 					{
@@ -124,6 +124,8 @@ const definition: PluginDefinition = {
 							{ type: "text_input", action_id: "author", label: "Author name" },
 							{ type: "text_input", action_id: "role", label: "Role / title" },
 							{ type: "text_input", action_id: "company", label: "Company" },
+							{ type: "text_input", action_id: "context", label: "Quote context (optional)" },
+							{ type: "text_input", action_id: "referenceUrl", label: "Reference URL" },
 						],
 					},
 				],
@@ -189,6 +191,7 @@ const definition: PluginDefinition = {
 						label: "Questions",
 						item_label: "Question",
 						min_items: 1,
+						initial_value: [{ question: "What is EmDash?", answer: "EmDash is an open source Astro CMS for humans and agents." }],
 						fields: [
 							{ type: "text_input", action_id: "question", label: "Question" },
 							{

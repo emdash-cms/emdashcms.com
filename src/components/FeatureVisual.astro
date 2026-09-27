@@ -1,0 +1,314 @@
+---
+import AgentLogos from "./AgentLogos.astro";
+
+interface Props {
+	scene: number;
+	compact?: boolean;
+}
+
+const { scene, compact = false } = Astro.props;
+---
+
+{compact ? (
+	<div class="feature-compact" aria-hidden="true">
+		{scene === 0 && (
+			<div class="compact-pipeline">
+				<div class="pipeline-file">
+					<div class="pipeline-file-bar"><img class="astro-logo--light" src="/brand/products/astro-logo-dark.svg" alt="" width="75" height="26" /><img class="astro-logo--dark" src="/brand/products/astro-logo-light-gradient.svg" alt="" width="75" height="26" /><span>blog/[slug].astro</span></div>
+					<code>getEmDashEntry(<em>"posts"</em>, slug)</code>
+				</div>
+				<svg class="pipeline-arrow" viewBox="0 0 16 28" fill="none"><path d="M8 1v24m-6-6 6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+				<div class="pipeline-page"><span class="pipeline-page-bar"><i></i><i></i><i></i></span><strong>EmDash is live</strong><span class="pipeline-page-rule"></span><span class="pipeline-page-rule pipeline-page-rule--short"></span></div>
+			</div>
+		)}
+		{scene === 1 && (
+			<div class="compact-editor">
+				<div class="mini-editor-bar"><span>← &nbsp; Edit Post</span><span class="mini-saved">✓ Saved</span></div>
+				<div class="mini-editor-field"><span>Title</span><strong>EmDash is live<span class="mini-caret"></span></strong></div>
+				<div class="mini-editor-field"><span>Excerpt</span><strong>A quick look at what EmDash is.</strong></div>
+				<div class="mini-editor-status"><span class="mini-draft-dot"></span> Draft version <span>Not live</span></div>
+			</div>
+		)}
+		{scene === 2 && (
+			<div class="compact-plugins">
+				<div class="plugin-hub"><img src="/brand/favicon.svg" alt="" width="28" height="28" /><span><strong>EmDash plugin</strong><small>One extension surface</small></span></div>
+				<svg class="plugin-branches" viewBox="0 0 300 52" preserveAspectRatio="none" fill="none"><path d="M150 0v18H50q-7 0-7 7v26m107-33v33m0-33h100q7 0 7 7v26" stroke="currentColor" stroke-width="1.5" /><path class="plugin-travel" d="M150 0v18H50q-7 0-7 7v26m107-33v33m0-33h100q7 0 7 7v26" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 9" /></svg>
+				<div class="plugin-capabilities">
+					<span><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 9h18" stroke="currentColor" stroke-width="1.5"/></svg><strong>Admin UI</strong></span>
+					<span><svg viewBox="0 0 24 24" fill="none"><path d="M8 4v8a4 4 0 0 0 8 0V4M5 7h6m2 0h6M12 16v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><strong>Hooks</strong></span>
+					<span><svg viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="5" rx="8" ry="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" stroke="currentColor" stroke-width="1.5"/></svg><strong>Storage</strong></span>
+				</div>
+			</div>
+		)}
+	</div>
+) : (
+	<figure class:list={["feature-stage", `feature-stage--${scene}`]}>
+		{scene === 0 && (
+			<>
+				<figcaption><span class="stage-dot"></span> Access is declared, not assumed <span class="stage-meta">01 / isolate</span></figcaption>
+				<div class="plugin-art" aria-hidden="true">
+					<svg class="plugin-wires" viewBox="0 0 680 360" preserveAspectRatio="none" fill="none">
+						<path d="M334 145h96q20 0 20 20v70h69" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 7" />
+						<circle class="signal" cx="450" cy="190" r="4" fill="currentColor" />
+					</svg>
+					<div class="plugin-manifest">
+						<div class="manifest-bar"><span class="manifest-glyph">{`{}`}</span><span>emdash-plugin.jsonc</span><span class="manifest-meta">manifest</span></div>
+						<div class="manifest-body"><span>capabilities</span><strong>content:read</strong><span>allowedHosts</span><strong>[]</strong></div>
+					</div>
+					<div class="plugin-sandbox">
+						<div class="sandbox-label"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2 4 5v6c0 5.2 3.1 8.8 8 11 4.9-2.2 8-5.8 8-11V5l-8-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg> Sandboxed plugin</div>
+						<strong>Isolated runtime</strong>
+						<div class="sandbox-capability"><span>✓</span> Content read <small>Declared</small></div>
+						<div class="sandbox-capability sandbox-capability--denied"><span>×</span> Network access <small>Not granted</small></div>
+					</div>
+				</div>
+			</>
+		)}
+		{scene === 1 && (
+			<>
+				<figcaption><span class="stage-dot"></span> Familiar publishing, modern architecture <span class="stage-meta">02 / build</span></figcaption>
+				<div class="cloud-art" aria-hidden="true">
+					<div class="cloud-grid"></div>
+					<svg class="cloud-wires" viewBox="0 0 680 350" preserveAspectRatio="none" fill="none">
+						<path class="wire" d="M340 128V96Q340 76 320 76H146Q126 76 126 96V111" />
+						<path class="wire" d="M340 128V96Q340 76 360 76H534Q554 76 554 96V111" />
+						<path class="wire" d="M340 232V252Q340 272 320 272H146Q126 272 126 252V237" />
+						<path class="wire" d="M340 232V252Q340 272 360 272H534Q554 272 554 252V237" />
+						<path class="wire-travel" d="M340 128V96Q340 76 320 76H146Q126 76 126 96V111" />
+						<path class="wire-travel" d="M340 232V252Q340 272 360 272H534Q554 272 554 252V237" />
+					</svg>
+					<div class="cloud-node cloud-node--center"><span class="node-mark"><img class="cloud-icon" src="/brand/products/workers.svg" alt="" width="26" height="26" /></span><strong>Workers</strong><small>Site + CMS</small></div>
+					<div class="cloud-node cloud-node--d1"><span class="node-mark"><img class="cloud-icon" src="/brand/products/d1.svg" alt="" width="26" height="26" /></span><strong>D1</strong><small>Content</small></div>
+					<div class="cloud-node cloud-node--r2"><span class="node-mark"><img class="cloud-icon" src="/brand/products/r2.svg" alt="" width="26" height="26" /></span><strong>R2</strong><small>Media</small></div>
+					<div class="cloud-node cloud-node--astro"><span class="node-mark node-mark--astro"><img class="astro-logo--light" src="/brand/products/astro-logo-dark.svg" alt="" width="86" height="30" /><img class="astro-logo--dark" src="/brand/products/astro-logo-light-gradient.svg" alt="" width="86" height="30" /></span><strong>Astro</strong><small>Pages</small></div>
+					<div class="cloud-node cloud-node--editor"><span class="node-mark"><img src="/brand/favicon.svg" alt="" width="26" height="26" /></span><strong>EmDash</strong><small>Editor</small></div>
+				</div>
+			</>
+		)}
+		{scene === 2 && (
+			<>
+				<figcaption><span class="stage-dot"></span> Agent drafts. Editor reviews and publishes. <span class="stage-meta">03 / collaborate</span></figcaption>
+				<div class="agent-art" aria-hidden="true">
+					<svg class="agent-wires" viewBox="0 0 680 340" preserveAspectRatio="none" fill="none">
+						<path d="M148 235V160Q148 125 183 125H254" />
+						<path d="M426 125H497Q532 125 532 160V235" />
+						<path class="agent-flow" d="M148 235V160Q148 125 183 125H254" />
+						<path class="agent-flow agent-flow--review" d="M426 125H497Q532 125 532 160V235" />
+					</svg>
+					<div class="content-record">
+						<div class="record-top"><span class="record-kicker"><img src="/brand/favicon.svg" alt="" width="16" height="16" /> EmDash CMS</span><span class="record-version">Draft</span></div>
+						<span class="record-path">Posts / Edit Post</span>
+						<strong>EmDash is live</strong>
+						<div class="record-field"><span>Title</span><b>EmDash is live</b></div>
+						<div class="record-preview"><span>Excerpt</span><i></i><i></i></div>
+						<div class="record-footer"><span>✓ Saved draft</span><span>Preview ↗</span></div>
+					</div>
+					<div class="actor actor--agent"><span class="actor-step">01 / AGENT</span><AgentLogos /><span class="actor-name">Agent via MCP</span><span class="actor-detail">Prepares draft content</span></div>
+					<div class="actor actor--human"><span class="actor-step">02 / EDITOR</span><span class="actor-icon">◎</span><span class="actor-name">EmDash editor</span><span class="actor-detail">Reviews, then publishes</span></div>
+				</div>
+			</>
+		)}
+	</figure>
+)}
+
+<style>
+	.feature-stage {
+		--art-muted: var(--marketing-text-secondary);
+		--art-line: color-mix(in srgb, var(--color-text) 11%, transparent);
+		position: relative;
+		min-height: 27rem;
+		overflow: hidden;
+		margin: 0;
+		background: color-mix(in srgb, var(--color-surface) 78%, var(--color-bg));
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+	}
+	.feature-stage figcaption {
+		position: relative;
+		z-index: 2;
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		padding: 1.25rem clamp(1.25rem, 3vw, 2rem);
+		color: var(--art-muted);
+		font-size: 0.75rem;
+		font-weight: 550;
+		letter-spacing: 0.005em;
+	}
+	.stage-dot { width: 0.43rem; height: 0.43rem; flex: none; background: var(--color-primary); border-radius: 50%; box-shadow: 0 0 0 4px var(--heat-12); }
+	.stage-meta { margin-inline-start: auto; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.7rem; opacity: 0.75; white-space: nowrap; }
+	.plugin-art, .cloud-art, .agent-art { position: relative; height: 22.5rem; }
+	.plugin-art { background: radial-gradient(ellipse at 72% 50%, var(--heat-12), transparent 52%); }
+	.plugin-wires, .cloud-wires, .agent-wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+	.plugin-wires { color: var(--color-primary); }
+	.plugin-manifest, .plugin-sandbox { position: absolute; background: var(--color-surface); border: 1px solid var(--art-line); border-radius: 0.7rem; box-shadow: 0 18px 48px color-mix(in srgb, var(--color-text) 9%, transparent); }
+	.plugin-manifest { top: 1.35rem; left: 5%; width: 53%; min-width: 18rem; }
+	.manifest-bar { display: flex; align-items: center; gap: 0.55rem; padding: 0.8rem 0.9rem; border-bottom: 1px solid var(--art-line); font-size: 0.71rem; font-weight: 600; white-space: nowrap; }
+	.manifest-glyph { display: grid; width: 1.3rem; height: 1.3rem; place-items: center; color: var(--color-primary); background: var(--heat-8); border-radius: 0.3rem; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.65rem; }
+	.manifest-meta { margin-inline-start: auto; color: var(--art-muted); font-size: 0.6rem; font-weight: 400; }
+	.manifest-body { display: grid; gap: 0.55rem; padding: 1rem; font-family: ui-monospace, SFMono-Regular, monospace; }
+	.manifest-body > span { color: var(--art-muted); font-size: 0.65rem; }
+	.manifest-body strong { width: fit-content; padding: 0.32rem 0.45rem; color: var(--marketing-text-accent); background: var(--heat-8); border-radius: 0.3rem; font-size: 0.69rem; font-weight: 600; }
+	.plugin-sandbox { right: 5%; bottom: 1.4rem; width: 45%; min-width: 14rem; padding: 1rem; border-color: var(--heat-40); }
+	.sandbox-label { display: flex; align-items: center; gap: 0.5rem; color: var(--marketing-text-accent); font-size: 0.63rem; font-weight: 600; }
+	.sandbox-label svg { width: 1.3rem; height: 1.3rem; }
+	.plugin-sandbox > strong { display: block; margin: 0.9rem 0 0.7rem; font-size: 1rem; font-weight: 600; letter-spacing: -0.025em; }
+	.sandbox-capability { display: flex; align-items: center; gap: 0.4rem; padding: 0.55rem 0; border-top: 1px solid var(--art-line); font-size: 0.66rem; }
+	.sandbox-capability > span { color: var(--color-primary); font-size: 0.9rem; }
+	.sandbox-capability small { margin-inline-start: auto; color: var(--art-muted); font-size: 0.59rem; }
+	.sandbox-capability--denied { color: var(--art-muted); }
+	.sandbox-capability--denied > span { color: var(--art-muted); }
+	.cloud-art { background: radial-gradient(circle at 50% 49%, var(--heat-12), transparent 39%); }
+	.cloud-grid { position: absolute; inset: 0; background-image: radial-gradient(var(--art-line) 0.7px, transparent 0.7px); background-size: 18px 18px; mask-image: radial-gradient(ellipse at center, black, transparent 75%); }
+	.cloud-wires .wire, .agent-wires path { stroke: var(--art-line); stroke-width: 2; }
+	.cloud-wires .wire-travel, .agent-wires .agent-flow { stroke: var(--color-primary); stroke-width: 2; stroke-dasharray: 5 9; }
+	.cloud-node {
+		position: absolute; display: flex; min-width: 6.5rem; align-items: center; flex-direction: column;
+		gap: 0.16rem; padding: 0.9rem 1rem;
+		background: var(--color-surface); border: 1px solid var(--art-line);
+		border-radius: 0.8rem; box-shadow: 0 12px 35px color-mix(in srgb, var(--color-text) 6%, transparent);
+	}
+	.node-mark { display: grid; width: 1.65rem; height: 1.65rem; place-items: center; }
+	.node-mark img { display: block; width: 1.55rem; height: 1.55rem; object-fit: contain; }
+	.node-mark--astro { width: 5.4rem; height: 1.86rem; }
+	.node-mark--astro img { width: 5.35rem; height: 1.86rem; }
+	.astro-logo--dark { display: none !important; }
+	:global(:root.dark) .astro-logo--light { display: none; }
+	:global(:root.dark) .astro-logo--dark { display: block !important; }
+	:global(:root.dark) .cloud-icon { filter: invert(1); }
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .astro-logo--light { display: none; }
+		:global(:root:not(.light)) .astro-logo--dark { display: block !important; }
+		:global(:root:not(.light)) .cloud-icon { filter: invert(1); }
+	}
+	.cloud-node strong { font-size: 0.78rem; font-weight: 650; }
+	.cloud-node small { color: var(--art-muted); font-size: 0.65rem; }
+	.cloud-node--center { top: 50%; left: 50%; min-width: 8.5rem; padding: 1.1rem; border-color: var(--heat-40); transform: translate(-50%, -50%); box-shadow: 0 0 0 7px var(--heat-8), 0 18px 44px color-mix(in srgb, var(--color-text) 8%, transparent); }
+	.cloud-node--d1 { top: 9%; left: 10%; }
+	.cloud-node--r2 { top: 9%; right: 10%; }
+	.cloud-node--astro { bottom: 10%; left: 10%; }
+	.cloud-node--editor { bottom: 10%; right: 10%; }
+	.feature-stage--2 {
+		background: radial-gradient(ellipse at 50% 40%, var(--heat-12), transparent 65%), var(--color-surface);
+	}
+	:global(:root.dark) .feature-stage--2 {
+		--art-muted: #bfc0c5; --art-line: #ffffff24; --color-text: #f7f7f8; --color-surface: #25262b; --color-primary: #ff8553;
+		background: #1b1c20; border-color: #36373b;
+	}
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .feature-stage--2 {
+			--art-muted: #bfc0c5; --art-line: #ffffff24; --color-text: #f7f7f8; --color-surface: #25262b; --color-primary: #ff8553;
+			background: #1b1c20; border-color: #36373b;
+		}
+	}
+	.agent-art { height: 27rem; background: radial-gradient(ellipse at 50% 25%, var(--heat-12), transparent 60%); }
+	.agent-wires { top: 0; height: 100%; color: var(--art-line); }
+	.agent-wires path { stroke: currentColor; stroke-width: 1.5; }
+	.agent-wires .agent-flow { color: var(--color-primary); stroke-dasharray: 3 9; stroke-width: 2; }
+	.content-record {
+		position: absolute; top: 1.25rem; left: 50%; display: flex; width: min(55%, 18rem); min-width: 12.5rem; flex-direction: column; align-items: flex-start;
+		padding: 0 1rem 0.9rem; color: var(--color-text); background: var(--color-surface); border: 1px solid var(--art-line); border-radius: 0.65rem;
+		box-shadow: 0 20px 48px color-mix(in srgb, var(--color-text) 12%, transparent); transform: translateX(-50%);
+	}
+	.record-top { display: flex; width: calc(100% + 2rem); min-height: 2.6rem; align-items: center; justify-content: space-between; gap: 0.5rem; margin-inline: -1rem; padding-inline: 1rem; border-bottom: 1px solid var(--art-line); }
+	.record-kicker { display: flex; align-items: center; gap: 0.4rem; font-size: 0.59rem; font-weight: 600; white-space: nowrap; }
+	.record-kicker img { width: 1rem; height: 1rem; }
+	.record-version { color: var(--marketing-text-accent); font-size: 0.55rem; font-weight: 600; }
+	.record-path { margin-top: 0.75rem; color: var(--art-muted); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.54rem; }
+	.content-record strong { margin-top: 0.4rem; font-size: 0.85rem; letter-spacing: -0.02em; }
+	.record-field, .record-preview { display: flex; width: 100%; flex-direction: column; gap: 0.3rem; margin-top: 0.75rem; }
+	.record-field span, .record-preview span { color: var(--art-muted); font-size: 0.55rem; }
+	.record-field b { padding: 0.4rem 0.5rem; border: 1px solid var(--art-line); border-radius: 0.3rem; font-size: 0.61rem; font-weight: 500; }
+	.record-preview { gap: 0.25rem; padding: 0; border: 0; }
+	.record-preview i { width: 93%; height: 0.2rem; background: var(--art-line); border-radius: 1rem; }
+	.record-preview i:last-child { width: 64%; }
+	.record-footer { display: flex; width: 100%; justify-content: space-between; gap: 0.5rem; margin-top: 0.8rem; padding-top: 0.65rem; border-top: 1px solid var(--art-line); color: var(--art-muted); font-size: 0.57rem; white-space: nowrap; }
+	.record-footer span:last-child { color: var(--marketing-text-accent); }
+	.actor { position: absolute; bottom: 1.7rem; display: flex; width: 37%; max-width: 13rem; flex-direction: column; gap: 0.2rem; padding: 1rem; color: var(--color-text); background: var(--color-surface); border: 1px solid var(--art-line); border-radius: 0.7rem; box-shadow: 0 12px 35px color-mix(in srgb, var(--color-text) 12%, transparent); }
+	.actor--agent { left: 5%; --agent-logo-size: 1rem; }
+	.actor--agent :global(.agent-logos) { margin: 0.3rem 0; }
+	.actor--human { right: 5%; }
+	.actor-step { color: var(--art-muted); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.58rem; letter-spacing: 0.04em; }
+	.actor-icon { color: var(--marketing-text-accent); font-size: 1.35rem; }
+	.actor-name { font-size: 0.78rem; font-weight: 650; }
+	.actor-detail { color: var(--art-muted); font-size: 0.63rem; }
+	.feature-compact { width: 100%; padding-top: 2rem; color: var(--color-text); }
+	.compact-pipeline { display: grid; justify-items: center; padding: 0.9rem; background: radial-gradient(ellipse at 50% 50%, var(--heat-8), transparent 72%), color-mix(in srgb, var(--color-bg) 70%, var(--color-surface)); border: 1px solid var(--color-border); border-radius: 0.65rem; }
+	.pipeline-file, .pipeline-page { width: 100%; max-width: 17rem; overflow: hidden; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.45rem; box-shadow: 0 10px 24px color-mix(in srgb, var(--color-text) 5%, transparent); }
+	.pipeline-file-bar { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--color-border); }
+	.pipeline-file-bar img { width: 2.8rem; height: 1rem; object-fit: contain; }
+	.pipeline-file-bar span { min-width: 0; overflow: hidden; color: var(--marketing-text-secondary); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.55rem; text-overflow: ellipsis; white-space: nowrap; }
+	.pipeline-file code { display: block; overflow: hidden; padding: 0.7rem 0.6rem; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.62rem; text-overflow: ellipsis; white-space: nowrap; }
+	.pipeline-file code em { color: var(--marketing-text-accent); font-style: normal; }
+	.pipeline-arrow { width: 1rem; height: 1.5rem; color: var(--marketing-text-accent); }
+	.pipeline-page { display: flex; min-height: 4.6rem; flex-direction: column; gap: 0.33rem; padding: 0.5rem 0.65rem; }
+	.pipeline-page-bar { display: flex; gap: 0.2rem; padding-bottom: 0.35rem; border-bottom: 1px solid var(--color-border); }
+	.pipeline-page-bar i { width: 0.22rem; height: 0.22rem; background: var(--color-border); border-radius: 50%; }
+	.pipeline-page-bar i:first-child { background: var(--marketing-text-accent); }
+	.pipeline-page strong { font-size: 0.67rem; font-weight: 600; }
+	.pipeline-page-rule { width: 80%; height: 0.2rem; background: var(--color-border); border-radius: 1rem; }
+	.pipeline-page-rule--short { width: 55%; }
+	.compact-editor { overflow: hidden; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.65rem; }
+	.mini-editor-bar { display: flex; justify-content: space-between; gap: 0.5rem; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--color-border); font-size: 0.68rem; font-weight: 600; }
+	.mini-saved { color: var(--art-muted); font-size: 0.6rem; font-weight: 500; }
+	.mini-editor-field { display: grid; gap: 0.3rem; margin: 0.7rem 0.9rem; }
+	.mini-editor-field > span { color: var(--art-muted); font-size: 0.56rem; font-weight: 600; }
+	.mini-editor-field strong { overflow: hidden; padding: 0.48rem 0.6rem; border: 1px solid var(--color-border); border-radius: 0.3rem; font-size: 0.68rem; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+	.mini-editor-field:first-of-type strong { border-color: var(--heat-40); }
+	.mini-caret { display: inline-block; width: 1px; height: 0.75rem; margin-inline-start: 0.16rem; background: var(--color-primary); vertical-align: -0.1rem; }
+	.mini-editor-status { display: flex; align-items: center; gap: 0.35rem; padding: 0.65rem 0.9rem; border-top: 1px solid var(--color-border); font-size: 0.58rem; font-weight: 600; }
+	.mini-editor-status span:last-child { margin-inline-start: auto; color: var(--art-muted); font-weight: 400; }
+	.mini-draft-dot { width: 0.4rem; height: 0.4rem; background: var(--color-primary); border-radius: 50%; }
+	.compact-plugins { position: relative; min-height: 11.2rem; overflow: hidden; padding: 1rem; background: radial-gradient(ellipse at 50% 62%, var(--heat-12), transparent 65%), color-mix(in srgb, var(--color-bg) 70%, var(--color-surface)); border: 1px solid var(--color-border); border-radius: 0.65rem; }
+	.plugin-hub { position: relative; z-index: 1; display: flex; width: fit-content; align-items: center; gap: 0.55rem; margin: 0 auto; padding: 0.5rem 0.75rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.5rem; box-shadow: 0 8px 22px color-mix(in srgb, var(--color-text) 6%, transparent); }
+	.plugin-hub img { width: 1.5rem; height: 1.5rem; }
+	.plugin-hub span { display: flex; flex-direction: column; gap: 0.12rem; }
+	.plugin-hub strong { font-size: 0.68rem; font-weight: 600; }
+	.plugin-hub small { color: var(--marketing-text-secondary); font-size: 0.52rem; }
+	.plugin-branches { position: absolute; top: 3.6rem; left: 1.2rem; width: calc(100% - 2.4rem); height: 3.2rem; color: var(--color-border); }
+	.plugin-branches .plugin-travel { color: var(--color-primary); stroke: currentColor; }
+	.plugin-capabilities { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem; margin-top: 3.35rem; }
+	.plugin-capabilities span { display: flex; min-width: 0; min-height: 3.5rem; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; padding: 0.4rem 0.2rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.4rem; box-shadow: 0 8px 20px color-mix(in srgb, var(--color-text) 5%, transparent); }
+	.plugin-capabilities svg { width: 1.1rem; height: 1.1rem; color: var(--marketing-text-accent); }
+	.plugin-capabilities strong { font-size: 0.58rem; font-weight: 600; white-space: nowrap; }
+	@media (max-width: 600px) {
+		.feature-stage { min-height: 24rem; }
+		.plugin-art, .cloud-art, .agent-art { height: 20rem; }
+		.plugin-manifest { left: 4%; min-width: 0; width: 69%; }
+		.plugin-sandbox { right: 3%; min-width: 0; width: 61%; }
+		.manifest-bar { padding: 0.6rem; font-size: 0.55rem; }
+		.manifest-meta { display: none; }
+		.manifest-body { padding: 0.65rem; }
+		.manifest-body > span, .manifest-body strong { font-size: 0.57rem; }
+		.plugin-sandbox { padding: 0.75rem; }
+		.sandbox-capability { font-size: 0.56rem; }
+		.sandbox-capability small { font-size: 0.5rem; }
+		.cloud-node { min-width: 4.8rem; padding: 0.65rem; }
+		.cloud-node--d1, .cloud-node--astro { left: 4%; }
+		.cloud-node--r2, .cloud-node--editor { right: 4%; }
+		.cloud-node--center { min-width: 6.5rem; }
+		.actor { width: 42%; padding: 0.7rem; }
+		.actor-detail { font-size: 0.56rem; }
+		.feature-stage--2 { min-height: 30rem; }
+		.feature-stage--2 .agent-art { height: 27rem; }
+	}
+	@media (max-width: 380px) {
+		.plugin-art { height: 28rem; }
+		.plugin-wires { display: none; }
+		.plugin-manifest { top: 0.6rem; left: 5%; width: 90%; }
+		.plugin-sandbox { right: 5%; bottom: 0.6rem; width: 80%; }
+		.feature-stage--2 figcaption { align-items: flex-start; }
+		.feature-stage--2 .stage-dot { margin-top: 0.3rem; }
+		.feature-stage--2 .stage-meta { display: none; }
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.plugin-wires .signal { animation: signal 3s ease-in-out infinite; }
+		.plugin-travel { animation: travel 5s linear infinite; }
+		.cloud-wires .wire-travel, .agent-wires .agent-flow { animation: travel 5s linear infinite; }
+		.agent-wires .agent-flow--review { animation-delay: -2.5s; }
+		.mini-caret { animation: blink 1.15s step-end infinite; }
+	}
+	@keyframes signal { 50% { opacity: 0.35; transform: translateY(18px); } }
+	@keyframes travel { to { stroke-dashoffset: -28; } }
+	@keyframes blink { 50% { opacity: 0; } }
+</style>

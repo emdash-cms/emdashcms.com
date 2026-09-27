@@ -1,0 +1,63 @@
+<div class="intro-visual" aria-hidden="true">
+	<div class="intro-canvas">
+		<div class="editor-shell">
+			<div class="shell-top"><img src="/brand/favicon.svg" alt="" width="18" height="18" /><span>EmDash CMS</span><span class="shell-divider"></span><span class="shell-crumb">Posts / Edit Post</span><span class="saved-pill">✓ Saved</span></div>
+			<div class="shell-body">
+				<div class="shell-main">
+					<strong>Edit Post</strong>
+					<span class="field-label">Title</span><span class="field-input field-input--active">EmDash is live<span class="field-caret"></span></span>
+					<span class="field-label">Excerpt</span><span class="field-input field-excerpt">A quick look at what EmDash is, and where to go next.</span>
+					<span class="field-label">Content</span><span class="field-toolbar"><b>B</b><i>I</i><span>H⌄</span><span>≡</span><span>▧</span></span>
+				</div>
+				<div class="shell-publish"><strong>Publish</strong><span class="field-label">Slug</span><span class="slug-field">emdash-is-live</span><span class="draft-state"><span class="draft-dot"></span><span><b>Draft version</b><small>Not visible to visitors</small></span></span><span class="preview-link">Preview <span>↗</span></span></div>
+			</div>
+		</div>
+		<div class="canvas-caption"><span></span> Edit the draft. Keep the live page.</div>
+	</div>
+</div>
+
+<style>
+	.intro-visual { min-width: 0; width: 100%; }
+	.intro-canvas { position: relative; display: grid; width: 100%; max-width: 35rem; min-height: 21rem; place-items: center; margin-inline: auto; background: radial-gradient(ellipse at 50% 50%, var(--heat-12), transparent 61%); }
+	.intro-canvas::before { position: absolute; inset: 0; background-image: radial-gradient(var(--color-border) 0.7px, transparent 0.7px); background-size: 20px 20px; content: ""; mask-image: radial-gradient(ellipse at center, #0009, transparent 72%); }
+	.editor-shell { position: relative; width: 96%; height: 17.8rem; overflow: hidden; background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: 0.75rem; box-shadow: 0 22px 50px color-mix(in srgb, var(--color-text) 12%, transparent); }
+	.shell-top { display: flex; height: 2.55rem; align-items: center; gap: 0.45rem; padding: 0 0.75rem; border-bottom: 1px solid var(--color-border); font-size: 0.61rem; font-weight: 600; white-space: nowrap; }
+	.shell-top img { flex: none; }
+	.shell-divider { width: 1px; height: 0.8rem; margin-inline: 0.3rem; background: var(--color-border); }
+	.shell-crumb { overflow: hidden; color: var(--color-muted); font-weight: 450; text-overflow: ellipsis; }
+	.saved-pill { margin-inline-start: auto; padding: 0.27rem 0.45rem; color: var(--color-muted); border: 1px solid var(--color-border); border-radius: 0.3rem; font-size: 0.53rem; }
+	.shell-body { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.9fr); height: calc(100% - 2.55rem); }
+	.shell-main { display: flex; min-width: 0; flex-direction: column; padding: 1rem; }
+	.shell-main > strong { margin-bottom: 0.5rem; font-size: 0.86rem; font-weight: 600; }
+	.field-label { margin: 0.55rem 0 0.27rem; color: var(--color-muted); font-size: 0.55rem; font-weight: 600; }
+	.field-input, .slug-field { display: block; overflow: hidden; padding: 0.48rem 0.55rem; border: 1px solid var(--color-border); border-radius: 0.32rem; font-size: 0.61rem; text-overflow: ellipsis; white-space: nowrap; }
+	.field-input--active { border-color: var(--heat-40); box-shadow: 0 0 0 2px var(--heat-8); }
+	.field-caret { display: inline-block; width: 1px; height: 0.7rem; margin-inline-start: 0.2rem; background: var(--color-primary); vertical-align: -0.12rem; }
+	.field-excerpt { min-height: 3.1rem; white-space: normal; line-height: 1.4; }
+	.field-toolbar { display: flex; gap: 0.7rem; margin-top: 0.1rem; padding: 0.45rem 0.55rem; border: 1px solid var(--color-border); border-radius: 0.32rem; font-size: 0.62rem; }
+	.shell-publish { display: flex; min-width: 0; flex-direction: column; padding: 1rem 0.75rem; border-left: 1px solid var(--color-border); }
+	.shell-publish > strong { margin-bottom: 0.45rem; font-size: 0.68rem; font-weight: 600; }
+	.slug-field { padding: 0.42rem; font-size: 0.55rem; }
+	.draft-state { display: flex; align-items: flex-start; gap: 0.4rem; margin-top: 0.9rem; padding: 0.6rem 0.4rem; border: 1px solid var(--color-border); border-radius: 0.35rem; }
+	.draft-dot { width: 0.4rem; height: 0.4rem; flex: none; margin-top: 0.1rem; background: var(--color-primary); border-radius: 50%; }
+	.draft-state b, .draft-state small { display: block; }
+	.draft-state b { font-size: 0.57rem; font-weight: 600; }
+	.draft-state small { margin-top: 0.2rem; color: var(--color-muted); font-size: 0.5rem; line-height: 1.35; }
+	.preview-link { display: flex; justify-content: space-between; margin-top: auto; padding: 0.4rem 0.5rem; border: 1px solid var(--color-border); border-radius: 0.3rem; font-size: 0.57rem; font-weight: 600; }
+	.preview-link span { color: var(--color-primary); }
+	.canvas-caption { position: absolute; right: 0.75rem; bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem; color: var(--color-muted); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.61rem; white-space: nowrap; }
+	.canvas-caption span { width: 1rem; height: 1px; background: var(--color-primary); }
+	@media (max-width: 420px) {
+		.intro-canvas { min-height: 20rem; }
+		.editor-shell { height: 17.5rem; }
+		.shell-top { padding-inline: 0.6rem; }
+		.shell-crumb { display: none; }
+		.shell-main { padding: 0.7rem; }
+		.shell-publish { padding: 0.7rem 0.45rem; }
+		.draft-state { padding: 0.4rem 0.2rem; }
+		.draft-state small { font-size: 0.44rem; }
+		.canvas-caption { font-size: 0.52rem; }
+	}
+	@media (prefers-reduced-motion: no-preference) { .field-caret { animation: blink 1.15s step-end infinite; } }
+	@keyframes blink { 50% { opacity: 0; } }
+</style>

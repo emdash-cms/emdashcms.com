@@ -15,12 +15,16 @@
 	--heat-8: #ff5e1f14;
 	--heat-4: #ff5e1f0a;
 	--color-primary: var(--heat-100);
+	--marketing-text-accent: #b84312;
 	--marketing-text-secondary: #626262;
+	--color-focus: var(--marketing-text-accent);
 	--color-primary-dark: var(--heat-90);
 	--color-primary-light: var(--heat-12);
 	--color-accent: var(--heat-100);
 	--color-accent-light: var(--heat-12);
-	--button-primary-fg: #fffbf5;
+	--button-primary-bg: var(--heat-100);
+	--button-primary-bg-hover: var(--heat-90);
+	--button-primary-fg: #fff;
 }
 
 :root.dark {
@@ -32,12 +36,16 @@
 	--heat-8: #ff5e1f14;
 	--heat-4: #ff5e1f0a;
 	--color-primary: var(--heat-100);
+	--marketing-text-accent: #ff9568;
 	--marketing-text-secondary: #b0b0b0;
+	--color-focus: var(--marketing-text-accent);
 	--color-primary-dark: var(--heat-90);
 	--color-primary-light: var(--heat-12);
 	--color-accent: var(--heat-100);
 	--color-accent-light: var(--heat-12);
-	--button-primary-fg: #fffbf5;
+	--button-primary-bg: var(--heat-100);
+	--button-primary-bg-hover: var(--heat-90);
+	--button-primary-fg: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -50,11 +58,15 @@
 		--heat-8: #ff5e1f14;
 		--heat-4: #ff5e1f0a;
 		--color-primary: var(--heat-100);
+		--marketing-text-accent: #ff9568;
 		--marketing-text-secondary: #b0b0b0;
+		--color-focus: var(--marketing-text-accent);
 		--color-primary-dark: var(--heat-90);
 		--color-primary-light: var(--heat-12);
 		--color-accent: var(--heat-100);
 		--color-accent-light: var(--heat-12);
-		--button-primary-fg: #fffbf5;
+		--button-primary-bg: var(--heat-100);
+		--button-primary-bg-hover: var(--heat-90);
+		--button-primary-fg: #fff;
 	}
 }
