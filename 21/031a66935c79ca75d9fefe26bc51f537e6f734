@@ -1,5 +1,5 @@
 src/components/blocks/Hero.astro
-  s_bf6c4e65e38922::t_0f1bba697f8fc5 48,120,129,642-681
+  s_bf6c4e65e38922::t_0f1bba697f8fc5 48,120,129,642-681,642-644,646-670,672,675-681
 ---
 {
   "schema_version": "authorship/3.0.0",

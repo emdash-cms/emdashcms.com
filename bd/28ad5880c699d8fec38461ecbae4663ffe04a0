@@ -1,5 +1,6 @@
 src/components/blocks/Hero.astro
   s_bf6c4e65e38922::t_f7ab3ceae4ce37 74-76,78-88,107-108,315-325,327-330,618
+  s_bf6c4e65e38922::t_0f1bba697f8fc5 48,642-644,646-670,672,675-681
 src/components/blocks/Testimonials.astro
   s_bf6c4e65e38922::t_c4a1e88261f8dd 18-19
 seed/seed.json
