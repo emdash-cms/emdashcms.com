@@ -74,7 +74,7 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 								<div class="hero-local-start">
 									<div class="hero-install-command">
 										<span class="hero-command-prompt" aria-hidden="true">$</span>
-										<code>npm create emdash@latest</code>
+										<code>npm create <span class="hero-command-package">emdash@latest</span></code>
 										<button type="button" aria-label="Copy scaffold command" data-copy-install-command>
 											<svg class="hero-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
 											<svg class="hero-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
@@ -357,7 +357,7 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 		gap: 0.5rem;
 		padding-inline-start: 0.75rem;
 		color: var(--color-text);
-		background: var(--color-surface);
+		background: color-mix(in srgb, var(--color-surface) 94%, var(--color-text));
 		border: 0;
 		border-radius: var(--radius);
 		box-shadow:
@@ -373,6 +373,11 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 		font-size: 0.8125rem;
 		white-space: nowrap;
 		user-select: text;
+	}
+
+	.hero-command-package {
+		color: color-mix(in srgb, var(--color-primary) 62%, var(--color-text));
+		font-weight: 600;
 	}
 
 	.hero-install-command button {
