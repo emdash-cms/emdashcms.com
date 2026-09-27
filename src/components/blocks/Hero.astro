@@ -15,6 +15,9 @@ interface Props {
 		// Empty strings mean "no CTA".
 		primaryCtaLabel?: string;
 		primaryCtaUrl?: string;
+		secondaryCtaLabel?: string;
+		secondaryCtaUrl?: string;
+		showAgentActions?: boolean;
 		agentPrompt?: string;
 		centered?: boolean;
 	};
@@ -35,6 +38,11 @@ const primaryCta =
 	node.primaryCtaLabel && node.primaryCtaUrl
 		? { label: node.primaryCtaLabel, url: sanitizeHref(node.primaryCtaUrl.trim()) }
 		: undefined;
+const secondaryCta =
+	node.secondaryCtaLabel && node.secondaryCtaUrl
+		? { label: node.secondaryCtaLabel, url: sanitizeHref(node.secondaryCtaUrl.trim()) }
+		: undefined;
+const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" && _key === "hero");
 ---
 
 <section class:list={["hero", { "hero-centered": centered }]} id={_key} aria-labelledby={headingId}>
@@ -49,40 +57,54 @@ const primaryCta =
 				</a>
 				<h1 id={headingId} class="hero-headline">{headline}</h1>
 				{subheadline && <p class="hero-subheadline">{subheadline}</p>}
-				<div class="hero-cta-group">
-					<div class="hero-actions">
-						{primaryCta && (
-							<a href={primaryCta.url} class="btn btn-primary btn-lg">
-								<span>{primaryCta.label}</span>
-							</a>
-						)}
-						<div class="hero-copy-action">
-							<CopyPromptButton prompt={copyPrompt} />
-							<div class="hero-prompt-feedback" data-copy-prompt-feedback>
-								<p class="hero-prompt-preview" data-copy-prompt-preview aria-hidden="true">
-									<span class="hero-prompt-dash" aria-hidden="true"></span>
-									<span class="hero-prompt-preview-text">An EmDash starter for your agent: plan, build, preview locally.</span>
-								</p>
-								<p class="hero-prompt-copied" data-copy-prompt-copied aria-hidden="true">
-									<span class="hero-prompt-check">✓</span>
-									<span class="hero-prompt-message">Prompt copied. Paste it into your coding agent to begin.</span>
-								</p>
-								<p class="hero-prompt-failed" data-copy-prompt-failed aria-hidden="true">Could not copy the prompt. Try again.</p>
-							</div>
-						</div>
-						<div class="hero-local-start">
-							<div class="hero-install-command">
-								<span class="hero-command-prompt" aria-hidden="true">$</span>
-								<code>npm create emdash@latest</code>
-								<button type="button" aria-label="Copy scaffold command" data-copy-install-command>
-									<svg class="hero-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
-									<svg class="hero-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
-								</button>
-							</div>
-							<span class="hero-install-status" role="status" data-install-status></span>
+				{(primaryCta || secondaryCta || showAgentActions) && (
+					<div class="hero-cta-group">
+						<div class="hero-actions">
+							{primaryCta && (
+								<a href={primaryCta.url} class="btn btn-primary btn-lg">
+									<span>{primaryCta.label}</span>
+								</a>
+							)}
+							{!showAgentActions && secondaryCta && (
+								<a href={secondaryCta.url} class="btn btn-secondary btn-lg">
+									<span>{secondaryCta.label}</span>
+								</a>
+							)}
+							{showAgentActions && (
+								<div class="hero-copy-action">
+									<CopyPromptButton prompt={copyPrompt} />
+									<div class="hero-prompt-feedback" data-copy-prompt-feedback>
+										<p class="hero-prompt-preview" data-copy-prompt-preview aria-hidden="true">
+											<span class="hero-prompt-dash" aria-hidden="true"></span>
+											<span class="hero-prompt-preview-text">An EmDash starter for your agent: plan, build, preview locally.</span>
+										</p>
+										<p class="hero-prompt-copied" data-copy-prompt-copied aria-hidden="true">
+											<span class="hero-prompt-check">✓</span>
+											<span class="hero-prompt-message">Prompt copied. Paste it into your coding agent to begin.</span>
+										</p>
+										<p class="hero-prompt-failed" data-copy-prompt-failed aria-hidden="true" inert>
+											<span>Copy manually:</span>
+											<input type="text" value={copyPrompt} readonly aria-label="EmDash agent prompt to copy manually" data-copy-prompt-manual />
+										</p>
+									</div>
+								</div>
+							)}
+							{showAgentActions && (
+								<div class="hero-local-start">
+									<div class="hero-install-command">
+										<span class="hero-command-prompt" aria-hidden="true">$</span>
+										<code>npm create emdash@latest</code>
+										<button type="button" aria-label="Copy scaffold command" data-copy-install-command>
+											<svg class="hero-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
+											<svg class="hero-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+										</button>
+									</div>
+									<span class="hero-install-status" role="status" data-install-status></span>
+								</div>
+							)}
 						</div>
 					</div>
-				</div>
+				)}
 			</div>
 
 			<div class="hero-image-wrap">
@@ -423,6 +445,22 @@ const primaryCta =
 
 	.hero-prompt-failed {
 		color: #b42318;
+	}
+
+	.hero-prompt-failed[aria-hidden="false"] {
+		pointer-events: auto;
+	}
+
+	.hero-prompt-failed input {
+		min-width: 0;
+		width: min(100%, 30rem);
+		height: 1.5rem;
+		padding: 0 0.5rem;
+		color: var(--color-text);
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		font: inherit;
 	}
 
 	:global(:root.dark) .hero-prompt-failed {

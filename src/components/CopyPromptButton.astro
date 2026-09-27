@@ -34,6 +34,7 @@ const { prompt } = Astro.props;
 		const preview = feedback?.querySelector<HTMLElement>("[data-copy-prompt-preview]");
 		const copied = feedback?.querySelector<HTMLElement>("[data-copy-prompt-copied]");
 		const failed = feedback?.querySelector<HTMLElement>("[data-copy-prompt-failed]");
+		const manualPrompt = feedback?.querySelector<HTMLInputElement>("[data-copy-prompt-manual]");
 		const labels = button.querySelector<HTMLElement>("[data-copy-prompt-labels]");
 		const defaultLabel = button.querySelector<HTMLElement>("[data-copy-prompt-label-default]");
 		const copiedLabel = button.querySelector<HTMLElement>("[data-copy-prompt-label-copied]");
@@ -79,7 +80,8 @@ const { prompt } = Astro.props;
 				}, 200));
 			}
 
-			if (element === preview) element.setAttribute("aria-hidden", String(!visible));
+			if (element === preview || element === failed) element.setAttribute("aria-hidden", String(!visible));
+			if (element === failed) element.inert = !visible;
 		};
 		const resizeActiveLabel = () => {
 			const activeLabel = copyState === "copied" ? copiedLabel : copyState === "failed" ? failedLabel : defaultLabel;
@@ -129,9 +131,14 @@ const { prompt } = Astro.props;
 				status.textContent = "Prompt copied. Paste it into your coding agent to begin.";
 			} catch {
 				copyState = "failed";
-				status.textContent = "Could not copy the prompt. Try again.";
+				status.textContent = "Clipboard unavailable. Prompt selected for manual copy.";
 			}
 			updateFeedback();
+			if (copyState === "failed") {
+				manualPrompt?.focus();
+				manualPrompt?.select();
+				return;
+			}
 
 			resetTimer = window.setTimeout(() => {
 				copyState = "idle";
