@@ -1,0 +1,33 @@
+public/start.md
+  s_bf6c4e65e38922::t_4013b0d052502c 1-23
+seed/seed.json
+  s_bf6c4e65e38922::t_27ed8f851e71ea 122-125
+src/components/AgentLogos.astro
+  s_bf6c4e65e38922::t_a1e8d30b822034 1-21
+src/components/CopyPromptButton.astro
+  s_bf6c4e65e38922::t_6e8426b4e5d68d 1-241
+src/components/blocks/Hero.astro
+  s_bf6c4e65e38922::t_793d9092b24ced 7,14-15,18,31-32,43,52,59-83,85,92,101,114-140,164,182,206,257,261-265,275-278,281-372,376-453,519-522,525-526,533-549,583-584
+src/pages/index.astro
+  s_bf6c4e65e38922::t_ae92b23e93ed40 16
+src/plugins/marketing-blocks/index.ts
+  s_bf6c4e65e38922::t_e1484d0f90dde6 51,64-66
+src/styles/theme.css
+  s_bf6c4e65e38922::t_a05bf3aa77b851 18,35,53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4f1219e35f7377773820773018b41c14fb7e24b3",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
