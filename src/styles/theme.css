@@ -15,6 +15,7 @@
 	--heat-8: #ff5e1f14;
 	--heat-4: #ff5e1f0a;
 	--color-primary: var(--heat-100);
+	--marketing-text-secondary: #626262;
 	--color-primary-dark: var(--heat-90);
 	--color-primary-light: var(--heat-12);
 	--color-accent: var(--heat-100);
@@ -31,6 +32,7 @@
 	--heat-8: #ff5e1f14;
 	--heat-4: #ff5e1f0a;
 	--color-primary: var(--heat-100);
+	--marketing-text-secondary: #b0b0b0;
 	--color-primary-dark: var(--heat-90);
 	--color-primary-light: var(--heat-12);
 	--color-accent: var(--heat-100);
@@ -48,6 +50,7 @@
 		--heat-8: #ff5e1f14;
 		--heat-4: #ff5e1f0a;
 		--color-primary: var(--heat-100);
+		--marketing-text-secondary: #b0b0b0;
 		--color-primary-dark: var(--heat-90);
 		--color-primary-light: var(--heat-12);
 		--color-accent: var(--heat-100);
