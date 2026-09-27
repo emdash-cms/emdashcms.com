@@ -1,0 +1,21 @@
+src/components/CopyPromptButton.astro
+  s_bf6c4e65e38922::t_120b3aed2ace06 163
+src/components/blocks/Hero.astro
+  s_bf6c4e65e38922::t_dc9daa1555f2bf 52-71,260-266,280,286,289,517-520
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "86534cdadb508f748fd5ca191fc6f9b9abf804d2",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
