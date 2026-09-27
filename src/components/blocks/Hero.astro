@@ -71,6 +71,22 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 								</a>
 							)}
 							{showAgentActions && (
+								<div class="hero-local-start">
+									<div class="hero-install-command">
+										<span class="hero-command-prompt" aria-hidden="true">$</span>
+										<code>npm create emdash@latest</code>
+										<button type="button" aria-label="Copy scaffold command" data-copy-install-command>
+											<svg class="hero-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
+											<svg class="hero-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+										</button>
+									</div>
+									<span class="hero-install-status" role="status" data-install-status></span>
+								</div>
+							)}
+						</div>
+						{showAgentActions && (
+							<div class="hero-agent-row">
+								<span class="hero-agent-label">Or build with an agent</span>
 								<div class="hero-copy-action">
 									<CopyPromptButton prompt={copyPrompt} />
 									<div class="hero-prompt-feedback" data-copy-prompt-feedback>
@@ -88,21 +104,8 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 										</p>
 									</div>
 								</div>
-							)}
-							{showAgentActions && (
-								<div class="hero-local-start">
-									<div class="hero-install-command">
-										<span class="hero-command-prompt" aria-hidden="true">$</span>
-										<code>npm create emdash@latest</code>
-										<button type="button" aria-label="Copy scaffold command" data-copy-install-command>
-											<svg class="hero-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
-											<svg class="hero-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
-										</button>
-									</div>
-									<span class="hero-install-status" role="status" data-install-status></span>
-								</div>
-							)}
-						</div>
+							</div>
+						)}
 					</div>
 				)}
 			</div>
@@ -307,6 +310,26 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 
 	.hero-centered .hero-actions {
 		justify-content: center;
+	}
+
+	.hero-agent-label {
+		color: var(--marketing-text-secondary);
+		font-size: var(--font-size-sm);
+		line-height: 1.5;
+		white-space: nowrap;
+	}
+
+	.hero-agent-row {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.75rem;
+		margin-top: 1rem;
+	}
+
+	.hero-centered .hero-agent-row {
+		align-items: center;
 	}
 
 	.hero-actions :global(.btn) {
@@ -586,15 +609,8 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 		}
 
 		.hero-prompt-feedback {
-			inset-inline-start: 1rem;
-			width: min(43rem, calc(100vw - 20rem));
-		}
-	}
-
-	@media (min-width: 820px) {
-		.hero-prompt-feedback {
 			inset-inline-start: 0;
-			width: min(43rem, calc(100vw - 19rem));
+			width: min(43rem, calc(100vw - 12rem));
 		}
 	}
 
