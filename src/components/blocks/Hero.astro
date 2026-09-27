@@ -140,8 +140,19 @@ const primaryCta =
 
 <style>
 	.hero {
+		--marketing-text-secondary: #626262;
 		overflow: hidden;
 		background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+	}
+
+	:global(:root.dark) .hero {
+		--marketing-text-secondary: #b0b0b0;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .hero {
+			--marketing-text-secondary: #b0b0b0;
+		}
 	}
 
 	.hero-section {
@@ -179,7 +190,7 @@ const primaryCta =
 		width: fit-content;
 		margin-bottom: 1.5rem;
 		padding: 4px 12px 4px 4px;
-		color: var(--marketing-text-secondary);
+		color: var(--color-muted);
 		font-size: var(--font-size-sm);
 		font-weight: 500;
 		line-height: 1;
@@ -203,7 +214,7 @@ const primaryCta =
 		align-items: center;
 		min-height: 24px;
 		padding: 3px 8px;
-		color: var(--marketing-text-accent);
+		color: var(--color-primary);
 		font-size: var(--font-size-xs);
 		font-weight: 650;
 		line-height: 1;
