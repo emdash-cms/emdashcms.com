@@ -1,0 +1,1779 @@
+---
+/**
+ * Capabilities bento.
+ *
+ * The section heading and introduction are editable through the block's
+ * fields. The cards are intentionally fixed: each one is paired with a
+ * bespoke product illustration, and their order carries the story
+ * (Astro foundation → familiar admin → editorial workflow → agents →
+ * extensibility → plugin security). Editing card copy independently of its
+ * illustration would let the two drift apart.
+ */
+import AgentLogos from "../AgentLogos.astro";
+
+interface Props {
+	node: {
+		_key?: string;
+		headline?: string;
+		subheadline?: string;
+	};
+}
+
+const { node } = Astro.props;
+const key = node._key || "capabilities";
+const headingId = `${key}-title`;
+
+const headline = node.headline?.trim() || "Familiar where it matters. Modern everywhere else.";
+// The default applies only when the field is absent (e.g. the home-page
+// fallback block). An editor who clears the introduction hides it.
+const subheadline =
+	node.subheadline === undefined
+		? "The editing experience people already know, on a typed, Astro-native foundation that agents and plugins can build on."
+		: node.subheadline.trim();
+
+// Render the first sentence at full strength and the rest muted. The split
+// needs sentence punctuation followed by a capital letter or digit; a headline
+// without one renders as a single tone.
+const headlineMatch = headline.match(/^(.+?[.!?]["'”’)]?)\s+(?=\p{Lu}|\d)(.+)$/u);
+const headlineLead = headlineMatch ? headlineMatch[1] : headline;
+const headlineRest = headlineMatch ? headlineMatch[2] : undefined;
+
+// 24px line icons, drawn with currentColor strokes.
+const icons = {
+	page: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
+	post: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+	media: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="m21 16-5-5-9 9"/>',
+	menu: '<path d="M4 6h16M4 12h16M4 18h10"/>',
+	widgets:
+		'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
+	folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+	tag: '<path d="M3.5 12.5V4.5a1 1 0 0 1 1-1h8l8 8a1.5 1.5 0 0 1 0 2.1l-7 7a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.25"/>',
+	check: '<path d="m5 12.5 4.5 4.5L19 7"/>',
+	x: '<path d="M7 7l10 10M17 7 7 17"/>',
+	calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+	eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.75"/>',
+	plug: '<path d="M9 3v5M15 3v5M6.5 8h11v3.5a5.5 5.5 0 0 1-11 0zM12 17v4"/>',
+	hero: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9.5h10M7 13.5h6"/>',
+	quote: '<path d="M6 8h4.5v4.5C10.5 15 9 16.5 7 17.5M14 8h4.5v4.5c0 2.5-1.5 4-3.5 5"/>',
+	question: '<circle cx="12" cy="12" r="8.5"/><path d="M9.75 9.5a2.25 2.25 0 1 1 3.2 2.05c-.6.3-.95.8-.95 1.45v.5M12 16.5h.01"/>',
+	type: '<path d="M5 7V5h14v2M12 5v14M9.5 19h5"/>',
+	paragraph: '<path d="M5 7h14M5 12h14M5 17h9"/>',
+	braces: '<path d="M9 4c-2 0-3 1-3 3v2c0 1.5-.5 3-2.5 3 2 0 2.5 1.5 2.5 3v2c0 2 1 3 3 3M15 4c2 0 3 1 3 3v2c0 1.5.5 3 2.5 3-2 0-2.5 1.5-2.5 3v2c0 2-1 3-3 3"/>',
+};
+
+// The generated interface matches this site's own `emdash-env.d.ts`.
+const typeCode = [
+	'<span class="tok-k">export interface</span> <span class="tok-t">Post</span> {',
+	'  title: <span class="tok-p">string</span>;',
+	'  excerpt?: <span class="tok-p">string</span>;',
+	'<span class="tok-hl">  content?: <span class="tok-p">PortableTextBlock</span>[];</span>',
+	"}",
+].join("\n");
+---
+
+<section class="capabilities" id={key} aria-labelledby={headingId}>
+	<div class="cap-container container">
+		<header class="cap-header">
+			<div class="cap-heading">
+				<p class="cap-eyebrow"><span class="cap-eyebrow-dash" aria-hidden="true"></span>Capabilities</p>
+				<h2 id={headingId} class="cap-headline">
+					{headlineLead}{headlineRest && " "}{headlineRest && <span class="cap-headline-muted">{headlineRest}</span>}
+				</h2>
+			</div>
+			{subheadline && <p class="cap-intro">{subheadline}</p>}
+		</header>
+
+		<div class="cap-grid">
+			{/* 1. Astro foundation: the anchor. */}
+			<div class="cap-card cap-card--anchor">
+				<div class="cap-copy cap-copy--anchor">
+					<h3 class="cap-title cap-title--anchor">Everything you expect from a CMS. Built for Astro.</h3>
+					<p class="cap-text">
+						Create content types in the admin and edit them with drafts, revisions, and preview. EmDash generates
+						TypeScript types from your schema, and Astro renders every entry on the server from structured JSON.
+					</p>
+				</div>
+
+				<ol class="flow">
+					<li class="flow-step">
+						<div
+							class="ui flow-panel"
+							role="img"
+							aria-label="A Posts content type with Title, Excerpt, and Content fields."
+						>
+							<div class="ui-bar">
+								<span class="ui-crumb">Content types</span><span class="ui-sep">/</span><span class="ui-strong">Posts</span>
+							</div>
+							<div class="schema">
+								<div class="schema-row">
+									<svg class="schema-icon" viewBox="0 0 24 24" set:html={icons.type} />
+									<span class="schema-name">Title</span><span class="schema-type">string</span>
+								</div>
+								<div class="schema-row">
+									<svg class="schema-icon" viewBox="0 0 24 24" set:html={icons.paragraph} />
+									<span class="schema-name">Excerpt</span><span class="schema-type">text</span>
+								</div>
+								<div class="schema-row is-active">
+									<svg class="schema-icon" viewBox="0 0 24 24" set:html={icons.braces} />
+									<span class="schema-name">Content</span><span class="schema-type">portableText</span>
+								</div>
+								<div class="schema-add">+ Add field</div>
+							</div>
+						</div>
+						<p class="flow-caption"><span class="flow-num" aria-hidden="true">01</span><strong>Model</strong><span>Content types and fields, defined in the admin</span></p>
+					</li>
+
+					<li class="flow-step">
+						<div
+							class="ui flow-panel"
+							role="img"
+							aria-label="A draft post titled Small tools, big impact in the EmDash editor, saved and ready to publish."
+						>
+							<div class="ui-bar">
+								<span class="ui-crumb">Posts</span><span class="ui-sep">/</span><span class="ui-strong">Edit</span>
+								<span class="ui-pill">Draft</span>
+							</div>
+							<div class="editor">
+								<p class="editor-title">Small tools, big impact</p>
+								<div class="editor-toolbar"><b>B</b><i>I</i><span>H2</span><span class="editor-toolbar-sep"></span><span>“ ”</span></div>
+								<p class="editor-text">The best tools do one thing well.<span class="editor-caret"></span></p>
+								<span class="sk sk--90"></span>
+								<span class="sk sk--64"></span>
+							</div>
+							<div class="ui-foot">
+								<span class="ui-saved"><svg viewBox="0 0 24 24" set:html={icons.check} />Saved</span>
+								<span class="ui-btn ui-btn--primary">Publish</span>
+							</div>
+						</div>
+						<p class="flow-caption"><span class="flow-num" aria-hidden="true">02</span><strong>Edit</strong><span>Drafts, revisions, and live preview</span></p>
+					</li>
+
+					<li class="flow-step">
+						<div
+							class="ui flow-panel flow-panel--code"
+							role="img"
+							aria-label="The generated emdash-env.d.ts file, with a Post interface containing title, excerpt, and content."
+						>
+							<div class="ui-bar">
+								<span class="ui-file">emdash-env.d.ts</span>
+								<span class="ui-pill ui-pill--accent">Generated</span>
+							</div>
+							<pre class="code"><code set:html={typeCode} /></pre>
+						</div>
+						<p class="flow-caption"><span class="flow-num" aria-hidden="true">03</span><strong>Type</strong><span>TypeScript types generated from your schema</span></p>
+					</li>
+
+					<li class="flow-step">
+						<div
+							class="ui flow-panel"
+							role="img"
+							aria-label="The published post rendered on the site at yoursite.com/blog/small-tools."
+						>
+							<div class="ui-bar ui-bar--browser">
+								<span class="ui-dots"><i></i><i></i><i></i></span>
+								<span class="ui-url">yoursite.com/blog/small-tools</span>
+							</div>
+							<div class="site">
+								<p class="site-meta">Blog · June 1</p>
+								<p class="site-title">Small tools, big impact</p>
+								<p class="site-text">The best tools do one thing well.</p>
+								<span class="sk sk--100"></span>
+								<span class="sk sk--80"></span>
+							</div>
+						</div>
+						<p class="flow-caption"><span class="flow-num" aria-hidden="true">04</span><strong>Render</strong><span>Server-rendered Astro pages with <code>getEmDashEntry()</code></span></p>
+					</li>
+				</ol>
+			</div>
+
+			{/* 2. Familiar CMS experience. */}
+			<div class="cap-card cap-card--familiar">
+				<div class="cap-copy">
+					<h3 class="cap-title">Familiar from the first login</h3>
+					<p class="cap-text">
+						Pages, posts, media, menus, widgets, and taxonomies, organized the way WordPress users expect. Bring
+						existing content over with the built-in WordPress importer.
+					</p>
+				</div>
+				<div
+					class="cap-visual visual-familiar"
+					role="img"
+					aria-label="EmDash admin sidebar listing Pages, Posts, Media, Menus, Widgets, Categories, and Tags, beside a completed WordPress import."
+				>
+					<div class="ui admin-nav">
+						<div class="admin-brand"><span class="admin-logo"></span>My Site</div>
+						<p class="admin-group">Content</p>
+						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.page} />Pages</div>
+						<div class="admin-item is-active"><svg viewBox="0 0 24 24" set:html={icons.post} />Posts</div>
+						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.media} />Media</div>
+						<p class="admin-group">Manage</p>
+						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.menu} />Menus</div>
+						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.widgets} />Widgets</div>
+						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.folder} />Categories</div>
+						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.tag} />Tags</div>
+					</div>
+					<div class="ui import-card">
+						<p class="import-title">Import WordPress</p>
+						<p class="import-file">export.xml</p>
+						<div class="import-bar"><span></span></div>
+						<ul class="import-list">
+							<li><svg viewBox="0 0 24 24" set:html={icons.check} />Posts and pages</li>
+							<li><svg viewBox="0 0 24 24" set:html={icons.check} />Media library</li>
+							<li><svg viewBox="0 0 24 24" set:html={icons.check} />Authors and taxonomies</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			{/* 3. Editorial workflows. */}
+			<div class="cap-card cap-card--editorial">
+				<div class="cap-copy">
+					<h3 class="cap-title">Drafts, revisions, and scheduling built in</h3>
+					<p class="cap-text">
+						Changes save as drafts while the live page stays untouched. Restore earlier revisions, schedule
+						publishing, and share signed preview links before anything goes live.
+					</p>
+				</div>
+				<div
+					class="cap-visual visual-editorial"
+					role="img"
+					aria-label="A revision history beside the EmDash publish panel. The live version stays public while draft changes wait, scheduled for June 1 at 9:00 AM."
+				>
+					<div class="timeline">
+						<div class="tl-item">
+							<span class="tl-dot"></span>
+							<p class="tl-time">Mar 12</p>
+							<p class="tl-label">Published</p>
+						</div>
+						<div class="tl-item">
+							<span class="tl-dot"></span>
+							<p class="tl-time">Yesterday</p>
+							<p class="tl-label">Revision saved</p>
+						</div>
+						<div class="tl-item tl-item--current ui">
+							<span class="tl-dot"></span>
+							<p class="tl-time">Just now</p>
+							<p class="tl-label">Draft autosaved</p>
+						</div>
+					</div>
+					<div class="ui publish">
+						<p class="publish-title">Publish</p>
+						<div class="publish-row">
+							<span class="publish-dot publish-dot--live"></span>
+							<p><strong>Live version</strong><span>Visitors still see the published page</span></p>
+						</div>
+						<div class="publish-row">
+							<span class="publish-dot publish-dot--draft"></span>
+							<p><strong>Draft changes</strong><span>Ready to publish</span></p>
+						</div>
+						<div class="publish-schedule">
+							<svg viewBox="0 0 24 24" set:html={icons.calendar} />
+							<span>Scheduled</span>
+							<strong>Jun 1, 9:00 AM</strong>
+						</div>
+						<div class="publish-actions">
+							<span class="ui-btn"><svg viewBox="0 0 24 24" set:html={icons.eye} />Preview draft</span>
+							<span class="ui-btn ui-btn--primary">Publish changes</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{/* 4. Agents. */}
+			<div class="cap-card cap-card--agents">
+				<div class="cap-copy">
+					<h3 class="cap-title">An MCP server in every site</h3>
+					<p class="cap-text">
+						Connect Claude, Codex, Cursor, or any MCP client to draft, edit, search, and schedule content under the
+						same publishing rules as your team. Scripts get the same operations through the REST API and CLI.
+					</p>
+				</div>
+				<div
+					class="cap-visual visual-agents"
+					role="img"
+					aria-label="An agent receives a request to draft and schedule a post, then calls the content_create and content_schedule tools on the site's MCP server."
+				>
+					<div class="ui chat">
+						<div class="chat-head">
+							<AgentLogos />
+							<span class="chat-endpoint">/_emdash/api/mcp</span>
+						</div>
+						<p class="chat-msg chat-msg--user">Draft a post about the summer sale and schedule it for June 1 at 9 AM.</p>
+						<div class="chat-tools">
+							<div class="tool">
+								<svg viewBox="0 0 24 24" set:html={icons.check} />
+								<code>content_create</code>
+								<span>posts · draft</span>
+							</div>
+							<div class="tool">
+								<svg viewBox="0 0 24 24" set:html={icons.check} />
+								<code>content_schedule</code>
+								<span>Jun 1, 9:00 AM</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{/* 5. Extensibility. */}
+			<div class="cap-card cap-card--extend">
+				<div class="cap-copy">
+					<h3 class="cap-title">Make it yours with plugins</h3>
+					<p class="cap-text">
+						Add custom block types, admin pages, hooks, storage, and API routes in TypeScript. Every section on this
+						page is a block from this site’s own plugin.
+					</p>
+				</div>
+				<div
+					class="cap-visual visual-extend"
+					role="img"
+					aria-label="The EmDash editor's slash menu listing the Hero, Features, Testimonials, and FAQ blocks from this site's marketing-blocks plugin."
+				>
+					{/* Labels and descriptions mirror src/plugins/marketing-blocks. */}
+					<div class="ui slash">
+						<span class="plugin-chip"><svg viewBox="0 0 24 24" set:html={icons.plug} />marketing-blocks</span>
+						<p class="slash-input"><span class="slash-key">/</span>blocks<span class="editor-caret"></span></p>
+						<div class="slash-item">
+							<span class="slash-icon"><svg viewBox="0 0 24 24" set:html={icons.hero} /></span>
+							<p><strong>Hero</strong><span>Headline with optional links or agent actions</span></p>
+						</div>
+						<div class="slash-item is-active">
+							<span class="slash-icon"><svg viewBox="0 0 24 24" set:html={icons.widgets} /></span>
+							<p><strong>Features</strong><span>Grid of feature cards with icons</span></p>
+						</div>
+						<div class="slash-item">
+							<span class="slash-icon"><svg viewBox="0 0 24 24" set:html={icons.quote} /></span>
+							<p><strong>Testimonials</strong><span>Customer testimonial cards</span></p>
+						</div>
+						<div class="slash-item">
+							<span class="slash-icon"><svg viewBox="0 0 24 24" set:html={icons.question} /></span>
+							<p><strong>FAQ</strong><span>Frequently asked questions</span></p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{/* 6. Plugin security. */}
+			<div class="cap-card cap-card--secure">
+				<div class="cap-copy">
+					<h3 class="cap-title">Plugins without the security nightmare</h3>
+					<p class="cap-text">
+						Sandboxed plugins, including every install from the registry, run in their own isolate. They see no
+						environment variables or filesystem, and only get the capabilities they declare and you approve.
+					</p>
+				</div>
+				<div
+					class="cap-visual visual-secure"
+					role="img"
+					aria-label="A sandboxed plugin isolate with two declared capabilities, content read access and network requests to api.example.com. Environment variables, the filesystem, other plugins' storage, and undeclared hosts are unavailable."
+				>
+					<div class="sandbox">
+						<div class="sandbox-head">
+							<span class="sandbox-icon"><svg viewBox="0 0 24 24" set:html={icons.plug} /></span>
+							<strong>form-webhooks</strong>
+							<span class="ui-pill">Isolate</span>
+						</div>
+						<p class="sandbox-label">Declared capabilities</p>
+						<div class="grant"><svg viewBox="0 0 24 24" set:html={icons.check} /><code>content:read</code></div>
+						<div class="grant">
+							<svg viewBox="0 0 24 24" set:html={icons.check} /><code>network:request</code><span>api.example.com</span>
+						</div>
+					</div>
+					<div class="ui denied">
+						<p class="sandbox-label">Not available</p>
+						<div class="deny"><svg viewBox="0 0 24 24" set:html={icons.x} />Environment variables</div>
+						<div class="deny"><svg viewBox="0 0 24 24" set:html={icons.x} />Filesystem</div>
+						<div class="deny"><svg viewBox="0 0 24 24" set:html={icons.x} />Other plugins’ storage</div>
+						<div class="deny"><svg viewBox="0 0 24 24" set:html={icons.x} />Undeclared hosts</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.capabilities {
+		--cap-muted: color-mix(in srgb, var(--color-text) 64%, transparent);
+		--cap-subtle: color-mix(in srgb, var(--color-text) 52%, transparent);
+		--cap-line: color-mix(in srgb, var(--color-text) 9%, transparent);
+		--cap-skeleton: color-mix(in srgb, var(--color-text) 8%, transparent);
+		--cap-dot: color-mix(in srgb, var(--color-text) 13%, transparent);
+		--cap-card-border: var(--color-border);
+		--cap-card-ring: var(--border-faint);
+		--cap-ui-bg: var(--color-surface);
+		--cap-ui-sunken: color-mix(in srgb, var(--color-bg) 70%, var(--color-surface));
+		--cap-ui-border: color-mix(in srgb, var(--color-text) 10%, transparent);
+		--cap-ui-shadow:
+			0 1px 2px rgba(0, 0, 0, 0.04),
+			0 10px 24px -14px rgba(0, 0, 0, 0.18);
+		--cap-success: #1f9d55;
+
+		padding: var(--spacing-4xl) 0 var(--spacing-2xl);
+		background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+	}
+
+	:global(:root.dark) .capabilities {
+		--cap-card-border: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+		--cap-card-ring: color-mix(in srgb, var(--color-text) 5%, transparent);
+		--cap-ui-bg: var(--color-surface-raised);
+		--cap-ui-sunken: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
+		--cap-ui-shadow:
+			0 1px 2px rgba(0, 0, 0, 0.3),
+			0 14px 28px -14px rgba(0, 0, 0, 0.7);
+		--cap-success: #4ade80;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .capabilities {
+			--cap-card-border: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+			--cap-card-ring: color-mix(in srgb, var(--color-text) 5%, transparent);
+			--cap-ui-bg: var(--color-surface-raised);
+			--cap-ui-sunken: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
+			--cap-ui-shadow:
+				0 1px 2px rgba(0, 0, 0, 0.3),
+				0 14px 28px -14px rgba(0, 0, 0, 0.7);
+			--cap-success: #4ade80;
+		}
+	}
+
+	/* ---------- Header ---------- */
+
+	.cap-container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-2xl);
+	}
+
+	.cap-header {
+		display: grid;
+		gap: var(--spacing-md);
+	}
+
+	.cap-eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: var(--spacing-md);
+		color: var(--color-text);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		line-height: 1;
+	}
+
+	.cap-eyebrow-dash {
+		width: 0.875rem;
+		height: 2px;
+		background: var(--color-primary);
+		border-radius: var(--radius-full);
+	}
+
+	.cap-headline {
+		max-width: 40rem;
+		font-size: var(--font-size-3xl);
+		font-weight: 700;
+		line-height: 1.08;
+		letter-spacing: -0.04em;
+		text-wrap: balance;
+	}
+
+	/* 56% keeps this large text above 3:1 on the light section background. */
+	.cap-headline-muted {
+		display: block;
+		color: color-mix(in srgb, var(--color-text) 56%, transparent);
+	}
+
+	.cap-intro {
+		max-width: 26rem;
+		color: var(--cap-muted);
+		font-size: var(--font-size-base);
+		line-height: 1.6;
+		text-wrap: pretty;
+	}
+
+	/* ---------- Grid + cards ---------- */
+
+	.cap-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--spacing-md);
+	}
+
+	.cap-card {
+		position: relative;
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		overflow: hidden;
+		background: var(--color-surface);
+		border: 1px solid var(--cap-card-border);
+		border-radius: 18px;
+		box-shadow:
+			0 0 0 4px var(--cap-card-ring),
+			var(--shadow-sm);
+	}
+
+	.cap-copy {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		padding: var(--spacing-xl) var(--spacing-xl) 0;
+	}
+
+	.cap-title {
+		font-size: 1.1875rem;
+		font-weight: 600;
+		line-height: 1.25;
+		letter-spacing: -0.02em;
+		text-wrap: balance;
+	}
+
+	.cap-text {
+		max-width: 34rem;
+		margin-top: 0.5rem;
+		color: var(--cap-muted);
+		font-size: 0.9375rem;
+		line-height: 1.6;
+		text-wrap: pretty;
+	}
+
+	/* Illustration stage: dotted texture that fades out toward the edges. */
+	.cap-visual {
+		position: relative;
+		display: flex;
+		flex: 1 1 auto;
+		min-height: 17rem;
+		align-items: center;
+		justify-content: center;
+		padding: var(--spacing-xl);
+	}
+
+	.cap-visual::before,
+	.flow::before {
+		position: absolute;
+		inset: 0;
+		background-image: radial-gradient(var(--cap-dot) 1px, transparent 1.2px);
+		background-size: 14px 14px;
+		-webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 55%, #000 20%, transparent 75%);
+		mask-image: radial-gradient(ellipse 70% 70% at 50% 55%, #000 20%, transparent 75%);
+		pointer-events: none;
+		content: "";
+	}
+
+	/* ---------- Shared product-UI primitives ---------- */
+
+	.ui {
+		position: relative;
+		background: var(--cap-ui-bg);
+		border: 1px solid var(--cap-ui-border);
+		border-radius: 12px;
+		box-shadow: var(--cap-ui-shadow);
+		font-size: 0.75rem;
+		line-height: 1.35;
+	}
+
+	.ui p {
+		margin: 0;
+	}
+
+	.ui svg,
+	.sandbox svg,
+	.plugin-chip svg {
+		flex: 0 0 auto;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.75;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.ui-bar {
+		display: flex;
+		min-height: 2.125rem;
+		align-items: center;
+		gap: 0.375rem;
+		padding: 0 0.75rem;
+		border-bottom: 1px solid var(--cap-line);
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+		white-space: nowrap;
+	}
+
+	.ui-sep {
+		opacity: 0.6;
+	}
+
+	.ui-strong {
+		color: var(--color-text);
+		font-weight: 600;
+	}
+
+	.ui-file {
+		color: var(--color-text);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+	}
+
+	.ui-pill {
+		display: inline-flex;
+		align-items: center;
+		margin-inline-start: auto;
+		padding: 0.125rem 0.4375rem;
+		color: var(--cap-muted);
+		font-size: 0.625rem;
+		font-weight: 600;
+		line-height: 1.4;
+		background: var(--cap-skeleton);
+		border-radius: var(--radius-full);
+	}
+
+	.ui-pill--accent {
+		color: var(--color-primary);
+		background: var(--heat-12);
+	}
+
+	.ui-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3125rem;
+		padding: 0.3125rem 0.625rem;
+		color: var(--color-text);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		line-height: 1.3;
+		white-space: nowrap;
+		background: var(--cap-skeleton);
+		border-radius: 7px;
+	}
+
+	.ui-btn svg {
+		width: 0.8125rem;
+		height: 0.8125rem;
+	}
+
+	.ui-btn--primary {
+		color: #fff;
+		background: var(--color-primary);
+	}
+
+	.sk {
+		display: block;
+		height: 0.375rem;
+		margin-top: 0.4375rem;
+		background: var(--cap-skeleton);
+		border-radius: var(--radius-full);
+	}
+
+	.sk--100 { width: 100%; }
+	.sk--90 { width: 90%; }
+	.sk--80 { width: 80%; }
+	.sk--64 { width: 64%; }
+
+	.editor-caret {
+		display: inline-block;
+		width: 1.5px;
+		height: 0.9em;
+		margin-inline-start: 1px;
+		vertical-align: -0.1em;
+		background: var(--color-primary);
+		animation: cap-caret 1.1s steps(1) infinite;
+	}
+
+	@keyframes cap-caret {
+		50% {
+			opacity: 0;
+		}
+	}
+
+	/* ---------- Anchor: model → edit → type → render ---------- */
+
+	.cap-card--anchor .cap-copy--anchor {
+		gap: var(--spacing-md);
+	}
+
+	.cap-title--anchor {
+		max-width: 30rem;
+		font-size: 1.75rem;
+		font-weight: 700;
+		line-height: 1.1;
+		letter-spacing: -0.035em;
+	}
+
+	.flow {
+		--flow-gap: 1.75rem;
+		--flow-panel-h: 11.75rem;
+		position: relative;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--flow-gap);
+		margin: 0;
+		padding: var(--spacing-xl);
+		list-style: none;
+	}
+
+	.flow-step {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 0.875rem;
+	}
+
+	/* Connectors: a hairline with an accent node between consecutive steps. */
+	.flow-step:not(:last-child)::after,
+	.flow-step:not(:last-child)::before {
+		position: absolute;
+		pointer-events: none;
+		content: "";
+	}
+
+	.flow-step:not(:last-child)::after {
+		inset-block-start: 100%;
+		inset-inline-start: 1.25rem;
+		width: 1px;
+		height: var(--flow-gap);
+		background: color-mix(in srgb, var(--color-primary) 45%, var(--cap-line));
+	}
+
+	.flow-step:not(:last-child)::before {
+		z-index: 1;
+		inset-block-start: calc(100% + var(--flow-gap) / 2 - 3px);
+		inset-inline-start: calc(1.25rem - 2.5px);
+		width: 6px;
+		height: 6px;
+		background: var(--color-primary);
+		border-radius: 50%;
+		box-shadow: 0 0 0 3px var(--color-surface);
+	}
+
+	.flow-panel {
+		display: flex;
+		height: var(--flow-panel-h);
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.flow-caption {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		column-gap: 0.5rem;
+		row-gap: 0.125rem;
+		font-size: var(--font-size-sm);
+		line-height: 1.45;
+	}
+
+	.flow-caption strong {
+		font-weight: 600;
+	}
+
+	.flow-caption span:last-child {
+		flex-basis: 100%;
+		color: var(--cap-muted);
+		font-size: 0.8125rem;
+	}
+
+	.flow-caption code {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+	}
+
+	.flow-num {
+		color: var(--color-primary);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 600;
+	}
+
+	/* Step 1: schema */
+	.schema {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 0.625rem;
+	}
+
+	.schema-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.375rem 0.5rem;
+		border-radius: 7px;
+	}
+
+	.schema-row.is-active {
+		background: var(--cap-ui-sunken);
+		box-shadow: inset 0 0 0 1px var(--cap-line);
+	}
+
+	.schema-icon {
+		width: 0.875rem;
+		height: 0.875rem;
+		color: var(--cap-subtle);
+	}
+
+	.schema-name {
+		font-weight: 500;
+	}
+
+	.schema-type {
+		margin-inline-start: auto;
+		color: var(--cap-subtle);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+	}
+
+	.schema-row.is-active .schema-type {
+		color: var(--color-primary);
+	}
+
+	.schema-add {
+		padding: 0.375rem 0.5rem;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+		border: 1px dashed var(--cap-ui-border);
+		border-radius: 7px;
+	}
+
+	/* Step 2: editor */
+	.editor {
+		flex: 1 1 auto;
+		padding: 0.625rem 0.75rem 0;
+	}
+
+	.editor-title {
+		font-size: 0.875rem;
+		font-weight: 700;
+		letter-spacing: -0.015em;
+	}
+
+	.editor-toolbar {
+		display: flex;
+		align-items: center;
+		gap: 0.625rem;
+		margin: 0.5rem 0;
+		padding: 0.25rem 0.5rem;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+		background: var(--cap-ui-sunken);
+		border-radius: 6px;
+	}
+
+	.editor-toolbar b,
+	.editor-toolbar i {
+		color: var(--color-text);
+		font-style: normal;
+	}
+
+	.editor-toolbar i {
+		font-style: italic;
+	}
+
+	.editor-toolbar-sep {
+		width: 1px;
+		height: 0.75rem;
+		background: var(--cap-line);
+	}
+
+	.editor-text {
+		font-size: 0.6875rem;
+	}
+
+	.ui-foot {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.5rem 0.75rem;
+		border-top: 1px solid var(--cap-line);
+	}
+
+	.ui-saved {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+	}
+
+	.ui-saved svg {
+		width: 0.75rem;
+		height: 0.75rem;
+		color: var(--cap-success);
+	}
+
+	/* Step 3: generated types */
+	.code {
+		flex: 1 1 auto;
+		margin: 0;
+		padding: 0.75rem;
+		overflow: hidden;
+		color: var(--color-text);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		line-height: 1.75;
+		white-space: pre;
+		background: var(--cap-ui-sunken);
+	}
+
+	.code :global(.tok-k) {
+		color: var(--cap-subtle);
+	}
+
+	.code :global(.tok-t) {
+		color: var(--color-primary);
+		font-weight: 600;
+	}
+
+	.code :global(.tok-p) {
+		color: var(--cap-muted);
+	}
+
+	/* Threads the highlighted Content field from the schema into the type. */
+	.code :global(.tok-hl) {
+		display: inline-block;
+		margin-inline: -0.75rem;
+		padding-inline: 0.75rem;
+		min-width: calc(100% + 1.5rem);
+		background: var(--heat-8);
+		box-shadow: inset 2px 0 0 var(--color-primary);
+	}
+
+	/* Step 4: rendered page */
+	.ui-bar--browser {
+		gap: 0.625rem;
+	}
+
+	.ui-dots {
+		display: inline-flex;
+		gap: 0.25rem;
+	}
+
+	.ui-dots i {
+		width: 0.4375rem;
+		height: 0.4375rem;
+		background: var(--cap-line);
+		border-radius: 50%;
+	}
+
+	.ui-url {
+		flex: 1 1 auto;
+		min-width: 0;
+		overflow: hidden;
+		padding: 0.1875rem 0.5rem;
+		text-overflow: ellipsis;
+		background: var(--cap-ui-sunken);
+		border-radius: 6px;
+	}
+
+	.site {
+		padding: 0.875rem 0.875rem 0;
+	}
+
+	.site-meta {
+		color: var(--color-primary);
+		font-size: 0.625rem;
+		font-weight: 600;
+	}
+
+	.site-title {
+		margin-top: 0.25rem !important;
+		font-size: 1.0625rem;
+		font-weight: 700;
+		line-height: 1.15;
+		letter-spacing: -0.03em;
+	}
+
+	.site-text {
+		margin-top: 0.375rem !important;
+		color: var(--cap-muted);
+		font-size: 0.6875rem;
+	}
+
+	/* ---------- Familiar admin ---------- */
+
+	/* The sidebar runs off the bottom of the card and fades out. */
+	.visual-familiar {
+		align-items: flex-start;
+		height: 17.5rem;
+		min-height: 0;
+		flex: 0 0 auto;
+		margin-top: auto;
+		overflow: hidden;
+		padding-bottom: 0;
+	}
+
+	.admin-nav {
+		width: 11.5rem;
+		padding: 0.75rem 0.5rem 1.25rem;
+		border-bottom: 0;
+		border-radius: 12px 12px 0 0;
+		-webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
+		mask-image: linear-gradient(to bottom, #000 70%, transparent);
+	}
+
+	.admin-brand {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0 0.5rem 0.625rem;
+		font-weight: 600;
+	}
+
+	.admin-logo {
+		width: 1rem;
+		height: 1rem;
+		border: 1.5px solid var(--color-primary);
+		border-radius: 4px;
+		background: linear-gradient(var(--color-primary), var(--color-primary)) center / 0.5rem 1.5px no-repeat;
+	}
+
+	.admin-group {
+		padding: 0.5rem 0.5rem 0.25rem;
+		color: var(--cap-subtle);
+		font-size: 0.625rem;
+		font-weight: 500;
+	}
+
+	.admin-item {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.3125rem 0.5rem;
+		color: var(--cap-muted);
+		border-radius: 6px;
+	}
+
+	.admin-item svg {
+		width: 0.875rem;
+		height: 0.875rem;
+	}
+
+	.admin-item.is-active {
+		color: var(--color-text);
+		font-weight: 500;
+		background: var(--cap-ui-sunken);
+		box-shadow: inset 0 0 0 1px var(--cap-line);
+	}
+
+	.admin-item.is-active svg {
+		color: var(--color-primary);
+	}
+
+	.import-card {
+		width: 12.5rem;
+		margin-top: 3.5rem;
+		margin-inline-start: -2.5rem;
+		padding: 0.875rem;
+	}
+
+	.import-title {
+		font-weight: 600;
+	}
+
+	.import-file {
+		margin-top: 0.125rem !important;
+		color: var(--cap-subtle);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+	}
+
+	.import-bar {
+		height: 0.25rem;
+		margin: 0.625rem 0;
+		overflow: hidden;
+		background: var(--cap-skeleton);
+		border-radius: var(--radius-full);
+	}
+
+	.import-bar span {
+		display: block;
+		width: 100%;
+		height: 100%;
+		background: var(--color-primary);
+	}
+
+	.import-list {
+		display: grid;
+		gap: 0.375rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		color: var(--cap-muted);
+	}
+
+	.import-list li {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+	}
+
+	.import-list svg {
+		width: 0.8125rem;
+		height: 0.8125rem;
+		color: var(--cap-success);
+	}
+
+	/* ---------- Editorial workflow ---------- */
+
+	.visual-editorial {
+		gap: var(--spacing-lg);
+	}
+
+	.timeline {
+		position: relative;
+		display: flex;
+		width: 10.5rem;
+		flex: 0 0 auto;
+		flex-direction: column;
+		gap: 0.75rem;
+		padding-inline-start: 0.25rem;
+	}
+
+	.timeline::before {
+		position: absolute;
+		inset-block: 0.75rem;
+		inset-inline-start: 0.9375rem;
+		width: 1px;
+		background: var(--cap-line);
+		content: "";
+	}
+
+	.tl-item {
+		position: relative;
+		padding: 0.5rem 0.75rem 0.5rem 1.75rem;
+		font-size: 0.75rem;
+		line-height: 1.35;
+	}
+
+	.tl-item p {
+		margin: 0;
+	}
+
+	.tl-dot {
+		position: absolute;
+		inset-block-start: 0.875rem;
+		inset-inline-start: 0.5rem;
+		width: 0.4375rem;
+		height: 0.4375rem;
+		background: var(--color-surface);
+		border: 1.5px solid var(--cap-subtle);
+		border-radius: 50%;
+	}
+
+	.tl-item--current {
+		margin-inline-start: -0.25rem;
+		padding-inline-start: 2rem;
+	}
+
+	.tl-item--current .tl-dot {
+		inset-inline-start: 0.75rem;
+		background: var(--color-primary);
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 3px var(--heat-20);
+	}
+
+	.tl-time {
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+	}
+
+	.tl-label {
+		font-weight: 500;
+	}
+
+	.publish {
+		width: 16.25rem;
+		flex: 0 0 auto;
+		padding: 0.875rem;
+	}
+
+	.publish-title {
+		margin-bottom: 0.625rem !important;
+		font-weight: 600;
+	}
+
+	.publish-row {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.5rem;
+		padding: 0.4375rem 0;
+	}
+
+	.publish-row + .publish-row {
+		border-top: 1px solid var(--cap-line);
+	}
+
+	.publish-row p {
+		display: grid;
+		gap: 0.0625rem;
+	}
+
+	.publish-row strong {
+		font-weight: 500;
+	}
+
+	.publish-row span {
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+	}
+
+	.publish-dot {
+		width: 0.4375rem;
+		height: 0.4375rem;
+		flex: 0 0 auto;
+		margin-top: 0.3125rem;
+		border-radius: 50%;
+	}
+
+	.publish-dot--live {
+		background: var(--cap-success);
+	}
+
+	.publish-dot--draft {
+		background: var(--color-warning);
+	}
+
+	.publish-schedule {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+		margin: 0.5rem 0 0.75rem;
+		padding: 0.4375rem 0.5625rem;
+		color: var(--cap-muted);
+		font-size: 0.6875rem;
+		background: var(--cap-ui-sunken);
+		border-radius: 7px;
+	}
+
+	.publish-schedule svg {
+		width: 0.8125rem;
+		height: 0.8125rem;
+	}
+
+	.publish-schedule strong {
+		margin-inline-start: auto;
+		color: var(--color-text);
+		font-weight: 500;
+	}
+
+	.publish-actions {
+		display: flex;
+		gap: 0.375rem;
+	}
+
+	.publish-actions .ui-btn {
+		flex: 1 1 auto;
+		justify-content: center;
+	}
+
+	/* ---------- Agents ---------- */
+
+	.chat {
+		width: min(100%, 25rem);
+		padding: 0.875rem;
+	}
+
+	.chat-head {
+		--agent-logo-size: 0.875rem;
+		--agent-logo-gap: 0.375rem;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		padding-bottom: 0.75rem;
+		color: var(--color-text);
+		border-bottom: 1px solid var(--cap-line);
+	}
+
+	.chat-endpoint {
+		color: var(--cap-subtle);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+	}
+
+	.chat-msg {
+		max-width: 88%;
+		margin-top: 0.75rem !important;
+		padding: 0.5rem 0.6875rem;
+		border-radius: 10px;
+		text-wrap: pretty;
+	}
+
+	.chat-msg--user {
+		margin-inline-start: auto;
+		background: var(--cap-ui-sunken);
+		box-shadow: inset 0 0 0 1px var(--cap-line);
+	}
+
+	.chat-tools {
+		display: grid;
+		gap: 0.375rem;
+		margin-top: 0.75rem;
+	}
+
+	.tool {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.4375rem 0.625rem;
+		border: 1px solid var(--cap-line);
+		border-radius: 8px;
+	}
+
+	.tool svg {
+		width: 0.8125rem;
+		height: 0.8125rem;
+		color: var(--cap-success);
+	}
+
+	.tool code {
+		color: var(--color-text);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		font-weight: 600;
+	}
+
+	.tool span {
+		margin-inline-start: auto;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+		white-space: nowrap;
+	}
+
+	/* ---------- Extend ---------- */
+
+	.visual-extend {
+		flex-direction: column;
+		gap: 0.875rem;
+	}
+
+	.slash {
+		width: min(100%, 17.5rem);
+		padding: 0.375rem;
+	}
+
+	.slash-input {
+		display: flex;
+		align-items: center;
+		gap: 0.125rem;
+		margin-bottom: 0.25rem !important;
+		padding: 0.4375rem 0.5rem 0.5rem;
+		color: var(--color-text);
+		border-bottom: 1px solid var(--cap-line);
+	}
+
+	.slash-key {
+		margin-inline-end: 0.125rem;
+		color: var(--color-primary);
+		font-weight: 600;
+	}
+
+	.slash-item {
+		display: flex;
+		align-items: center;
+		gap: 0.625rem;
+		padding: 0.375rem 0.5rem;
+		border-radius: 7px;
+	}
+
+	.slash-item.is-active {
+		background: var(--cap-ui-sunken);
+		box-shadow: inset 0 0 0 1px var(--cap-line);
+	}
+
+	.slash-item p {
+		display: grid;
+		min-width: 0;
+	}
+
+	.slash-item strong {
+		font-weight: 500;
+	}
+
+	.slash-item p span {
+		overflow: hidden;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.slash-icon {
+		display: grid;
+		width: 1.625rem;
+		height: 1.625rem;
+		flex: 0 0 auto;
+		place-items: center;
+		color: var(--cap-muted);
+		border: 1px solid var(--cap-line);
+		border-radius: 6px;
+	}
+
+	.slash-item.is-active .slash-icon {
+		color: var(--color-primary);
+	}
+
+	.slash-icon svg {
+		width: 0.875rem;
+		height: 0.875rem;
+	}
+
+	.plugin-chip {
+		position: absolute;
+		inset-block-start: -0.75rem;
+		inset-inline-end: -1.25rem;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.375rem;
+		padding: 0.25rem 0.625rem;
+		color: var(--cap-muted);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		background: var(--cap-ui-bg);
+		border: 1px solid var(--cap-ui-border);
+		border-radius: var(--radius-full);
+		box-shadow: var(--cap-ui-shadow);
+	}
+
+	.plugin-chip svg {
+		width: 0.75rem;
+		height: 0.75rem;
+		color: var(--color-primary);
+	}
+
+	/* ---------- Security ---------- */
+
+	.visual-secure {
+		flex-wrap: wrap;
+		gap: var(--spacing-md);
+	}
+
+	.sandbox {
+		position: relative;
+		width: 16rem;
+		padding: 0.875rem;
+		font-size: 0.75rem;
+		line-height: 1.35;
+		background: color-mix(in srgb, var(--color-primary) 4%, var(--cap-ui-bg));
+		border: 1px dashed color-mix(in srgb, var(--color-primary) 55%, transparent);
+		border-radius: 12px;
+		box-shadow:
+			0 0 0 4px color-mix(in srgb, var(--color-primary) 6%, transparent),
+			var(--cap-ui-shadow);
+	}
+
+	.sandbox p {
+		margin: 0;
+	}
+
+	.sandbox-head {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.sandbox-head strong {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 600;
+	}
+
+	.sandbox-icon {
+		display: grid;
+		width: 1.5rem;
+		height: 1.5rem;
+		place-items: center;
+		color: var(--color-primary);
+		background: var(--heat-12);
+		border-radius: 6px;
+	}
+
+	.sandbox-icon svg {
+		width: 0.875rem;
+		height: 0.875rem;
+	}
+
+	.sandbox-label {
+		margin-bottom: 0.375rem !important;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+		font-weight: 500;
+	}
+
+	.grant,
+	.deny {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.375rem 0;
+	}
+
+	.grant + .grant,
+	.deny + .deny {
+		border-top: 1px solid var(--cap-line);
+	}
+
+	.grant svg,
+	.deny svg {
+		width: 0.8125rem;
+		height: 0.8125rem;
+	}
+
+	.grant svg {
+		color: var(--cap-success);
+	}
+
+	.grant code {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		font-weight: 600;
+	}
+
+	.grant span {
+		margin-inline-start: auto;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+	}
+
+	.denied {
+		width: 13rem;
+		padding: 0.875rem;
+	}
+
+	.deny {
+		color: var(--cap-subtle);
+	}
+
+	.deny svg {
+		color: var(--cap-subtle);
+	}
+
+	/* ---------- Tablet ---------- */
+
+	@media (min-width: 640px) {
+		.flow {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			row-gap: var(--spacing-xl);
+		}
+
+		/* Horizontal connectors within each row; none across the row wrap. */
+		.flow-step:not(:last-child)::after {
+			inset-block-start: calc(var(--flow-panel-h) / 2);
+			inset-inline-start: 100%;
+			width: var(--flow-gap);
+			height: 1px;
+		}
+
+		.flow-step:not(:last-child)::before {
+			inset-block-start: calc(var(--flow-panel-h) / 2 - 2.5px);
+			inset-inline-start: calc(100% + var(--flow-gap) / 2 - 3px);
+		}
+
+		.flow-step:nth-child(2)::after,
+		.flow-step:nth-child(2)::before {
+			display: none;
+		}
+
+		.cap-headline {
+			font-size: var(--font-size-4xl);
+		}
+	}
+
+	/* ---------- Large screens: editorial header, roomier cards ---------- */
+
+	@media (min-width: 1024px) {
+		.capabilities {
+			padding: var(--spacing-4xl) 0 var(--spacing-2xl);
+		}
+
+		.cap-container {
+			gap: var(--spacing-3xl);
+		}
+
+		.cap-header {
+			grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+			align-items: end;
+			gap: var(--spacing-2xl);
+		}
+
+		.cap-headline {
+			max-width: 46rem;
+			font-size: clamp(2.75rem, 4.6vw, var(--font-size-5xl));
+			line-height: 1.02;
+		}
+
+		.cap-intro {
+			justify-self: end;
+			padding-bottom: 0.375rem;
+			font-size: var(--font-size-lg);
+		}
+
+		.cap-copy {
+			padding: var(--spacing-2xl) var(--spacing-2xl) 0;
+		}
+
+		.cap-card--anchor .cap-copy--anchor {
+			display: grid;
+			grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+			align-items: end;
+			gap: var(--spacing-2xl);
+		}
+
+		.cap-card--anchor .cap-text {
+			justify-self: end;
+			max-width: 29rem;
+			margin-top: 0;
+		}
+
+		.cap-title--anchor {
+			font-size: 2.25rem;
+		}
+
+		.cap-visual {
+			min-height: 17.5rem;
+			padding: var(--spacing-lg) var(--spacing-2xl);
+		}
+
+		.visual-familiar {
+			padding-top: var(--spacing-xl);
+			padding-bottom: 0;
+		}
+
+		.flow {
+			padding: var(--spacing-2xl);
+		}
+	}
+
+	/*
+	 * ---------- Desktop bento ----------
+	 * The asymmetric grid and the four-step flow need the full container
+	 * width; below it the cards stack and the flow stays two-by-two so the
+	 * illustrations never clip.
+	 */
+
+	@media (min-width: 1200px) {
+		.cap-grid {
+			grid-template-columns: repeat(12, minmax(0, 1fr));
+		}
+
+		.cap-card--anchor {
+			grid-column: 1 / -1;
+		}
+
+		.cap-card--familiar {
+			grid-column: span 5;
+		}
+
+		.cap-card--editorial {
+			grid-column: span 7;
+		}
+
+		.cap-card--agents {
+			grid-column: span 7;
+		}
+
+		.cap-card--extend {
+			grid-column: span 5;
+		}
+
+		.cap-card--secure {
+			grid-column: 1 / -1;
+			display: grid;
+			grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+			align-items: center;
+		}
+
+		.cap-card--secure .cap-copy {
+			padding: var(--spacing-2xl) 0 var(--spacing-2xl) var(--spacing-2xl);
+		}
+
+		.cap-card--secure .cap-visual {
+			min-height: 16rem;
+		}
+
+		.flow {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+
+		.flow-step:nth-child(2)::after,
+		.flow-step:nth-child(2)::before {
+			display: block;
+		}
+	}
+
+	/* ---------- Small screens ---------- */
+
+	@media (max-width: 639.98px) {
+		.capabilities {
+			padding-top: var(--spacing-3xl);
+		}
+
+		.cap-copy {
+			padding: var(--spacing-lg) var(--spacing-lg) 0;
+		}
+
+		.cap-visual {
+			min-height: 15rem;
+			padding: var(--spacing-lg);
+		}
+
+		.visual-familiar {
+			padding-bottom: 0;
+		}
+
+		.flow {
+			padding: var(--spacing-lg);
+		}
+
+		/* Steps stack here, so panels no longer need a shared height. */
+		.flow-panel {
+			height: auto;
+		}
+
+		.editor,
+		.site {
+			padding-bottom: 0.75rem;
+		}
+
+		.cap-title--anchor {
+			font-size: 1.625rem;
+		}
+
+		.visual-editorial {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.timeline {
+			display: none;
+		}
+
+		.publish {
+			width: 100%;
+		}
+
+		.import-card {
+			width: 11rem;
+			margin-inline-start: -3.5rem;
+		}
+
+		.visual-secure {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.sandbox,
+		.denied {
+			width: 100%;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.editor-caret {
+			animation: none;
+		}
+	}
+</style>

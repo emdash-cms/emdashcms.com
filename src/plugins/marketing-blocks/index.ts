@@ -1,7 +1,7 @@
 /**
  * Marketing blocks plugin (inline, template-local).
  *
- * Registers the five marketing block types so editors can insert and edit them
+ * Registers the marketing block types so editors can insert and edit them
  * in the admin's Portable Text editor. Block Kit `fields` describe the form
  * shown when inserting or editing a block.
  *
@@ -69,6 +69,23 @@ const definition: PluginDefinition = {
 						multiline: true,
 					},
 					{ type: "toggle", action_id: "centered", label: "Center the layout" },
+				],
+			},
+
+			{
+				type: "marketing.capabilities",
+				label: "Capabilities",
+				description: "Bento story of EmDash capabilities with product illustrations",
+				// Only the heading is editable. Each card is paired with a bespoke
+				// illustration, so card copy lives in Capabilities.astro.
+				fields: [
+					{ type: "text_input", action_id: "headline", label: "Headline" },
+					{
+						type: "text_input",
+						action_id: "subheadline",
+						label: "Introduction",
+						multiline: true,
+					},
 				],
 			},
 

@@ -9,6 +9,7 @@
 import type { PortableTextBlock } from "emdash";
 import { PortableText } from "emdash/ui";
 import Hero from "./blocks/Hero.astro";
+import Capabilities from "./blocks/Capabilities.astro";
 import Features from "./blocks/Features.astro";
 import Testimonials from "./blocks/Testimonials.astro";
 import Pricing from "./blocks/Pricing.astro";
@@ -23,6 +24,7 @@ const { value } = Astro.props;
 // Custom block type components
 const marketingTypes = {
 	"marketing.hero": Hero,
+	"marketing.capabilities": Capabilities,
 	"marketing.features": Features,
 	"marketing.testimonials": Testimonials,
 	"marketing.pricing": Pricing,
