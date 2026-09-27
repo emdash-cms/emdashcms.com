@@ -15,7 +15,8 @@ interface Props {
 }
 
 const { node } = Astro.props;
-const { _key, headline, testimonials } = node;
+const { _key, testimonials } = node;
+const headline = node.headline?.trim() || (Astro.url.pathname === "/" && _key === "testimonials" ? "What people are saying" : undefined);
 
 function getInitials(name: string) {
 	return name

@@ -128,44 +128,45 @@
 						{
 							"_type": "marketing.features",
 							"_key": "features",
-							"headline": "Built for the way you actually ship",
-							"subheadline": "Type-safe content, server-rendered Astro pages, and a single binary deploy on Cloudflare. No SaaS dashboard between you and your data.",
+							"headline": "Build your next blog or microsite today",
+							"subheadline": "EmDash combines with Astro to create one end-to-end TypeScript CMS and frontend",
 							"features": [
 								{
-									"icon": "code",
-									"title": "Schema as code",
-									"description": "Define collections, fields, and relationships in a seed file. Get generated TypeScript types and a fully migrated database every time you run dev."
+									"icon": "shield",
+									"title": "Secure plugins",
+									"description": "No more plugin security nightmare: EmDash runs plugins in secure, isolated sandboxes"
 								},
 								{
 									"icon": "zap",
-									"title": "Astro-native",
-									"description": "First-class Astro integration. Server-rendered pages, content loaders, image components, and Portable Text rendering with no glue code."
+									"title": "The Astro-native CMS",
+									"description": "First-class Astro integration. Server-rendered pages, content loaders, image components, and JSON structured content."
 								},
 								{
-									"icon": "cloud",
-									"title": "Runs on Cloudflare",
-									"description": "D1 for content, R2 for media, Workers for serving. One stack, global by default, deployed from a single command."
+									"icon": "check",
+									"title": "A spiritual WordPress successor",
+									"description": "Everything you love about WordPress with lightning-fast admin panels, no plugin security concerns, and a more modern architecture."
 								},
 								{
 									"icon": "users",
-									"title": "Admin humans love",
-									"description": "Drafts, revisions, scheduling, full-text search, taxonomies, menus, and live preview, all in a fast modern editor."
+									"title": "Easy to manage",
+									"description": "Create your own content types in the admin, with drafts, revisions, scheduling, full-text search, taxonomies, menus, and live preview."
 								},
 								{
 									"icon": "shield",
-									"title": "Built for agents",
-									"description": "Every CMS operation is exposed over MCP. Agents read schema, edit content, and publish through the same typed APIs the admin uses."
+									"title": "Built with agents in mind",
+									"description": "Work with your agent to create a modern, beautiful site that you can both edit through extensive APIs and MCPs."
 								},
 								{
 									"icon": "globe",
-									"title": "Extensible by design",
-									"description": "Plugins add custom block types, admin pages, hooks, and storage. Bring your own auth, payments, comments, or analytics."
+									"title": "Extend with plugins",
+									"description": "Add your own custom block types, admin pages, hooks, storage and more with plugins."
 								}
 							]
 						},
 						{
 							"_type": "marketing.testimonials",
 							"_key": "testimonials",
+							"headline": "What people are saying",
 							"testimonials": [
 								{
 									"quote": "The entire functionality of WordPress, and then some.",
