@@ -34,7 +34,7 @@
 <style>
 	.astro-pipeline {
 		--line: color-mix(in srgb, var(--color-text) 12%, transparent);
-		--muted: color-mix(in srgb, var(--color-text) 55%, transparent);
+		--muted: var(--marketing-text-secondary);
 		position: relative;
 		min-width: 0;
 		overflow: hidden;
@@ -79,21 +79,21 @@
 	.artifact-bar { display: flex; align-items: center; gap: 0.55rem; padding: 0.8rem 0.9rem; border-bottom: 1px solid var(--line); font-size: 0.67rem; }
 	.artifact-bar strong { font-weight: 600; }
 	.artifact-bar > span:last-child { margin-inline-start: auto; color: var(--muted); font-size: 0.56rem; white-space: nowrap; }
-	.artifact-mark, .page-mark { color: var(--color-primary); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.72rem; }
+	.artifact-mark, .page-mark { color: var(--marketing-text-accent); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.72rem; }
 	.code-row { display: flex; gap: 0.85rem; padding: 0.23rem 0.9rem; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.65rem; white-space: nowrap; }
 	.code-row:nth-child(2) { padding-top: 0.95rem; }
 	.code-row > span { color: var(--muted); opacity: 0.72; }
 	.code-row code { font: inherit; }
-	.code-row em { color: var(--color-primary); font-style: normal; }
+	.code-row em { color: var(--marketing-text-accent); font-style: normal; }
 	.type-card { top: 35%; right: 5%; display: flex; width: 38%; flex-direction: column; gap: 0.45rem; padding: 1rem; transform: rotate(3deg); }
 	.type-kicker { color: var(--muted); font-size: 0.65rem; }
-	.type-kicker span { color: var(--color-primary); }
+	.type-kicker span { color: var(--marketing-text-accent); }
 	.type-card strong { margin: 0.15rem 0 0.4rem; font-size: 1.05rem; letter-spacing: -0.02em; }
 	.type-card code { padding: 0.3rem 0.4rem; background: var(--color-bg); border: 1px solid var(--line); border-radius: 0.25rem; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.62rem; }
-	.type-card code span { color: var(--color-primary); }
+	.type-card code span { color: var(--marketing-text-accent); }
 	.page-card { right: 8%; bottom: 3%; width: 56%; overflow: hidden; transform: rotate(-2deg); }
 	.page-content { display: flex; min-height: 8.8rem; flex-direction: column; gap: 0.55rem; padding: 1.2rem; }
-	.page-content span { color: var(--color-primary); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.04em; }
+	.page-content span { color: var(--marketing-text-accent); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.04em; }
 	.page-content strong { margin-bottom: 0.35rem; font-size: 1rem; letter-spacing: -0.025em; }
 	.page-content i { width: 82%; height: 0.25rem; background: var(--line); border-radius: 1rem; }
 	.page-content i:last-child { width: 56%; }
