@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none" font-family="Inter, Arial, sans-serif">
+		<title>A media library for the whole story. — EmDash</title>
+		<defs><linearGradient id="orange-mark" x1="0%" y1="100%" x2="100%" y2="0%"><stop stop-color="#ff5e1f"/><stop offset="0.6" stop-color="#ffae58"/><stop offset="1" stop-color="#fff2e3"/></linearGradient></defs>
+		<rect width="1200" height="630" fill="#f7f7f6"/>
+		<rect x="28" y="28" width="1144" height="574" rx="28" fill="#fff" stroke="#e4e4e1" stroke-width="2"/>
+		<rect x="80" y="72" width="34" height="34" rx="6" stroke="#ff7a42" stroke-width="3"/><path d="M88 89h18" stroke="#ff7a42" stroke-width="3" stroke-linecap="round"/>
+		<text x="128" y="100" fill="#1b1c20" font-size="28" font-weight="700" letter-spacing="-1">EmDash</text>
+		<text x="80" y="185" fill="#a94b25" font-family="monospace" font-size="16" font-weight="700" letter-spacing="1.2">MEDIA LIBRARY</text>
+		<text x="80" y="263" fill="#1b1c20" font-size="56" font-weight="700" letter-spacing="-2.8">A media library</text><text x="80" y="335" fill="#1b1c20" font-size="56" font-weight="700" letter-spacing="-2.8">for the whole story.</text><text x="80" y="447" fill="#5d6166" font-size="22">Organize, describe, and trace assets</text><text x="80" y="478" fill="#5d6166" font-size="22">alongside the content that uses them.</text>
+		<g transform="translate(690 162)">
+		<rect width="450" height="340" rx="22" fill="#f5f4f2" stroke="#e7e6e4"/>
+		<rect x="19" y="26" width="412" height="287" rx="13" fill="#fff" stroke="#deddda"/><path d="M19 70h412" stroke="#e7e6e4"/>
+		<text x="38" y="56" fill="#1b1c20" font-size="18" font-weight="700">Media Library</text><rect x="295" y="39" width="116" height="22" rx="5" fill="#ff6d35"/><text x="313" y="55" fill="#171717" font-size="12" font-weight="700">+ Upload Files</text>
+		<rect x="37" y="86" width="286" height="30" rx="6" fill="#fafafa" stroke="#e4e3e1"/><circle cx="55" cy="100" r="6" stroke="#8a8d90"/><path d="m59 104 5 5" stroke="#8a8d90"/><text x="75" y="106" fill="#8a8d90" font-size="14">Search files...</text>
+		<text x="37" y="146" fill="#1b1c20" font-size="16" font-weight="700">Folders</text><rect x="37" y="157" width="128" height="36" rx="6" fill="#fff" stroke="#e4e3e1"/><text x="50" y="180" fill="#a94b25" font-size="14">▱</text><text x="74" y="181" fill="#1b1c20" font-size="14" font-weight="600">Campaign</text><rect x="174" y="157" width="115" height="36" rx="6" fill="#fff" stroke="#e4e3e1"/><text x="188" y="181" fill="#1b1c20" font-size="14">Editorial</text>
+		<text x="37" y="225" fill="#1b1c20" font-size="16" font-weight="700">Files</text><g><rect x="37" y="236" width="122" height="61" rx="6" fill="#e8ddd0"/><circle cx="135" cy="251" r="9" fill="#ff7840"/><path d="M37 288 77 251l28 25 18-17 36 37H37Z" fill="#687767"/></g><g><rect x="170" y="236" width="122" height="61" rx="6" fill="#d9d9c7"/><path d="M182 280h98v17h-98Z" fill="#314635"/><circle cx="263" cy="253" r="12" fill="#ff7840"/></g>
+		<g transform="rotate(4 352 236)"><rect x="300" y="192" width="124" height="105" rx="10" fill="#fff" stroke="#e4e3e1"/><text x="312" y="215" fill="#1b1c20" font-size="12" font-weight="700">landscape.jpg</text><rect x="312" y="228" width="100" height="42" rx="4" fill="#e8ddd0"/><path d="M312 266 342 238l24 20 18-14 28 26H312Z" fill="#687767"/><text x="312" y="286" fill="#a94b25" font-size="10">ALT TEXT</text></g></g>
+		<path d="M80 530h1040" stroke="#e8e8e5" stroke-width="2"/>
+		<text x="80" y="566" fill="#6f7377" font-family="monospace" font-size="17">emdashcms.com</text>
+		<text x="1120" y="566" fill="#a94b25" font-family="monospace" font-size="17" text-anchor="end">MEDIA LIBRARY</text>
+	</svg>

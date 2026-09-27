@@ -67,6 +67,12 @@ const socialLinks = rawSocialLinks.map((item) => ({
 	url: sanitizeHref(item.url?.trim()),
 	type: getSocialType(item),
 }));
+
+const productPages = [
+	{ label: "Astro CMS", url: "/astro-cms" },
+	{ label: "Media library", url: "/media-library" },
+	{ label: "For agents", url: "/for-agents" },
+];
 ---
 
 <footer class="site-footer">
@@ -109,6 +115,9 @@ const socialLinks = rawSocialLinks.map((item) => ({
 								<span>{item.label}</span>
 							</a>
 						))}
+						{column.heading === "Product" && productPages
+							.filter((page) => !column.menu.items.some((item) => item.url === page.url))
+							.map((page) => <a href={page.url}>{page.label}</a>)}
 					</div>
 				))}
 			</nav>

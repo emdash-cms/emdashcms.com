@@ -11,6 +11,7 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
   pageType?: string;
   articleMeta?: {
     publishedTime?: string | null;
@@ -24,7 +25,7 @@ interface Props {
   };
 }
 
-const { title, description, image, pageType = "website", articleMeta, content } = Astro.props;
+const { title, description, image, imageAlt, pageType = "website", articleMeta, content } = Astro.props;
 const PLAYGROUND_URL = "https://try.emdashcms.com";
 const PUBLIC_SITE_URL = Astro.site?.href ?? "https://emdashcms.com/";
 const canonical = new URL(Astro.url.pathname, PUBLIC_SITE_URL).href;
@@ -93,6 +94,12 @@ const pageCtx = createPublicPageContext({
     <link rel="icon" type="image/png" sizes="any" href="/brand/favicon.png" />
     <link rel="apple-touch-icon" href="/brand/favicon.png" />
     <EmDashHead page={pageCtx} />
+    {image && imageAlt && (
+      <>
+        <meta property="og:image:alt" content={imageAlt} />
+        <meta name="twitter:image:alt" content={imageAlt} />
+      </>
+    )}
     <Font cssVariable="--font-sans" preload />
     <script is:inline>
       // Apply theme immediately to prevent flash
