@@ -1,0 +1,29 @@
+seed/seed.json
+  s_bf6c4e65e38922::t_5473208becb38e 125
+src/components/AgentLogos.astro
+  s_bf6c4e65e38922::t_3fde5897f7de18 1-21
+src/components/CopyPromptButton.astro
+  s_bf6c4e65e38922::t_ae83b69d5917e8 2-3,19
+src/components/FeatureVisual.astro
+  s_bf6c4e65e38922::t_b9b0ad60495576 2-3,16-21,34-40,106,116,192-202,204-205,207,210-211,216,223,226-229,232,236-250,262-273,306
+src/components/blocks/Features.astro
+  s_bf6c4e65e38922::t_1082d925366c68 184-187
+src/styles/theme.css
+  s_bf6c4e65e38922::t_15bc14bcd7dd4f 25-26,46-47,68-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ef433cd3ae0f82ea252296ee8533f88e3ed5b446",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
