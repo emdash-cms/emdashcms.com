@@ -1,0 +1,89 @@
+src/components/blocks/Hero.astro
+  s_bf6c4e65e38922::t_46fc2b3cd9589e 59-82,262,275-278,287,294,324,376,518-519,526-530,534-537
+package.json
+  s_bf6c4e65e38922::t_9877ef1a496704 10-11,16,33
+  s_bf6c4e65e38922::t_c142f6da9a7bf2 12
+  s_bf6c4e65e38922::t_852853a7960346 13-14
+pnpm-lock.yaml
+  s_bf6c4e65e38922::t_e7fecb5cca195c 203-205
+public/social/astro-cms.svg
+  s_bf6c4e65e38922::t_66135f933e33f2 1-26
+public/social/for-agents.svg
+  s_bf6c4e65e38922::t_28b5d489525291 1-19
+public/social/home.svg
+  s_bf6c4e65e38922::t_45f5f53707b512 1-21
+public/social/media-library.svg
+  s_bf6c4e65e38922::t_32e21cefa24d86 1-21
+scripts/generate-social-cards.mjs
+  s_bf6c4e65e38922::t_95fde7ee37c2a7 1-155
+scripts/social-cards.manifest.json
+  s_bf6c4e65e38922::t_ea9db84477ca6b 1-21
+src/components/AgentJourney.astro
+  s_bf6c4e65e38922::t_46dcf994c20eeb 1-32,34-81,83,85-89,91-113
+  s_bf6c4e65e38922::t_84fc41aff893ad 33,82,84,90
+src/components/AstroPipeline.astro
+  s_bf6c4e65e38922::t_307848a74e4d02 1-36,38-81,83-86,88-89,91-92,94-95,97-124
+  s_bf6c4e65e38922::t_2fe82d0e2a64ef 37,82,87,90,93,96
+src/components/SiteFooter.astro
+  s_bf6c4e65e38922::t_f26e34e5e2c0eb 70-75,118-120
+  s_bf6c4e65e38922::t_d8646290426e66 240,262,267,278,308,317,340
+src/components/SiteHeader.astro
+  s_bf6c4e65e38922::t_84f8725cb20d86 58-62,110-145,148-155,170-171,209-210,217,229-240,248-254,429-433,435-441,443-466,468-473,475,480-481,488,503-506,511,612,615,637
+  s_bf6c4e65e38922::t_7151d2c1161c50 442
+  s_bf6c4e65e38922::t_2d50274b42d57d 421,434,467,474,502
+src/layouts/Base.astro
+  s_bf6c4e65e38922::t_2d5ea365fd4e53 14,28,97-102
+src/pages/astro-cms.astro
+  s_bf6c4e65e38922::t_18dd7c976ab3a8 1-108,110-112,114,116-118,120-122,125-131,133-134,136-137,139-140,142,144-155,157-160,162-165,168-173,175,178,180-200
+  s_bf6c4e65e38922::t_7465a8cf00de3d 109,115,123,132,166
+  s_bf6c4e65e38922::t_20c6a73043ed64 124,141,174,176
+  s_bf6c4e65e38922::t_b89974bc957e9d 113,119,135,138,143,156,161,167,177,179
+src/pages/for-agents.astro
+  s_bf6c4e65e38922::t_a78a7bec34431e 1-126,128-130,132,134-136,138-140,143-147,149-151,153-155,157-159,161,164-167,169-170,173-176,178-181,183,185-187,189-195,198-199,201,204-207,209-215,217,220-240
+  s_bf6c4e65e38922::t_4406157e3b9dd1 127,133,141,152,162,171,182
+  s_bf6c4e65e38922::t_9eef9bdc52d6d5 142,200,216,218
+  s_bf6c4e65e38922::t_7a6932e9881cbc 131,137,148,156,160,163,168,172,177,184,188,196-197,202-203,208,219
+src/pages/index.astro
+  s_bf6c4e65e38922::t_f9dc7273316a06 17-18
+src/pages/media-library.astro
+  s_bf6c4e65e38922::t_348b60c2bc777a 1-48,51-54,60-68,70,72,74-75,77-79,82-88,90,92-97,99-103,105-111,113-114,116-117,119,121-125,127-129,131,134,136-147,149,163-165,167,189,194-199,201,204-261,267-279
+  s_bf6c4e65e38922::t_516ed4d10078e5 71,73,80,118,130
+  s_bf6c4e65e38922::t_b61da5decff857 81,89,200,202
+  s_bf6c4e65e38922::t_4260aa6111b191 69,76,91,98,104,112,115,120,126,132-133,135,148,150,166,190,203
+  s_bf6c4e65e38922::t_2aad4b7a933217 49-50,55-59,151-162,168-188,191-193,262-266
+src/pages/sitemap-[collection].xml.ts
+  s_bf6c4e65e38922::t_c6af90fb25973a 1-5
+src/pages/sitemap.xml.ts
+  s_bf6c4e65e38922::t_971c3c988929f4 1,4-6,8,23-28,36,37-38,55-62,64-66,68-76,79-81,82-87,90-95
+  s_bf6c4e65e38922::t_7ed05990b81101 2-3,7,9-22,29-35,39-54,63,67,77-78,88-89
+scripts/sitemap.test.mjs
+  s_bf6c4e65e38922::t_df6a15542d125d 1-14
+src/lib/sitemap.mjs
+  s_bf6c4e65e38922::t_413aca8b9c4549 1-27
+public/llms.txt
+  s_bf6c4e65e38922::t_a0a60fae7c6879 1-25
+scripts/home-content-migration.md
+  s_bf6c4e65e38922::t_75cc40929d5745 1-16
+scripts/home-content-plan.mjs
+  s_bf6c4e65e38922::t_0054c0ab6f0cd8 1-62
+scripts/home-content-plan.test.mjs
+  s_bf6c4e65e38922::t_f6d6bc44fb0d66 1-114
+scripts/plan-home-content.mjs
+  s_bf6c4e65e38922::t_2c5dc11983ee0e 1-73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "85c5ea54a91bea5fc4b24a2853e58a9fb47a37f9",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
