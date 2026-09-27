@@ -75,6 +75,7 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 									<div class="hero-install-command">
 										<span class="hero-command-prompt" aria-hidden="true">$</span>
 										<code>npm create <span class="hero-command-package">emdash@latest</span></code>
+										<input type="text" readonly hidden aria-label="Scaffold command to copy manually" data-install-manual />
 										<button type="button" aria-label="Copy scaffold command" data-copy-install-command>
 											<svg class="hero-copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
 											<svg class="hero-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
@@ -138,7 +139,9 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 
 <script>
 	document.querySelectorAll<HTMLButtonElement>("[data-copy-install-command]").forEach((button) => {
-		const command = button.parentElement?.querySelector("code")?.textContent?.trim();
+		const code = button.parentElement?.querySelector("code");
+		const manual = button.parentElement?.querySelector<HTMLInputElement>("[data-install-manual]");
+		const command = code?.textContent?.trim();
 		const status = button.closest(".hero-local-start")?.querySelector<HTMLElement>("[data-install-status]");
 		let resetTimer: number | undefined;
 		button.addEventListener("click", async () => {
@@ -146,13 +149,23 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 			try {
 				if (!command || !navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
 				await navigator.clipboard.writeText(command);
+				if (manual) manual.hidden = true;
+				if (code) code.hidden = false;
 				button.classList.add("is-copied");
 				button.setAttribute("aria-label", "Scaffold command copied");
 				if (status) status.textContent = "Scaffold command copied";
 			} catch {
 				button.classList.remove("is-copied");
 				button.setAttribute("aria-label", "Copy scaffold command");
-				if (status) status.textContent = "Could not copy. Select the command to copy it manually.";
+				if (status) status.textContent = "Clipboard unavailable. Command selected for manual copy.";
+				if (command && manual && code) {
+					manual.value = command;
+					code.hidden = true;
+					manual.hidden = false;
+					manual.focus();
+					manual.select();
+				}
+				return;
 			}
 			resetTimer = window.setTimeout(() => {
 				button.classList.remove("is-copied");
@@ -373,6 +386,26 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 		font-size: 0.8125rem;
 		white-space: nowrap;
 		user-select: text;
+	}
+
+	.hero-install-command input {
+		min-width: 0;
+		flex: 1;
+		padding: 0;
+		color: var(--color-text);
+		background: transparent;
+		border: 0;
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+	}
+
+	.hero-install-command input[hidden] {
+		display: none;
+	}
+
+	.hero-install-command input:focus {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
 	}
 
 	.hero-command-package {
