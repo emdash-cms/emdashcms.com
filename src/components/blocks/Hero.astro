@@ -650,6 +650,21 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 			padding-bottom: 0;
 		}
 
+		.hero--split .hero-container::before {
+			position: absolute;
+			z-index: 0;
+			inset-block-start: 3rem;
+			inset-inline-start: 48%;
+			width: min(80vw, 1000px);
+			height: 32rem;
+			background:
+				radial-gradient(ellipse 48% 32% at 43% 34%, color-mix(in srgb, var(--color-primary) 22%, transparent), transparent),
+				radial-gradient(ellipse 55% 50% at 69% 49%, color-mix(in srgb, var(--color-primary) 9%, transparent), transparent);
+			filter: blur(28px);
+			pointer-events: none;
+			content: "";
+		}
+
 		.hero--split .hero-copy {
 			z-index: 1;
 			padding-top: clamp(2rem, 4vw, 4rem);
@@ -668,6 +683,7 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 		}
 
 		.hero--split .hero-image-wrap {
+			z-index: 1;
 			width: clamp(780px, 57vw, 960px);
 			margin-top: 3rem;
 			padding: 4px;
