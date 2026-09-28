@@ -9,18 +9,18 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const pageTitle = page?.data.title;
 
-// Home content created before the capabilities block existed does not contain
-// one. Until an editor inserts it, render the default section directly before
-// the first features block. Once the block is in the content, its position
-// and headline come from the CMS. Because the fallback re-applies whenever the
-// block is absent, removing the section from the page also means deleting
-// this helper; it can go once production content includes the block.
+// The capabilities bento replaces the home page's features grid. Home content
+// created before the capabilities block existed still has the grid and no
+// bento, so render the default bento in the grid's place. Content that
+// already includes a capabilities block renders exactly as stored: its
+// position and headline come from the CMS, and any features block in it stays.
+// Delete this helper once production content includes the capabilities block.
 function withCapabilities(content: PortableTextBlock[] | undefined) {
 	if (!content || content.some((block) => block._type === "marketing.capabilities")) return content;
 	const featuresIndex = content.findIndex((block) => block._type === "marketing.features");
 	if (featuresIndex < 0) return content;
 	const capabilities: PortableTextBlock = { _type: "marketing.capabilities", _key: "capabilities" };
-	return [...content.slice(0, featuresIndex), capabilities, ...content.slice(featuresIndex)];
+	return [...content.slice(0, featuresIndex), capabilities, ...content.slice(featuresIndex + 1)];
 }
 
 const pageContent = withCapabilities(page?.data.content);

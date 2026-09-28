@@ -132,44 +132,6 @@
 							"subheadline": "EmDash combines with Astro to create one end-to-end TypeScript CMS and frontend."
 						},
 						{
-							"_type": "marketing.features",
-							"_key": "features",
-							"headline": "Build your next blog or microsite today",
-							"subheadline": "EmDash combines with Astro to create one end-to-end TypeScript CMS and frontend",
-							"features": [
-								{
-									"icon": "shield",
-									"title": "Secure plugins",
-									"description": "No more plugin security nightmare: EmDash runs plugins in secure, isolated sandboxes"
-								},
-								{
-									"icon": "zap",
-									"title": "The Astro-native CMS",
-									"description": "First-class Astro integration. Server-rendered pages, content loaders, image components, and JSON structured content."
-								},
-								{
-									"icon": "check",
-									"title": "A spiritual WordPress successor",
-									"description": "Everything you love about WordPress with lightning-fast admin panels, no plugin security concerns, and a more modern architecture."
-								},
-								{
-									"icon": "users",
-									"title": "Easy to manage",
-									"description": "Create your own content types in the admin, with drafts, revisions, scheduling, full-text search, taxonomies, menus, and live preview."
-								},
-								{
-									"icon": "shield",
-									"title": "Built with agents in mind",
-									"description": "Work with your agent to create a modern, beautiful site that you can both edit through extensive APIs and MCPs."
-								},
-								{
-									"icon": "globe",
-									"title": "Extend with plugins",
-									"description": "Add your own custom block types, admin pages, hooks, storage and more with plugins."
-								}
-							]
-						},
-						{
 							"_type": "marketing.testimonials",
 							"_key": "testimonials",
 							"headline": "What people are saying",
