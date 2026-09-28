@@ -40,14 +40,6 @@ const headlineRest = headlineMatch ? headlineMatch[2] : undefined;
 
 // 24px line icons, drawn with currentColor strokes.
 const icons = {
-	widgets:
-		'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
-	check: '<path d="m5 12.5 4.5 4.5L19 7"/>',
-	x: '<path d="M7 7l10 10M17 7 7 17"/>',
-	plug: '<path d="M9 3v5M15 3v5M6.5 8h11v3.5a5.5 5.5 0 0 1-11 0zM12 17v4"/>',
-	hero: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9.5h10M7 13.5h6"/>',
-	quote: '<path d="M6 8h4.5v4.5C10.5 15 9 16.5 7 17.5M14 8h4.5v4.5c0 2.5-1.5 4-3.5 5"/>',
-	question: '<circle cx="12" cy="12" r="8.5"/><path d="M9.75 9.5a2.25 2.25 0 1 1 3.2 2.05c-.6.3-.95.8-.95 1.45v.5M12 16.5h.01"/>',
 	grip: '<path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"/>',
 	plus: '<path d="M12 5.5v13M5.5 12h13"/>',
 	bold: '<path d="M7.5 5h5.25a3.5 3.5 0 0 1 0 7H7.5zM7.5 12h6.25a3.5 3.5 0 0 1 0 7H7.5z"/>',
@@ -81,12 +73,18 @@ const ph = {
 	calendarPlus: '<path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-48-56a8,8,0,0,1-8,8H136v16a8,8,0,0,1-16,0V160H104a8,8,0,0,1,0-16h16V128a8,8,0,0,1,16,0v16h16A8,8,0,0,1,160,152Z"/>',
 	dotsSixVertical: '<path d="M104,60A12,12,0,1,1,92,48,12,12,0,0,1,104,60Zm60,12a12,12,0,1,0-12-12A12,12,0,0,0,164,72ZM92,116a12,12,0,1,0,12,12A12,12,0,0,0,92,116Zm72,0a12,12,0,1,0,12,12A12,12,0,0,0,164,116ZM92,184a12,12,0,1,0,12,12A12,12,0,0,0,92,184Zm72,0a12,12,0,1,0,12,12A12,12,0,0,0,164,184Z"/>',
 	upload: '<path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a16,16,0,0,1,16-16H80a8,8,0,0,1,0,16H32v64H224V136H176a8,8,0,0,1,0-16h48A16,16,0,0,1,240,136ZM85.66,77.66,120,43.31V128a8,8,0,0,0,16,0V43.31l34.34,34.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,77.66ZM200,168a12,12,0,1,0-12,12A12,12,0,0,0,200,168Z"/>',
-	arrowSquareOut: '<path d="M224,104a8,8,0,0,1-16,0V59.32l-66.33,66.34a8,8,0,0,1-11.32-11.32L196.68,48H152a8,8,0,0,1,0-16h64a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/>',
 	fileText: '<path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/>',
 	magnifyingGlass: '<path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>',
 	filePlus: '<path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-40-64a8,8,0,0,1-8,8H136v16a8,8,0,0,1-16,0V160H104a8,8,0,0,1,0-16h16V128a8,8,0,0,1,16,0v16h16A8,8,0,0,1,160,152Z"/>',
 	calendarDots: '<path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-68-76a12,12,0,1,1-12-12A12,12,0,0,1,140,132Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,184,132ZM96,172a12,12,0,1,1-12-12A12,12,0,0,1,96,172Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,140,172Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,184,172Z"/>',
 	plus: '<path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/>',
+	cube: '<path d="m223.68 66.15l-88-48.15a15.88 15.88 0 0 0-15.36 0l-88 48.17a16 16 0 0 0-8.32 14v95.64a16 16 0 0 0 8.32 14l88 48.17a15.88 15.88 0 0 0 15.36 0l88-48.17a16 16 0 0 0 8.32-14V80.18a16 16 0 0 0-8.32-14.03M128 32l80.34 44L128 120L47.66 76ZM40 90l80 43.78v85.79l-80-43.75Zm96 129.57v-85.75L216 90v85.78Z"/>',
+	stack: '<path d="M230.91 172a8 8 0 0 1-2.91 10.91l-96 56a8 8 0 0 1-8.06 0l-96-56A8 8 0 0 1 36 169.09l92 53.65l92-53.65a8 8 0 0 1 10.91 2.91M220 121.09l-92 53.65l-92-53.65a8 8 0 0 0-8 13.82l96 56a8 8 0 0 0 8.06 0l96-56a8 8 0 1 0-8.06-13.82M24 80a8 8 0 0 1 4-6.91l96-56a8 8 0 0 1 8.06 0l96 56a8 8 0 0 1 0 13.82l-96 56a8 8 0 0 1-8.06 0l-96-56A8 8 0 0 1 24 80m23.88 0L128 126.74L208.12 80L128 33.26Z"/>',
+	shieldCheck: '<path d="M208 40H48a16 16 0 0 0-16 16v56c0 52.72 25.52 84.67 46.93 102.19c23.06 18.86 46 25.26 47 25.53a8 8 0 0 0 4.2 0c1-.27 23.91-6.67 47-25.53C198.48 196.67 224 164.72 224 112V56a16 16 0 0 0-16-16m0 72c0 37.07-13.66 67.16-40.6 89.42a129.3 129.3 0 0 1-39.4 22.2a128.3 128.3 0 0 1-38.92-21.81C61.82 179.51 48 149.3 48 112V56h160ZM82.34 141.66a8 8 0 0 1 11.32-11.32L112 148.69l50.34-50.35a8 8 0 0 1 11.32 11.32l-56 56a8 8 0 0 1-11.32 0Z"/>',
+	key: '<path d="M216.57 39.43a80 80 0 0 0-132.66 81.35L28.69 176A15.86 15.86 0 0 0 24 187.31V216a16 16 0 0 0 16 16h32a8 8 0 0 0 8-8v-16h16a8 8 0 0 0 8-8v-16h16a8 8 0 0 0 5.66-2.34l9.56-9.57A79.7 79.7 0 0 0 160 176h.1a80 80 0 0 0 56.47-136.57M224 98.1c-1.09 34.09-29.75 61.86-63.89 61.9H160a63.7 63.7 0 0 1-23.65-4.51a8 8 0 0 0-8.84 1.68L116.69 168H96a8 8 0 0 0-8 8v16H72a8 8 0 0 0-8 8v16H40v-28.69l58.83-58.82a8 8 0 0 0 1.68-8.84A63.7 63.7 0 0 1 96 95.92c0-34.14 27.81-62.8 61.9-63.89A64 64 0 0 1 224 98.1M192 76a12 12 0 1 1-12-12a12 12 0 0 1 12 12"/>',
+	hardDrives: '<path d="M208 136H48a16 16 0 0 0-16 16v48a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16v-48a16 16 0 0 0-16-16m0 64H48v-48h160zm0-160H48a16 16 0 0 0-16 16v48a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16V56a16 16 0 0 0-16-16m0 64H48V56h160zm-16-24a12 12 0 1 1-12-12a12 12 0 0 1 12 12m0 96a12 12 0 1 1-12-12a12 12 0 0 1 12 12"/>',
+	database: '<path d="M128 24c-53.83 0-96 24.6-96 56v96c0 31.4 42.17 56 96 56s96-24.6 96-56V80c0-31.4-42.17-56-96-56m80 104c0 9.62-7.88 19.43-21.61 26.92C170.93 163.35 150.19 168 128 168s-42.93-4.65-58.39-13.08C55.88 147.43 48 137.62 48 128v-16.64c17.06 15 46.23 24.64 80 24.64s62.94-9.68 80-24.64ZM69.61 53.08C85.07 44.65 105.81 40 128 40s42.93 4.65 58.39 13.08C200.12 60.57 208 70.38 208 80s-7.88 19.43-21.61 26.92C170.93 115.35 150.19 120 128 120s-42.93-4.65-58.39-13.08C55.88 99.43 48 89.62 48 80s7.88-19.43 21.61-26.92m116.78 149.84C170.93 211.35 150.19 216 128 216s-42.93-4.65-58.39-13.08C55.88 195.43 48 185.62 48 176v-16.64c17.06 15 46.23 24.64 80 24.64s62.94-9.68 80-24.64V176c0 9.62-7.88 19.43-21.61 26.92"/>',
+	globeSimple: '<path d="M128 24a104 104 0 1 0 104 104A104.12 104.12 0 0 0 128 24m87.62 96h-39.83c-1.79-36.51-15.85-62.33-27.38-77.6a88.19 88.19 0 0 1 67.22 77.6ZM96.23 136h63.54c-2.31 41.61-22.23 67.11-31.77 77c-9.55-9.9-29.46-35.4-31.77-77m0-16c2.31-41.61 22.23-67.11 31.77-77c9.55 9.93 29.46 35.43 31.77 77Zm11.36-77.6C96.06 57.67 82 83.49 80.21 120H40.37a88.19 88.19 0 0 1 67.22-77.6M40.37 136h39.84c1.82 36.51 15.85 62.33 27.38 77.6A88.19 88.19 0 0 1 40.37 136m108 77.6c11.53-15.27 25.56-41.09 27.38-77.6h39.84a88.19 88.19 0 0 1-67.18 77.6Z"/>',
 };
 
 // MCP clients on the left of the agents illustration; `logo` keys into AgentLogos.
@@ -157,6 +155,43 @@ const typeLines = [
 	{ html: '  createdAt: <span class="tok-p">Date</span>;' },
 	{ html: '  updatedAt: <span class="tok-p">Date</span>;' },
 	{ html: '  publishedAt: <span class="tok-p">Date</span> | <span class="tok-p">null</span>;' },
+];
+
+// A window onto src/plugins/marketing-blocks/index.ts at the Capabilities
+// block's own line number, dedented. `thread` marks the label the menu shows.
+const blockStartLine = 75;
+const blockLines = [
+	{ html: "{" },
+	{ html: '  type: <span class="tok-s">"marketing.capabilities"</span>,' },
+	{ html: '  label: <span class="tok-s">"Capabilities"</span>,', thread: true },
+	{ html: '  description: <span class="tok-s">"Feature bento with product illustrations"</span>,' },
+	{ html: '  <span class="tok-c">// Only the heading is editable. Each card is paired with a bespoke</span>' },
+	{ html: '  <span class="tok-c">// illustration, so card copy lives in Capabilities.astro.</span>' },
+	{ html: "  fields: [" },
+	{
+		html: '    { type: <span class="tok-s">"text_input"</span>, action_id: <span class="tok-s">"headline"</span>, label: <span class="tok-s">"Headline"</span> },',
+	},
+];
+
+// The editor's slash menu scrolled to its end: the built-in Section command,
+// then this site's plugin blocks in registration order. Plugin blocks without
+// an icon get the admin's default Cube.
+const slashItems = [
+	{ label: "Section", description: "Insert a reusable section", icon: ph.stack },
+	{ label: "Hero", description: "Headline with optional links or agent actions", icon: ph.cube },
+	{ label: "Capabilities", description: "Feature bento with product illustrations", icon: ph.cube, active: true },
+	{ label: "Features", description: "Grid of feature cards with icons", icon: ph.cube },
+	{ label: "Testimonials", description: "Customer testimonial cards", icon: ph.cube },
+];
+
+// Capability labels as the admin's consent dialog words them.
+const consentCapabilities = ["Read your content", "Make network requests to: hooks.slack.com"];
+
+const isolateDenied = [
+	{ label: "Environment variables", icon: ph.key },
+	{ label: "Filesystem", icon: ph.hardDrives },
+	{ label: "Other plugins’ storage", icon: ph.database },
+	{ label: "Undeclared hosts", icon: ph.globeSimple },
 ];
 
 // Field rows copy the admin's custom-field list: label, slug, type, and flags.
@@ -524,27 +559,31 @@ const schemaFields = [
 				<div
 					class="cap-visual visual-extend"
 					role="img"
-					aria-label="The EmDash editor's slash menu listing the Hero, Features, Testimonials, and FAQ blocks from this site's marketing-blocks plugin."
+					aria-label="This site's marketing-blocks plugin source defining the Capabilities block, beside the editor's insert menu listing Section, Hero, Capabilities, Features, and Testimonials, with Capabilities selected."
 				>
-					{/* Labels and descriptions mirror src/plugins/marketing-blocks. */}
-					<div class="ui slash">
-						<span class="plugin-chip"><svg viewBox="0 0 24 24" set:html={icons.plug} />marketing-blocks</span>
-						<p class="slash-input"><span class="slash-key">/</span>blocks<span class="editor-caret"></span></p>
-						<div class="slash-item">
-							<span class="slash-icon"><svg viewBox="0 0 24 24" set:html={icons.hero} /></span>
-							<p><strong>Hero</strong><span>Headline with optional links or agent actions</span></p>
+					<div class="ext-stack">
+						<div class="ui ext-code">
+							<div class="ui-bar">
+								<span class="ui-file"><span class="ui-file-dir"><span class="ui-file-root">src/plugins/</span>marketing-blocks/</span>index.ts</span>
+							</div>
+							<div class="code">
+								{blockLines.map((line, index) => (
+									<div class:list={["code-line", { thread: line.thread }]}>
+										<span class="code-n">{blockStartLine + index}</span>
+										<code set:html={line.html} />
+									</div>
+								))}
+							</div>
 						</div>
-						<div class="slash-item is-active">
-							<span class="slash-icon"><svg viewBox="0 0 24 24" set:html={icons.widgets} /></span>
-							<p><strong>Features</strong><span>Grid of feature cards with icons</span></p>
-						</div>
-						<div class="slash-item">
-							<span class="slash-icon"><svg viewBox="0 0 24 24" set:html={icons.quote} /></span>
-							<p><strong>Testimonials</strong><span>Customer testimonial cards</span></p>
-						</div>
-						<div class="slash-item">
-							<span class="slash-icon"><svg viewBox="0 0 24 24" set:html={icons.question} /></span>
-							<p><strong>FAQ</strong><span>Frequently asked questions</span></p>
+						<div class="ui ext-menu">
+							<div class="ext-menu-list">
+								{slashItems.map((item) => (
+									<div class:list={["ext-item", { "is-active thread": item.active }]}>
+										<svg class="ph" viewBox="0 0 256 256" set:html={item.icon} />
+										<p><strong>{item.label}</strong><span>{item.description}</span></p>
+									</div>
+								))}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -562,26 +601,43 @@ const schemaFields = [
 				<div
 					class="cap-visual visual-secure"
 					role="img"
-					aria-label="A sandboxed plugin isolate with two declared capabilities, content read access and network requests to api.example.com. Environment variables, the filesystem, other plugins' storage, and undeclared hosts are unavailable."
+					aria-label="The admin's Plugin Permissions dialog: Slack Notify asks to read your content and make network requests to hooks.slack.com, with Cancel and Accept & Install buttons. Beside it, the plugin's isolate has no access to environment variables, the filesystem, other plugins' storage, or undeclared hosts."
 				>
-					<div class="sandbox">
-						<div class="sandbox-head">
-							<span class="sandbox-icon"><svg viewBox="0 0 24 24" set:html={icons.plug} /></span>
-							<strong>form-webhooks</strong>
-							<span class="ui-pill">Isolate</span>
+					<div class="ui consent">
+						<div class="consent-head">
+							<p class="consent-title">Plugin Permissions</p>
+							<p class="consent-sub">Slack Notify requires the following permissions:</p>
 						</div>
-						<p class="sandbox-label">Declared capabilities</p>
-						<div class="grant"><svg viewBox="0 0 24 24" set:html={icons.check} /><code>content:read</code></div>
-						<div class="grant">
-							<svg viewBox="0 0 24 24" set:html={icons.check} /><code>network:request</code><span>api.example.com</span>
+						<div class="consent-body">
+							{consentCapabilities.map((label) => (
+								<p class="consent-cap">
+									<svg class="ph" viewBox="0 0 256 256" set:html={ph.shieldCheck} />
+									<span>{label}</span>
+								</p>
+							))}
+						</div>
+						<div class="consent-foot">
+							<span class="ui-btn ui-btn--ghost">Cancel</span>
+							<span class="ui-btn ui-btn--primary">Accept &amp; Install</span>
 						</div>
 					</div>
-					<div class="ui denied">
-						<p class="sandbox-label">Not available</p>
-						<div class="deny"><svg viewBox="0 0 24 24" set:html={icons.x} />Environment variables</div>
-						<div class="deny"><svg viewBox="0 0 24 24" set:html={icons.x} />Filesystem</div>
-						<div class="deny"><svg viewBox="0 0 24 24" set:html={icons.x} />Other plugins’ storage</div>
-						<div class="deny"><svg viewBox="0 0 24 24" set:html={icons.x} />Undeclared hosts</div>
+					<div class="ui isolate">
+						<div class="ui-bar">
+							<svg class="ph" viewBox="0 0 256 256" set:html={ph.cube} />
+							<span class="ui-file">slack-notify</span>
+							<span class="isolate-tag">Isolate</span>
+						</div>
+						<div class="isolate-body">
+							<p class="isolate-label">No access</p>
+							<ul class="isolate-list">
+								{isolateDenied.map((row) => (
+									<li>
+										<svg class="ph" viewBox="0 0 256 256" set:html={row.icon} />
+										{row.label}
+									</li>
+								))}
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -775,9 +831,7 @@ const schemaFields = [
 		margin: 0;
 	}
 
-	.ui svg,
-	.sandbox svg,
-	.plugin-chip svg {
+	.ui svg {
 		flex: 0 0 auto;
 		fill: none;
 		stroke: currentColor;
@@ -1876,55 +1930,94 @@ const schemaFields = [
 
 	/* ---------- Extend ---------- */
 
-	.visual-extend {
+	/* The plugin source sits behind the insert menu it produces. Both share
+	   one grid cell, so the stack is always as tall as its taller layer. */
+	.ext-stack {
+		display: grid;
+		width: min(100%, 23rem);
+	}
+
+	.ext-stack > * {
+		grid-area: 1 / 1;
+	}
+
+	.ext-code {
+		display: flex;
+		width: 88%;
+		height: 11.25rem;
 		flex-direction: column;
-		gap: 0.875rem;
+		overflow: hidden;
 	}
 
-	.slash {
-		width: min(100%, 17.5rem);
-		padding: 0.375rem;
+	.ui-file-dir {
+		color: var(--cap-subtle);
 	}
 
-	.slash-input {
+	.ext-code .ui-bar {
+		overflow: hidden;
+	}
+
+	.ext-code .ui-file {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.code :global(.tok-s) {
+		color: var(--cap-muted);
+	}
+
+	/* Mirrors the admin's slash menu: plain icon, title, and description rows. */
+	.ext-menu {
+		justify-self: end;
+		align-self: start;
+		width: min(15.75rem, 80%);
+		/* Clears the bar and the first three lines, so the threaded label stays visible. */
+		margin-top: 6.875rem;
+		padding: 0.25rem;
+		border-radius: 10px;
+		box-shadow:
+			var(--cap-ui-shadow),
+			0 24px 40px -24px rgba(0, 0, 0, 0.35);
+	}
+
+	/* The menu scrolls on past the viewport: fade the row it cuts. */
+	.ext-menu-list {
+		display: grid;
+		max-height: 10.75rem;
+		overflow: hidden;
+		-webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2rem), transparent);
+		mask-image: linear-gradient(to bottom, #000 calc(100% - 2rem), transparent);
+	}
+
+	.ext-item {
 		display: flex;
-		align-items: center;
-		gap: 0.125rem;
-		margin-bottom: 0.25rem !important;
-		padding: 0.4375rem 0.5rem 0.5rem;
-		color: var(--color-text);
-		border-bottom: 1px solid var(--cap-line);
-	}
-
-	.slash-key {
-		margin-inline-end: 0.125rem;
-		color: var(--color-primary);
-		font-weight: 600;
-	}
-
-	.slash-item {
-		display: flex;
+		min-width: 0;
 		align-items: center;
 		gap: 0.625rem;
-		padding: 0.375rem 0.5rem;
-		border-radius: 7px;
+		padding: 0.4375rem 0.625rem;
+		border-radius: 6px;
 	}
 
-	.slash-item.is-active {
-		background: var(--cap-ui-sunken);
-		box-shadow: inset 0 0 0 1px var(--cap-line);
+	.ext-item.is-active {
+		background: var(--cap-ui-tint);
 	}
 
-	.slash-item p {
+	.ext-item svg {
+		width: 0.875rem;
+		height: 0.875rem;
+		color: var(--cap-subtle);
+	}
+
+	.ext-item p {
 		display: grid;
 		min-width: 0;
 	}
 
-	.slash-item strong {
+	.ext-item strong {
 		font-weight: 500;
 	}
 
-	.slash-item p span {
+	.ext-item span {
 		overflow: hidden;
 		color: var(--cap-subtle);
 		font-size: 0.6875rem;
@@ -1932,154 +2025,122 @@ const schemaFields = [
 		white-space: nowrap;
 	}
 
-	.slash-icon {
-		display: grid;
-		width: 1.625rem;
-		height: 1.625rem;
-		flex: 0 0 auto;
-		place-items: center;
-		color: var(--cap-muted);
-		border: 1px solid var(--cap-line);
-		border-radius: 6px;
-	}
-
-	.slash-item.is-active .slash-icon {
-		color: var(--color-primary);
-	}
-
-	.slash-icon svg {
-		width: 0.875rem;
-		height: 0.875rem;
-	}
-
-	.plugin-chip {
-		position: absolute;
-		inset-block-start: -0.75rem;
-		inset-inline-end: -1.25rem;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.375rem;
-		padding: 0.25rem 0.625rem;
-		color: var(--cap-muted);
-		font-family: var(--font-mono);
-		font-size: 0.6875rem;
-		background: var(--cap-ui-bg);
-		border: 1px solid var(--cap-ui-border);
-		border-radius: var(--radius-full);
-		box-shadow: var(--cap-ui-shadow);
-	}
-
-	.plugin-chip svg {
-		width: 0.75rem;
-		height: 0.75rem;
-		color: var(--color-primary);
-	}
-
 	/* ---------- Security ---------- */
 
 	.visual-secure {
 		flex-wrap: wrap;
-		gap: var(--spacing-md);
-	}
-
-	.sandbox {
-		position: relative;
-		width: 16rem;
-		padding: 0.875rem;
-		font-size: 0.75rem;
-		line-height: 1.35;
-		background: color-mix(in srgb, var(--color-primary) 4%, var(--cap-ui-bg));
-		border: 1px dashed color-mix(in srgb, var(--color-primary) 55%, transparent);
-		border-radius: 12px;
-		box-shadow:
-			0 0 0 4px color-mix(in srgb, var(--color-primary) 6%, transparent),
-			var(--cap-ui-shadow);
-	}
-
-	.sandbox p {
-		margin: 0;
-	}
-
-	.sandbox-head {
-		display: flex;
 		align-items: center;
-		gap: 0.5rem;
-		margin-bottom: 0.75rem;
+		gap: 1.25rem;
 	}
 
-	.sandbox-head strong {
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
+	/* Mirrors the admin's capability consent dialog. */
+	.consent {
+		width: 17.5rem;
+		flex: 0 1 auto;
+		overflow: hidden;
+	}
+
+	.consent-head {
+		padding: 0.75rem 0.875rem 0.6875rem;
+		border-bottom: 1px solid var(--cap-line);
+	}
+
+	.consent-title {
+		font-size: 0.8125rem;
 		font-weight: 600;
 	}
 
-	.sandbox-icon {
-		display: grid;
-		width: 1.5rem;
-		height: 1.5rem;
-		place-items: center;
-		color: var(--color-primary);
-		background: var(--heat-12);
-		border-radius: 6px;
+	.consent-sub {
+		margin-top: 0.1875rem !important;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+		text-wrap: pretty;
 	}
 
-	.sandbox-icon svg {
+	.consent-body {
+		display: grid;
+		gap: 0.375rem;
+		padding: 0.625rem 0.875rem 0.75rem;
+	}
+
+	.consent-cap {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.5rem;
+		padding: 0.4375rem 0.5rem;
+		background: var(--cap-ui-tint);
+		border-radius: 6px;
+		overflow-wrap: anywhere;
+	}
+
+	.consent-cap svg {
 		width: 0.875rem;
 		height: 0.875rem;
+		margin-top: 0.0625rem;
+		color: var(--cap-subtle);
 	}
 
-	.sandbox-label {
-		margin-bottom: 0.375rem !important;
+	.consent-foot {
+		display: flex;
+		justify-content: flex-end;
+		gap: 0.375rem;
+		padding: 0.5rem 0.875rem;
+		border-top: 1px solid var(--cap-line);
+	}
+
+	.ui-btn--ghost {
+		color: var(--cap-muted);
+		background: transparent;
+	}
+
+	/* What the plugin's isolate can't reach, whatever it declares. */
+	.isolate {
+		width: 14.5rem;
+		flex: 0 1 auto;
+		overflow: hidden;
+	}
+
+	.isolate .ui-bar svg {
+		width: 0.8125rem;
+		height: 0.8125rem;
+	}
+
+	.isolate-tag {
+		margin-inline-start: auto;
+	}
+
+	.isolate-body {
+		padding: 0.625rem 0.875rem 0.5rem;
+	}
+
+	.isolate-label {
 		color: var(--cap-subtle);
 		font-size: 0.6875rem;
 		font-weight: 500;
 	}
 
-	.grant,
-	.deny {
+	.isolate-list {
+		display: grid;
+		margin: 0.25rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.isolate-list li {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.375rem 0;
+		color: var(--cap-muted);
 	}
 
-	.grant + .grant,
-	.deny + .deny {
+	.isolate-list li + li {
 		border-top: 1px solid var(--cap-line);
 	}
 
-	.grant svg,
-	.deny svg {
+	.isolate-list svg {
 		width: 0.8125rem;
 		height: 0.8125rem;
-	}
-
-	.grant svg {
-		color: var(--cap-success);
-	}
-
-	.grant code {
-		font-family: var(--font-mono);
-		font-size: 0.6875rem;
-		font-weight: 600;
-	}
-
-	.grant span {
-		margin-inline-start: auto;
-		color: var(--cap-subtle);
-		font-size: 0.6875rem;
-	}
-
-	.denied {
-		width: 13rem;
-		padding: 0.875rem;
-	}
-
-	.deny {
-		color: var(--cap-subtle);
-	}
-
-	.deny svg {
 		color: var(--cap-subtle);
 	}
 
@@ -2317,9 +2378,14 @@ const schemaFields = [
 			align-items: stretch;
 		}
 
-		.sandbox,
-		.denied {
+		.consent,
+		.isolate {
 			width: 100%;
+		}
+
+		/* Keep the plugin name and file visible in the narrow code window. */
+		.ui-file-root {
+			display: none;
 		}
 	}
 

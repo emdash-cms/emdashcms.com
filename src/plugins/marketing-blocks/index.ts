@@ -75,7 +75,7 @@ const definition: PluginDefinition = {
 			{
 				type: "marketing.capabilities",
 				label: "Capabilities",
-				description: "Bento story of EmDash capabilities with product illustrations",
+				description: "Feature bento with product illustrations",
 				// Only the heading is editable. Each card is paired with a bespoke
 				// illustration, so card copy lives in Capabilities.astro.
 				fields: [
