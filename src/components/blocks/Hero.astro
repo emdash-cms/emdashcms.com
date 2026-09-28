@@ -1,5 +1,5 @@
 ---
-import { sanitizeHref } from "emdash";
+import { getEmDashCollection, sanitizeHref } from "emdash";
 import { Image } from "astro:assets";
 import heroDashDark from "../../../public/landing/hero/hero-dash-dark.png";
 import heroDashLight from "../../../public/landing/hero/hero-dash-light.png";
@@ -26,11 +26,25 @@ interface Props {
 const { node } = Astro.props;
 const { _key, headline, subheadline, centered } = node;
 const headingId = _key ? `${_key}-title` : "hero-title";
-const announcement = {
-	href: "/blog/emdash-is-live",
-	tag: "Announcement",
-	label: "EmDash is live",
-};
+
+const { entries: featuredPosts, error: featuredPostsError, cacheHint: featuredPostsCacheHint } =
+	await getEmDashCollection("posts", {
+		where: { featured_on_homepage: "1" },
+		orderBy: { published_at: "desc" },
+		limit: 1,
+	});
+
+if (featuredPostsError) console.error("Failed to load the featured homepage post:", featuredPostsError);
+if (Astro.cache?.enabled) Astro.cache.set(featuredPostsCacheHint);
+
+const featuredPost = featuredPosts[0];
+const announcement = featuredPost
+	? {
+			href: `/blog/${featuredPost.id}`,
+			tag: featuredPost.data.featured_pill_tag || "Announcement",
+			label: featuredPost.data.featured_pill_text || featuredPost.data.title,
+		}
+	: undefined;
 const defaultCopyPrompt = `I want to build a site with EmDash. Read https://emdashcms.com/start.md, inspect my project, and use what I have already told you. If my goal is unclear, ask one focused question. Make the content editable, run the site locally, and let me review it before deployment.`;
 const copyPrompt = node.agentPrompt?.trim() || defaultCopyPrompt;
 
@@ -49,12 +63,20 @@ const showAgentActions = node.showAgentActions ?? (Astro.url.pathname === "/" &&
 	<div class="hero-section">
 		<div class="hero-container">
 			<div class="hero-copy" data-copy-prompt-root>
-				<a href={announcement.href} class="hero-announcement">
-					<span class="hero-announcement-tag">{announcement.tag}</span>
-					<span class="hero-announcement-text">{announcement.label}</span>
-					<span class="hero-announcement-divider" aria-hidden="true"></span>
-					<span class="hero-announcement-arrow" aria-hidden="true" set:html={arrowRightSvg}></span>
-				</a>
+				{
+					announcement && (
+						<a href={announcement.href} class="hero-announcement">
+							<span class="hero-announcement-tag">{announcement.tag}</span>
+							<span class="hero-announcement-text">{announcement.label}</span>
+							<span class="hero-announcement-divider" aria-hidden="true"></span>
+							<span
+								class="hero-announcement-arrow"
+								aria-hidden="true"
+								set:html={arrowRightSvg}
+							></span>
+						</a>
+					)
+				}
 				<h1 id={headingId} class="hero-headline">{headline}</h1>
 				{subheadline && <p class="hero-subheadline">{subheadline}</p>}
 				{(primaryCta || secondaryCta || showAgentActions) && (
