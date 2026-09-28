@@ -1,0 +1,19 @@
+src/lib/post-art.ts
+  s_b617e4c40919cd::t_6b5b6a181f4bd5 1-256
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9383322f5af3cbc4a365dc95403e975022c4317e",
+  "prompts": {},
+  "sessions": {
+    "s_b617e4c40919cd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e244-feb3-7643-b8d8-0ce485c7a33c",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

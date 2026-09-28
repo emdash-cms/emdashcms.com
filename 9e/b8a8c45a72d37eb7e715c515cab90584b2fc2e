@@ -1,0 +1,23 @@
+src/components/blog/PostCover.astro
+  s_1fabfb704b9004::t_f510fd4e65c844 9,14,25
+src/lib/post-art-png.ts
+  s_1fabfb704b9004::t_0cd0da34519ab3 1-146
+src/lib/post-art.ts
+  s_1fabfb704b9004::t_30398dac9eaa60 22-33,49-56,64-65,245,258,273,279
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9eb8a8c45a72d37eb7e715c515cab90584b2fc2e",
+  "prompts": {},
+  "sessions": {
+    "s_1fabfb704b9004": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f1ae6e056ffeX0OIPOrUHEZYkh",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

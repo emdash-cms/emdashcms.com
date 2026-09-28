@@ -1,0 +1,29 @@
+emdash-env.d.ts
+  s_8780f962bfe40c::t_8326e3427eb8f0 31
+seed/seed.json
+  s_b617e4c40919cd::t_bef6f6a8d416fa 79-83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "78182d1d2ff661720891fcb659c47d1cf4949253",
+  "prompts": {},
+  "sessions": {
+    "s_8780f962bfe40c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e6d2-4124-7181-9d68-ab5763d27ff9",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    },
+    "s_b617e4c40919cd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e244-feb3-7643-b8d8-0ce485c7a33c",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

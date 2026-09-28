@@ -1,0 +1,21 @@
+seed/seed.json
+  s_1fabfb704b9004::t_adc69fc1875851 131-132
+src/components/blocks/Capabilities.astro
+  s_1fabfb704b9004::t_30d1526b87683d 26,31,221,223-224,355,357-358,430,432-433,492,494-496,554,556-557,598-599
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d4fd34e61711f877e602a862734bb57965ae4dd8",
+  "prompts": {},
+  "sessions": {
+    "s_1fabfb704b9004": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f1ae6e056ffeX0OIPOrUHEZYkh",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

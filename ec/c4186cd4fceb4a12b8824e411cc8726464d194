@@ -1,0 +1,21 @@
+src/components/SiteFooter.astro
+  s_f9529024d58f08::t_1a2b925c6a5858 3,58-59,63,129-134
+src/components/social.ts
+  s_f9529024d58f08::t_bbc5d117646eb1 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ecc4186cd4fceb4a12b8824e411cc8726464d194",
+  "prompts": {},
+  "sessions": {
+    "s_f9529024d58f08": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f18ad9679ffeSm6hraXnXZiVL1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
