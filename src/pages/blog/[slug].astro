@@ -1,11 +1,12 @@
 ---
 import { decodeSlug, getEmDashCollection, getEmDashEntry } from "emdash";
 import { PortableText } from "emdash/ui";
+import PostByline from "../../components/blog/PostByline.astro";
 import PostCover from "../../components/blog/PostCover.astro";
 import PostGrid from "../../components/blog/PostGrid.astro";
 import arrowRightSvg from "../../icons/arrow-right.svg?raw";
 import Base from "../../layouts/Base.astro";
-import { formatAuthorNames, formatPostDate, postAuthors, readingMinutes } from "../../lib/posts";
+import { formatPostDate, postAuthors, readingMinutes } from "../../lib/posts";
 
 let slug: string | undefined;
 try {
@@ -91,18 +92,9 @@ const articleMeta = {
 			}
 			{
 				authors.length > 0 && (
-					<p class="post-byline">
-						<span class="post-avatars" aria-hidden="true">
-							{authors.slice(0, 3).map((author) =>
-								author.avatar ? (
-									<img class="post-avatar" src={author.avatar.src} alt="" width="32" height="32" />
-								) : (
-									<span class="post-avatar post-avatar--initials">{author.initials}</span>
-								),
-							)}
-						</span>
-						<span>By {formatAuthorNames(authors)}</span>
-					</p>
+					<div class="post-byline">
+						<PostByline authors={authors} size="post" />
+					</div>
 				)
 			}
 		</header>
@@ -255,42 +247,12 @@ const articleMeta = {
 	}
 
 	.post-byline {
-		display: flex;
-		align-items: center;
-		gap: 0.625rem;
-		margin-top: var(--spacing-lg);
-		color: var(--post-muted);
-		font-size: var(--font-size-sm);
-		font-weight: 500;
-		line-height: 1.3;
-	}
+		/* Matches the .post background, so the avatar cut-outs read as gaps. */
+		--byline-ring: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+		--byline-muted: var(--post-muted);
+		--byline-accent: var(--post-accent-text);
 
-	.post-avatars {
-		display: flex;
-		flex: 0 0 auto;
-	}
-
-	.post-avatar {
-		display: inline-flex;
-		width: 2rem;
-		height: 2rem;
-		align-items: center;
-		justify-content: center;
-		object-fit: cover;
-		background: var(--heat-8);
-		border-radius: var(--radius-full);
-		box-shadow: 0 0 0 2px var(--color-surface);
-	}
-
-	.post-avatar + .post-avatar {
-		margin-inline-start: -0.5rem;
-	}
-
-	.post-avatar--initials {
-		color: var(--post-accent-text);
-		font-size: 0.6875rem;
-		font-weight: 700;
-		line-height: 1;
+		margin-top: var(--spacing-xl);
 	}
 
 	/* ---------- Cover ---------- */

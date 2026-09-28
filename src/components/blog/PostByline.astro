@@ -1,0 +1,173 @@
+---
+/**
+ * A post's authors: overlapping avatars, then their names.
+ *
+ * - `post`: the post header, with large avatars and names at reading size.
+ * - `card`: post cards, compact. Past three authors, the rest become a count.
+ *
+ * The avatars are decorative, since the names follow them. Set
+ * `--byline-ring` to the background behind the byline so the gap between
+ * overlapping avatars matches it.
+ */
+import { authorSeparator, type PostAuthor } from "../../lib/posts";
+
+interface Props {
+	authors: PostAuthor[];
+	size?: "post" | "card";
+}
+
+/** Past this many, the rest collapse into a "+N" chip. */
+const MAX_AVATARS = 3;
+
+const { authors, size = "card" } = Astro.props;
+const shown = authors.slice(0, MAX_AVATARS);
+const hidden = authors.length - shown.length;
+const pixels = size === "post" ? 40 : 24;
+
+// The post header names everyone. Cards name the authors whose avatars show, then count the rest.
+const names = (size === "post" ? authors : shown).map((author) => ({ text: author.name, count: false }));
+if (size === "card" && hidden > 0) names.push({ text: `${hidden} ${hidden === 1 ? "other" : "others"}`, count: true });
+---
+
+{
+	authors.length > 0 && (
+		<p class:list={["byline", `byline--${size}`]}>
+			<span class="byline-avatars" aria-hidden="true">
+				{shown.map((author) =>
+					author.avatar ? (
+						<span
+							class="byline-avatar"
+							style={author.avatar.color ? `--avatar-bg: ${author.avatar.color}` : undefined}
+						>
+							<img
+								src={author.avatar.src}
+								alt=""
+								width={pixels}
+								height={pixels}
+								loading={size === "post" ? "eager" : "lazy"}
+								decoding="async"
+							/>
+						</span>
+					) : (
+						<span class="byline-avatar byline-avatar--initials">{author.initials}</span>
+					),
+				)}
+				{hidden > 0 && <span class="byline-avatar byline-avatar--more">+{hidden}</span>}
+			</span>
+			<span class="byline-names">
+				{names.map((name, index) => (
+					<>
+						{index > 0 && <span class="byline-sep">{authorSeparator(index, names.length)}</span>}
+						{name.count ? <span>{name.text}</span> : <span class="byline-name">{name.text}</span>}
+					</>
+				))}
+			</span>
+		</p>
+	)
+}
+
+<style>
+	.byline {
+		--avatar-size: 1.5rem;
+		--avatar-overlap: -0.3125rem;
+		--avatar-gap: 2px;
+
+		display: flex;
+		min-width: 0;
+		align-items: center;
+		gap: 0.5rem;
+		color: var(--byline-muted, color-mix(in srgb, var(--color-text) 72%, transparent));
+		font-size: 0.8125rem;
+		line-height: 1.35;
+	}
+
+	.byline--post {
+		--avatar-size: 2.5rem;
+		--avatar-overlap: -0.5rem;
+		--avatar-gap: 3px;
+
+		gap: 0.875rem;
+		font-size: 0.9375rem;
+	}
+
+	.byline-avatars {
+		display: flex;
+		flex: 0 0 auto;
+	}
+
+	/*
+	 * Each avatar is its own stacking context, so everything it draws (photo,
+	 * ring, edge) sits above the avatar before it and below the one after.
+	 * An `outline` would break that: browsers paint outlines after all content,
+	 * so each edge would show through the next avatar.
+	 */
+	.byline-avatar {
+		position: relative;
+		display: inline-flex;
+		width: var(--avatar-size);
+		height: var(--avatar-size);
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		isolation: isolate;
+		/*
+		 * Opaque, so an overlapped avatar never shows through. (The theme's
+		 * --heat-* tints are translucent.) Mixed into the ring colour so it
+		 * reads as the same tint on any background.
+		 */
+		background: var(
+			--avatar-bg,
+			color-mix(in srgb, var(--color-primary) 16%, var(--byline-ring, var(--color-surface)))
+		);
+		border-radius: var(--radius-full);
+		/* The ring cuts each avatar out of the one it overlaps. */
+		box-shadow: 0 0 0 var(--avatar-gap) var(--byline-ring, var(--color-surface));
+	}
+
+	/* A hairline edge, above the photo, so light photos don't melt into a light page. */
+	.byline-avatar::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text) 12%, transparent);
+		pointer-events: none;
+	}
+
+	.byline-avatar img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.byline-avatar + .byline-avatar {
+		margin-inline-start: var(--avatar-overlap);
+	}
+
+	.byline-avatar--initials,
+	.byline-avatar--more {
+		color: var(--byline-accent, var(--color-primary));
+		font-size: calc(var(--avatar-size) * 0.36);
+		font-weight: 700;
+		line-height: 1;
+		letter-spacing: 0.02em;
+	}
+
+	.byline-avatar--more {
+		color: var(--color-text);
+		background: color-mix(in srgb, var(--color-text) 12%, var(--byline-ring, var(--color-surface)));
+	}
+
+	.byline-names {
+		min-width: 0;
+		overflow-wrap: break-word;
+		text-wrap: pretty;
+	}
+
+	.byline-name {
+		color: var(--color-text);
+		font-weight: 500;
+	}
+</style>
