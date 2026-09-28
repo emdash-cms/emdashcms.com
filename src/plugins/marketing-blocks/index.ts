@@ -1,7 +1,7 @@
 /**
  * Marketing blocks plugin (inline, template-local).
  *
- * Registers the five marketing block types so editors can insert and edit them
+ * Registers the marketing block types so editors can insert and edit them
  * in the admin's Portable Text editor. Block Kit `fields` describe the form
  * shown when inserting or editing a block.
  *
@@ -39,6 +39,15 @@ const ICON_OPTIONS = [
 	{ label: "Cloud", value: "cloud" },
 ];
 
+/**
+ * Header text for a new Capabilities block. The admin pre-fills the fields with
+ * it, and Capabilities.astro falls back to it when a field is absent.
+ */
+export const capabilitiesDefaults = {
+	headline: "Build your next blog or microsite today",
+	subheadline: "EmDash combines with Astro to create one end-to-end TypeScript CMS and frontend.",
+};
+
 const definition: PluginDefinition = {
 	id: "marketing-blocks",
 	version: "0.1.0",
@@ -69,6 +78,29 @@ const definition: PluginDefinition = {
 						multiline: true,
 					},
 					{ type: "toggle", action_id: "centered", label: "Center the layout" },
+				],
+			},
+
+			{
+				type: "marketing.capabilities",
+				label: "Capabilities",
+				description: "Feature bento with illustrations",
+				// Only the header is editable. Card copy lives in Capabilities.astro,
+				// next to the illustration it describes.
+				fields: [
+					{
+						type: "text_input",
+						action_id: "headline",
+						label: "Headline",
+						initial_value: capabilitiesDefaults.headline,
+					},
+					{
+						type: "text_input",
+						action_id: "subheadline",
+						label: "Introduction",
+						multiline: true,
+						initial_value: capabilitiesDefaults.subheadline,
+					},
 				],
 			},
 
@@ -207,6 +239,9 @@ const definition: PluginDefinition = {
 		],
 	},
 };
+
+/** The registered blocks, in slash-menu order. The capabilities illustration lists them. */
+export const portableTextBlocks = definition.admin?.portableTextBlocks ?? [];
 
 export function createPlugin() {
 	return definePlugin(definition);

@@ -1,5 +1,5 @@
 ---
-import { getEmDashEntry } from "emdash";
+import { getEmDashEntry, type PortableTextBlock } from "emdash";
 import Base from "../layouts/Base.astro";
 import MarketingBlocks from "../components/MarketingBlocks.astro";
 
@@ -8,7 +8,31 @@ const { entry: page, cacheHint } = await getEmDashEntry("pages", "home");
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const pageTitle = page?.data.title;
-const pageContent = page?.data.content;
+
+// The capabilities bento replaces the home page's features grid. Home content
+// created before the capabilities block existed still has the grid and no
+// bento, so render the bento in the first grid's place, keeping the grid's
+// stored headline and introduction so they stay editable in the admin.
+// Content that includes a capabilities block renders exactly as stored.
+//
+// This is a bridge, not a migration: while it exists, a features block can't
+// appear on a home page without a capabilities block. Once production content
+// has the capabilities block in place of the features grid, delete it.
+function withCapabilities(content: PortableTextBlock[] | undefined) {
+	if (!content || content.some((block) => block._type === "marketing.capabilities")) return content;
+	const featuresIndex = content.findIndex((block) => block._type === "marketing.features");
+	if (featuresIndex < 0) return content;
+	const { headline, subheadline } = content[featuresIndex] as { headline?: unknown; subheadline?: unknown };
+	const capabilities: PortableTextBlock = {
+		_type: "marketing.capabilities",
+		_key: "capabilities",
+		...(typeof headline === "string" && { headline }),
+		...(typeof subheadline === "string" && { subheadline }),
+	};
+	return [...content.slice(0, featuresIndex), capabilities, ...content.slice(featuresIndex + 1)];
+}
+
+const pageContent = withCapabilities(page?.data.content);
 ---
 
 <Base
