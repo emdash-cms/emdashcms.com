@@ -96,9 +96,9 @@
 			"name": "footer_product",
 			"label": "Footer: Product",
 			"items": [
-				{ "type": "custom", "label": "Try it", "url": "https://try.emdashcms.com", "target": "_blank" },
-				{ "type": "custom", "label": "Docs", "url": "https://docs.emdashcms.com", "target": "_blank" },
-				{ "type": "custom", "label": "Blog", "url": "/blog" }
+				{ "type": "custom", "label": "Playground", "url": "https://try.emdashcms.com", "target": "_blank" },
+				{ "type": "custom", "label": "EmDash Build", "url": "https://build.emdashcms.com", "target": "_blank" },
+				{ "type": "custom", "label": "Plugins", "url": "https://plugins.emdashcms.com", "target": "_blank" }
 			]
 		},
 		{
@@ -113,9 +113,14 @@
 			"name": "footer_resources",
 			"label": "Footer: Resources",
 			"items": [
-				{ "type": "custom", "label": "Release notes", "url": "/blog" },
 				{ "type": "custom", "label": "Documentation", "url": "https://docs.emdashcms.com", "target": "_blank" },
-				{ "type": "custom", "label": "Playground", "url": "https://try.emdashcms.com", "target": "_blank" }
+				{ "type": "custom", "label": "Blog", "url": "/blog" },
+				{
+					"type": "custom",
+					"label": "Build a plugin",
+					"url": "https://docs.emdashcms.com/plugins/creating-plugins/choosing-a-format/",
+					"target": "_blank"
+				}
 			]
 		},
 		{
@@ -123,7 +128,9 @@
 			"label": "Footer: Social Links",
 			"items": [
 				{ "type": "custom", "label": "Discord", "url": "https://discord.gg/YY9vBaQRYt", "target": "_blank" },
-				{ "type": "custom", "label": "GitHub", "url": "https://github.com/emdash-cms/emdash", "target": "_blank" }
+				{ "type": "custom", "label": "GitHub", "url": "https://github.com/emdash-cms/emdash", "target": "_blank" },
+				{ "type": "custom", "label": "Bluesky", "url": "https://bsky.app/profile/emdashcms.com", "target": "_blank" },
+				{ "type": "custom", "label": "X", "url": "https://x.com/EmDashCMS", "target": "_blank" }
 			]
 		}
 	],

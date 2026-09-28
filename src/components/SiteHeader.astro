@@ -1,5 +1,7 @@
 ---
+import { Icon } from "astro-iconset/components";
 import { sanitizeHref } from "emdash";
+import { SOCIAL_ICON_PATHS, getSocialType, type SocialType } from "./social";
 
 interface MenuItem {
 	label: string;
@@ -55,6 +57,83 @@ const logoHeight = 118;
 const safePlaygroundUrl = sanitizeHref(playgroundUrl.trim());
 const githubItem = safeMenuItems.find(isGitHubItem);
 const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
+
+interface ProductLink {
+	label: string;
+	description: string;
+	url: string;
+	icon: string;
+	badge?: string;
+}
+
+interface ProductGroup {
+	id: string;
+	heading: string;
+	items: ProductLink[];
+}
+
+// The Product menu lists EmDash's own properties, so it lives in code rather
+// than the editable "primary" menu. Keep it short: two groups, two links each.
+const productGroups: ProductGroup[] = [
+	{
+		id: "start",
+		heading: "Start building",
+		items: [
+			{
+				label: "Build",
+				description: "Generate a site from a prompt",
+				url: "https://build.emdashcms.com",
+				icon: "ph:sparkle",
+				badge: "New",
+			},
+			{
+				label: "Playground",
+				description: "Try the admin in your browser",
+				url: safePlaygroundUrl,
+				icon: "ph:app-window",
+			},
+		],
+	},
+	{
+		id: "extend",
+		heading: "Extend",
+		items: [
+			{
+				label: "Plugins",
+				description: "Browse the plugin registry",
+				url: "https://plugins.emdashcms.com",
+				icon: "ph:puzzle-piece",
+				badge: "New",
+			},
+			{
+				label: "Build a plugin",
+				description: "Hooks, routes, and admin pages",
+				url: "https://docs.emdashcms.com/plugins/creating-plugins/choosing-a-format/",
+				icon: "ph:code",
+			},
+		],
+	},
+];
+const productItems = productGroups.flatMap((group) => group.items);
+
+const communityLinks: { label: string; description: string; url: string; type: SocialType }[] = [
+	{
+		label: "Discord",
+		description: "Chat with the team and community",
+		url: "https://discord.gg/YY9vBaQRYt",
+		type: "discord",
+	},
+	{
+		label: "Bluesky",
+		description: "Follow @emdashcms.com",
+		url: "https://bsky.app/profile/emdashcms.com",
+		type: "bluesky",
+	},
+	{ label: "X", description: "Follow @EmDashCMS", url: "https://x.com/EmDashCMS", type: "x" },
+];
+// The Community menu replaces CMS links it already covers (e.g. Discord).
+const communityTypes = new Set<string>(communityLinks.map((link) => link.type));
+const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(item.label, item.url)));
 ---
 
 <header class="site-header" data-site-header data-scrolled="false">
@@ -102,29 +181,144 @@ const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 					</button>
 				</div>
 
-				{navItems.length > 0 && (
-					<div class="nav-center">
-						<ul>
-							{navItems.map((item) => (
+				<div class="nav-center">
+					<ul class="nav-center-list">
+						<li class="nav-dropdown" data-dropdown data-state="closed">
+							<button
+								type="button"
+								class="nav-link nav-dropdown-trigger"
+								aria-expanded="false"
+								aria-controls="nav-product-panel"
+								data-dropdown-trigger
+							>
+								Product
+								<svg class="nav-dropdown-caret" viewBox="0 0 16 16" aria-hidden="true">
+									<path d="m4 6 4 4 4-4" />
+								</svg>
+							</button>
+							<div class="nav-dropdown-panel" id="nav-product-panel" data-dropdown-panel>
+								<div class="product-menu">
+									{productGroups.map((group) => (
+										<div class="product-group">
+											<p class="product-group-heading" id={`nav-product-${group.id}`}>
+												{group.heading}
+											</p>
+											<ul class="product-list" aria-labelledby={`nav-product-${group.id}`}>
+												{group.items.map((item) => (
+													<li>
+														<a
+															class="product-link"
+															href={item.url}
+															target={getTarget(item)}
+															rel={getRel(item)}
+															data-dropdown-close
+														>
+															<span class="product-link-icon" aria-hidden="true">
+																<Icon name={item.icon} />
+															</span>
+															<span class="product-link-text">
+																<span class="product-link-label">
+																	{item.label}
+																	{item.badge && <span class="product-badge">{item.badge}</span>}
+																</span>
+																<span class="product-link-description">{item.description}</span>
+															</span>
+														</a>
+													</li>
+												))}
+											</ul>
+										</div>
+									))}
+								</div>
+							</div>
+						</li>
+						{topNavItems.map((item) => (
+							<li>
+								<a
+									class="nav-link"
+									href={item.url}
+									target={getTarget(item)}
+									rel={getRel(item)}
+								>
+									{item.label}
+								</a>
+							</li>
+						))}
+						<li class="nav-dropdown" data-dropdown data-state="closed">
+							<button
+								type="button"
+								class="nav-link nav-dropdown-trigger"
+								aria-expanded="false"
+								aria-controls="nav-community-panel"
+								data-dropdown-trigger
+							>
+								Community
+								<svg class="nav-dropdown-caret" viewBox="0 0 16 16" aria-hidden="true">
+									<path d="m4 6 4 4 4-4" />
+								</svg>
+							</button>
+							<div class="nav-dropdown-panel" id="nav-community-panel" data-dropdown-panel>
+								<div class="product-menu product-menu--single">
+									<ul class="product-list">
+										{communityLinks.map((link) => (
+											<li>
+												<a
+													class="product-link"
+													href={link.url}
+													target="_blank"
+													rel="noreferrer"
+													data-dropdown-close
+												>
+													<span class="product-link-icon" aria-hidden="true">
+														<svg viewBox="0 0 24 24">
+															<path fill="currentColor" d={SOCIAL_ICON_PATHS[link.type]} />
+														</svg>
+													</span>
+													<span class="product-link-text">
+														<span class="product-link-label">{link.label}</span>
+														<span class="product-link-description">{link.description}</span>
+													</span>
+												</a>
+											</li>
+										))}
+									</ul>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+
+				<div class="nav-panel" id="site-nav-panel" data-nav-panel>
+					<div class="nav-mobile-links">
+						<p class="nav-mobile-heading" id="nav-mobile-product">Product</p>
+						<ul class="product-list nav-mobile-products" aria-labelledby="nav-mobile-product">
+							{productItems.map((item) => (
 								<li>
 									<a
+										class="product-link"
 										href={item.url}
 										target={getTarget(item)}
 										rel={getRel(item)}
+										data-menu-close
 									>
-										{item.label}
+										<span class="product-link-icon" aria-hidden="true">
+											<Icon name={item.icon} />
+										</span>
+										<span class="product-link-text">
+											<span class="product-link-label">
+												{item.label}
+												{item.badge && <span class="product-badge">{item.badge}</span>}
+											</span>
+											<span class="product-link-description">{item.description}</span>
+										</span>
 									</a>
 								</li>
 							))}
 						</ul>
-					</div>
-				)}
 
-				<div class="nav-panel" id="site-nav-panel" data-nav-panel>
-					{navItems.length > 0 && (
-						<div class="nav-mobile-links">
-							<ul>
-								{navItems.map((item) => (
+						{topNavItems.length > 0 && (
+							<ul class="nav-mobile-list">
+								{topNavItems.map((item) => (
 									<li>
 										<a
 											href={item.url}
@@ -137,8 +331,24 @@ const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 									</li>
 								))}
 							</ul>
+						)}
+
+						<div class="community-row">
+							<p class="community-heading" id="nav-mobile-community">Community</p>
+							<ul class="community-list" aria-labelledby="nav-mobile-community">
+								{communityLinks.map((link) => (
+									<li>
+										<a class="community-link" href={link.url} target="_blank" rel="noreferrer" data-menu-close>
+											<svg viewBox="0 0 24 24" aria-hidden="true">
+												<path fill="currentColor" d={SOCIAL_ICON_PATHS[link.type]} />
+											</svg>
+											{link.label}
+										</a>
+									</li>
+								))}
+							</ul>
 						</div>
-					)}
+					</div>
 
 					<div class="nav-actions">
 						{githubItem && (
@@ -188,6 +398,71 @@ const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 			header.dataset.scrolled = window.scrollY > 50 ? "true" : "false";
 		};
 
+		// Desktop dropdowns follow the disclosure pattern: a button toggles a
+		// panel of ordinary links. A mouse can also open a panel by hovering;
+		// clicking the trigger while it is hover-open pins it instead of closing.
+		const dropdowns = Array.from(document.querySelectorAll("[data-dropdown]")).flatMap((root) => {
+			const trigger = root.querySelector("[data-dropdown-trigger]");
+			return trigger ? [{ root, trigger, closeTimer: 0, openedByHover: false }] : [];
+		});
+
+		const setDropdown = (dropdown, open, { hover = false } = {}) => {
+			window.clearTimeout(dropdown.closeTimer);
+			if (open) {
+				dropdowns.forEach((other) => {
+					if (other !== dropdown) setDropdown(other, false);
+				});
+			}
+			dropdown.root.dataset.state = open ? "open" : "closed";
+			dropdown.trigger.setAttribute("aria-expanded", String(open));
+			dropdown.openedByHover = open && hover;
+		};
+
+		const isOpen = (dropdown) => dropdown.root.dataset.state === "open";
+
+		dropdowns.forEach((dropdown) => {
+			const { root, trigger } = dropdown;
+
+			trigger.addEventListener("click", () => {
+				if (isOpen(dropdown) && dropdown.openedByHover) {
+					dropdown.openedByHover = false;
+					return;
+				}
+				setDropdown(dropdown, !isOpen(dropdown));
+			});
+
+			root.addEventListener("pointerenter", (event) => {
+				if (event.pointerType !== "mouse") return;
+				window.clearTimeout(dropdown.closeTimer);
+				if (!isOpen(dropdown)) setDropdown(dropdown, true, { hover: true });
+			});
+
+			root.addEventListener("pointerleave", (event) => {
+				if (event.pointerType !== "mouse" || !dropdown.openedByHover) return;
+				dropdown.closeTimer = window.setTimeout(() => setDropdown(dropdown, false), 160);
+			});
+
+			root.addEventListener("focusout", (event) => {
+				// relatedTarget is null when focus leaves for a non-focusable
+				// click target; the document pointerdown handler covers that case.
+				if (event.relatedTarget && !root.contains(event.relatedTarget)) {
+					setDropdown(dropdown, false);
+				}
+			});
+
+			root.querySelectorAll("[data-dropdown-close]").forEach((link) => {
+				link.addEventListener("click", () => setDropdown(dropdown, false));
+			});
+		});
+
+		document.addEventListener("pointerdown", (event) => {
+			dropdowns.forEach((dropdown) => {
+				if (isOpen(dropdown) && !dropdown.root.contains(event.target)) {
+					setDropdown(dropdown, false);
+				}
+			});
+		});
+
 		toggle.addEventListener("click", () => {
 			setOpen(nav.dataset.state !== "active");
 		});
@@ -199,9 +474,18 @@ const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 		window.addEventListener("scroll", updateScrolled, { passive: true });
 		window.addEventListener("resize", () => {
 			if (window.innerWidth >= 960) setOpen(false);
+			else dropdowns.forEach((dropdown) => setDropdown(dropdown, false));
 		});
 		window.addEventListener("keydown", (event) => {
-			if (event.key === "Escape") setOpen(false);
+			if (event.key !== "Escape") return;
+			const openDropdown = dropdowns.find(isOpen);
+			if (openDropdown) {
+				const hadFocus = openDropdown.root.contains(document.activeElement);
+				setDropdown(openDropdown, false);
+				if (hadFocus) openDropdown.trigger.focus();
+				return;
+			}
+			setOpen(false);
 		});
 
 		updateScrolled();
@@ -363,8 +647,8 @@ const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 		list-style: none;
 	}
 
-	.nav-center a,
-	.nav-mobile-links a {
+	.nav-link,
+	.nav-mobile-list a {
 		display: block;
 		font-size: var(--font-size-sm);
 		font-weight: 500;
@@ -372,9 +656,242 @@ const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 		transition: color var(--transition-fast);
 	}
 
-	.nav-center a:hover,
-	.nav-mobile-links a:hover {
+	.nav-link:hover,
+	.nav-mobile-list a:hover {
 		color: var(--color-text);
+	}
+
+	/* Top-level desktop items share a quiet pill hover. */
+	.nav-link {
+		padding: 6px 12px;
+		line-height: 20px;
+		border-radius: var(--button-radius);
+		transition:
+			color var(--transition-fast),
+			background var(--transition-fast);
+	}
+
+	.nav-link:hover {
+		background: var(--button-secondary-bg);
+	}
+
+	.nav-dropdown {
+		position: relative;
+	}
+
+	.nav-dropdown-trigger {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		font-family: inherit;
+		background: transparent;
+		border: 0;
+		cursor: pointer;
+	}
+
+	.nav-dropdown[data-state="open"] .nav-dropdown-trigger {
+		color: var(--color-text);
+		background: var(--button-secondary-bg);
+	}
+
+	.nav-dropdown-caret {
+		width: 14px;
+		height: 14px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.5;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		transition: transform var(--transition-base);
+	}
+
+	.nav-dropdown[data-state="open"] .nav-dropdown-caret {
+		transform: rotate(180deg);
+	}
+
+	/*
+	 * The panel's top padding bridges the gap below the trigger so the pointer
+	 * can travel into the menu without leaving the hover area.
+	 */
+	.nav-dropdown-panel {
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		z-index: 1;
+		padding-top: 22px;
+		opacity: 0;
+		visibility: hidden;
+		transform: translate(-50%, -4px) scale(0.98);
+		transform-origin: top center;
+		transition:
+			opacity 120ms ease-out,
+			transform 120ms ease-out,
+			visibility 0s linear 120ms;
+	}
+
+	.nav-dropdown[data-state="open"] .nav-dropdown-panel,
+	:global(html:not(.js)) .nav-dropdown:is(:hover, :focus-within) .nav-dropdown-panel {
+		opacity: 1;
+		visibility: visible;
+		transform: translate(-50%, 0) scale(1);
+		transition:
+			opacity 180ms cubic-bezier(0.22, 1, 0.36, 1),
+			transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+			visibility 0s;
+	}
+
+	.product-menu {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--spacing-md);
+		width: 584px;
+		padding: 20px;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 18px;
+		box-shadow:
+			0 24px 48px -24px rgba(0, 0, 0, 0.24),
+			var(--shadow-lg);
+	}
+
+	.product-menu--single {
+		grid-template-columns: minmax(0, 1fr);
+		width: 320px;
+		padding: 10px;
+	}
+
+	.product-group-heading,
+	.nav-mobile-heading {
+		margin: 0 0 6px;
+		padding: 0 10px;
+		font-size: var(--font-size-xs);
+		font-weight: 500;
+		line-height: 1.4;
+		color: var(--color-muted);
+	}
+
+	.product-list {
+		display: grid;
+		gap: 2px;
+	}
+
+	.product-link {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		padding: 10px;
+		border-radius: 12px;
+		transition: background var(--transition-fast);
+	}
+
+	.product-link:hover {
+		background: var(--button-secondary-bg);
+	}
+
+	.product-link-icon {
+		display: inline-flex;
+		flex: none;
+		width: 32px;
+		height: 32px;
+		align-items: center;
+		justify-content: center;
+		color: var(--color-text);
+		background: var(--color-bg);
+		border: 1px solid var(--color-border);
+		border-radius: 9px;
+		transition: color var(--transition-fast);
+	}
+
+	.product-link-icon :global(svg) {
+		width: 18px;
+		height: 18px;
+	}
+
+	.product-link:hover .product-link-icon {
+		color: var(--color-primary);
+	}
+
+	.product-link-text {
+		display: grid;
+		gap: 2px;
+		min-width: 0;
+	}
+
+	.product-link-label {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		font-size: var(--font-size-sm);
+		font-weight: 500;
+		line-height: 1.4;
+		color: var(--color-text);
+	}
+
+	.product-link-description {
+		font-size: 0.8125rem;
+		line-height: 1.4;
+		color: var(--color-muted);
+		text-wrap: pretty;
+	}
+
+	/* Mobile-only: the desktop nav has a Community dropdown instead. */
+	.community-row {
+		display: grid;
+		gap: var(--spacing-sm);
+		margin-top: var(--spacing-lg);
+		padding-top: var(--spacing-md);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.community-heading {
+		margin: 0;
+		font-size: var(--font-size-xs);
+		font-weight: 500;
+		line-height: 1.4;
+		color: var(--color-muted);
+	}
+
+	.community-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+		margin-left: -8px;
+	}
+
+	.community-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		min-height: 32px;
+		padding: 6px 8px;
+		font-size: 0.8125rem;
+		font-weight: 500;
+		line-height: 1.4;
+		color: var(--color-muted);
+		border-radius: 8px;
+		transition:
+			color var(--transition-fast),
+			background var(--transition-fast);
+	}
+
+	.community-link:hover {
+		color: var(--color-text);
+		background: var(--button-secondary-bg);
+	}
+
+	.community-link svg {
+		width: 15px;
+		height: 15px;
+	}
+
+	.product-badge {
+		padding: 1px 6px;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		line-height: 1.4;
+		color: var(--color-primary);
+		background: var(--color-primary-light);
+		border-radius: var(--radius-full);
 	}
 
 	.nav-panel {
@@ -400,12 +917,22 @@ const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 		margin-bottom: var(--spacing-xl);
 	}
 
-	.nav-mobile-links ul {
-		display: grid;
-		gap: var(--spacing-lg);
+	.nav-mobile-heading {
+		padding: 0;
 	}
 
-	.nav-mobile-links a {
+	.nav-mobile-products {
+		margin: 0 -10px var(--spacing-lg);
+	}
+
+	.nav-mobile-list {
+		display: grid;
+		gap: var(--spacing-lg);
+		padding-top: var(--spacing-lg);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.nav-mobile-list a {
 		font-size: var(--font-size-base);
 	}
 
@@ -462,6 +989,10 @@ const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 	}
 
 	@media (min-width: 640px) {
+		.nav-mobile-products {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
 		.nav-actions {
 			flex-direction: row;
 			justify-content: flex-end;
@@ -493,9 +1024,10 @@ const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 			margin: auto;
 		}
 
-		.nav-center ul {
+		.nav-center-list {
 			display: flex;
-			gap: var(--spacing-xl);
+			align-items: center;
+			gap: 4px;
 		}
 
 		.nav-panel,
@@ -526,8 +1058,23 @@ const navItems = safeMenuItems.filter((item) => !isGitHubItem(item));
 		.site-nav-shell,
 		.nav-toggle,
 		.nav-toggle-icon,
-		.nav-action {
+		.nav-action,
+		.nav-link,
+		.nav-dropdown-caret,
+		.product-link,
+		.product-link-icon,
+		.community-link {
 			transition: none;
+		}
+
+		.nav-dropdown-panel,
+		.nav-dropdown[data-state="open"] .nav-dropdown-panel {
+			transform: translate(-50%, 0);
+			transition: opacity 120ms linear, visibility 0s linear 120ms;
+		}
+
+		.nav-dropdown[data-state="open"] .nav-dropdown-panel {
+			transition: opacity 120ms linear, visibility 0s;
 		}
 
 		.nav-action:active {
