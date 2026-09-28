@@ -10,12 +10,17 @@
  * illustration would let the two drift apart.
  */
 import AgentLogos from "../AgentLogos.astro";
+import { capabilitiesDefaults, portableTextBlocks } from "../../plugins/marketing-blocks/index.ts";
+// The code windows below read these files at build time, so their text and
+// line numbers can't drift from the source they show.
+import envTypesSource from "../../../emdash-env.d.ts?raw";
+import pluginSource from "../../plugins/marketing-blocks/index.ts?raw";
 
 interface Props {
 	node: {
 		_key?: string;
-		headline?: string;
-		subheadline?: string;
+		headline?: string | null;
+		subheadline?: string | null;
 	};
 }
 
@@ -23,20 +28,50 @@ const { node } = Astro.props;
 const key = node._key || "capabilities";
 const headingId = `${key}-title`;
 
-const headline = node.headline?.trim() || "Build your next blog or microsite today";
+const headline = (typeof node.headline === "string" && node.headline.trim()) || capabilitiesDefaults.headline;
 // The default applies only when the field is absent (e.g. the home-page
 // fallback block). An editor who clears the introduction hides it.
 const subheadline =
-	node.subheadline === undefined
-		? "EmDash combines with Astro to create one end-to-end TypeScript CMS and frontend."
-		: node.subheadline.trim();
+	typeof node.subheadline === "string" ? node.subheadline.trim() : capabilitiesDefaults.subheadline;
 
-// Render the first sentence at full strength and the rest muted. The split
-// needs sentence punctuation followed by a capital letter or digit; a headline
-// without one renders as a single tone.
-const headlineMatch = headline.match(/^(.+?[.!?]["'”’)]?)\s+(?=\p{Lu}|\d)(.+)$/u);
-const headlineLead = headlineMatch ? headlineMatch[1] : headline;
-const headlineRest = headlineMatch ? headlineMatch[2] : undefined;
+const escapeHtml = (text: string) =>
+	text.replace(/[&<>]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[char] ?? char);
+
+/**
+ * `length` lines of `source`, starting `offset` lines from the first line that
+ * contains `anchor`, dedented, with tabs shown as two spaces. `start` is the
+ * first line's 1-based number. A missing anchor yields an empty window.
+ */
+function sourceWindow(source: string, anchor: string, length: number, offset = 0) {
+	const all = source.split("\n");
+	const found = all.findIndex((line) => line.includes(anchor));
+	if (found < 0) return { start: 1, lines: [] as string[] };
+	const from = Math.max(0, found + offset);
+	const lines = all.slice(from, from + length);
+	const indent = Math.min(...lines.filter((line) => line.trim()).map((line) => line.search(/\S/)));
+	return {
+		start: from + 1,
+		lines: lines.map((line) => line.slice(indent).replace(/^\t+/, (tabs) => "  ".repeat(tabs.length))),
+	};
+}
+
+/** Wrap each named-group match of `pattern` in a `tok-<group>` span. */
+function highlight(line: string, pattern: RegExp) {
+	let html = "";
+	let last = 0;
+	for (const match of line.matchAll(pattern)) {
+		const [kind, text] = Object.entries(match.groups ?? {}).find(([, value]) => value !== undefined) ?? [];
+		if (!kind || text === undefined || match.index === undefined) continue;
+		html += `${escapeHtml(line.slice(last, match.index))}<span class="tok-${kind}">${escapeHtml(text)}</span>`;
+		last = match.index + match[0].length;
+	}
+	return html + escapeHtml(line.slice(last));
+}
+
+// TypeScript declarations: keywords, the declared name, and type names.
+const declarationTokens = /(?<k>\b(?:export|interface)\b)|(?<t>(?<=interface )\w+)|(?<p>(?<=[:|] |<)[A-Za-z]\w*)/g;
+// Plugin source: strings and line comments.
+const sourceTokens = /(?<s>"(?:[^"\\]|\\.)*")|(?<c>\/\/.*$)/g;
 
 // 24px line icons, drawn with currentColor strokes.
 const icons = {
@@ -70,9 +105,7 @@ const ph = {
 	arrowsClockwise: '<path d="M224,48V96a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h28.69L182.06,73.37a79.56,79.56,0,0,0-56.13-23.43h-.45A79.52,79.52,0,0,0,69.59,72.71,8,8,0,0,1,58.41,61.27a96,96,0,0,1,135,.79L208,76.69V48a8,8,0,0,1,16,0ZM186.41,183.29a80,80,0,0,1-112.47-.66L59.31,168H88a8,8,0,0,0,0-16H40a8,8,0,0,0-8,8v48a8,8,0,0,0,16,0V179.31l14.63,14.63A95.43,95.43,0,0,0,130,222.06h.53a95.36,95.36,0,0,0,67.07-27.33,8,8,0,0,0-11.18-11.44Z"/>',
 	pencilSimple: '<path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/>',
 	caretDown: '<path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/>',
-	calendarPlus: '<path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-48-56a8,8,0,0,1-8,8H136v16a8,8,0,0,1-16,0V160H104a8,8,0,0,1,0-16h16V128a8,8,0,0,1,16,0v16h16A8,8,0,0,1,160,152Z"/>',
 	dotsSixVertical: '<path d="M104,60A12,12,0,1,1,92,48,12,12,0,0,1,104,60Zm60,12a12,12,0,1,0-12-12A12,12,0,0,0,164,72ZM92,116a12,12,0,1,0,12,12A12,12,0,0,0,92,116Zm72,0a12,12,0,1,0,12,12A12,12,0,0,0,164,116ZM92,184a12,12,0,1,0,12,12A12,12,0,0,0,92,184Zm72,0a12,12,0,1,0,12,12A12,12,0,0,0,164,184Z"/>',
-	upload: '<path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a16,16,0,0,1,16-16H80a8,8,0,0,1,0,16H32v64H224V136H176a8,8,0,0,1,0-16h48A16,16,0,0,1,240,136ZM85.66,77.66,120,43.31V128a8,8,0,0,0,16,0V43.31l34.34,34.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,77.66ZM200,168a12,12,0,1,0-12,12A12,12,0,0,0,200,168Z"/>',
 	fileText: '<path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/>',
 	magnifyingGlass: '<path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>',
 	filePlus: '<path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-40-64a8,8,0,0,1-8,8H136v16a8,8,0,0,1-16,0V160H104a8,8,0,0,1,0-16h16V128a8,8,0,0,1,16,0v16h16A8,8,0,0,1,160,152Z"/>',
@@ -97,14 +130,14 @@ const agentClients = [
 ] as const;
 
 // Tool-call trace: a human label, then the real EmDash MCP tool in a chip.
-// The expanded row shows the arguments the agent passed.
+// The expanded row shows the arguments the agent passed (abridged).
 const agentTools = [
 	{ label: "Check for duplicates", tool: "search", icon: ph.magnifyingGlass },
 	{
 		label: "Create draft",
 		tool: "content_create",
 		icon: ph.filePlus,
-		detail: ['title: "Summer sale starts June 1"', 'status: "draft"'],
+		detail: ['collection: "posts"', 'data: { title: "Summer sale starts June 1" }'],
 	},
 	{ label: "Schedule for June 1", tool: "content_schedule", icon: ph.calendarDots },
 ];
@@ -140,49 +173,35 @@ const importRows = [
 	{ label: "Categories and tags", count: 36 },
 ];
 
-// A window onto this site's real `emdash-env.d.ts`, starting at the Post
-// interface's own line number. The panel clips and fades the rest of the file.
-// `thread` marks the Content field as it moves through the flow.
-const typeStartLine = 21;
-const typeLines = [
-	{ html: '<span class="tok-k">export interface</span> <span class="tok-t">Post</span> {' },
-	{ html: '  id: <span class="tok-p">string</span>;' },
-	{ html: '  slug: <span class="tok-p">string</span> | <span class="tok-p">null</span>;' },
-	{ html: '  status: <span class="tok-p">string</span>;' },
-	{ html: '  title: <span class="tok-p">string</span>;' },
-	{ html: '  excerpt?: <span class="tok-p">string</span>;' },
-	{ html: '  content?: <span class="tok-p">PortableTextBlock</span>[];', thread: true },
-	{ html: '  createdAt: <span class="tok-p">Date</span>;' },
-	{ html: '  updatedAt: <span class="tok-p">Date</span>;' },
-	{ html: '  publishedAt: <span class="tok-p">Date</span> | <span class="tok-p">null</span>;' },
-];
+// This site's generated `emdash-env.d.ts`, from the Post interface. The panel
+// clips and fades the rest. `thread` marks the Content field through the flow.
+const typeWindow = sourceWindow(envTypesSource, "export interface Post {", 10);
+const typeLines = typeWindow.lines.map((line) => ({
+	html: highlight(line, declarationTokens),
+	thread: line.trimStart().startsWith("content?:"),
+}));
 
-// A window onto src/plugins/marketing-blocks/index.ts at the Capabilities
-// block's own line number, dedented. `thread` marks the label the menu shows.
-const blockStartLine = 75;
-const blockLines = [
-	{ html: "{" },
-	{ html: '  type: <span class="tok-s">"marketing.capabilities"</span>,' },
-	{ html: '  label: <span class="tok-s">"Capabilities"</span>,', thread: true },
-	{ html: '  description: <span class="tok-s">"Feature bento with product illustrations"</span>,' },
-	{ html: '  <span class="tok-c">// Only the heading is editable. Each card is paired with a bespoke</span>' },
-	{ html: '  <span class="tok-c">// illustration, so card copy lives in Capabilities.astro.</span>' },
-	{ html: "  fields: [" },
-	{
-		html: '    { type: <span class="tok-s">"text_input"</span>, action_id: <span class="tok-s">"headline"</span>, label: <span class="tok-s">"Headline"</span> },',
-	},
-];
+// The Capabilities block's definition in this site's plugin. `thread` marks
+// the label the slash menu shows.
+const blockWindow = sourceWindow(pluginSource, 'type: "marketing.capabilities"', 8, -1);
+const blockLines = blockWindow.lines.map((line) => ({
+	html: highlight(line, sourceTokens),
+	thread: line.trimStart().startsWith("label:"),
+}));
 
-// The editor's slash menu scrolled to its end: the built-in Section command,
-// then this site's plugin blocks in registration order. Plugin blocks without
-// an icon get the admin's default Cube.
+// A window onto the editor's slash menu: the built-in Section command, then
+// this site's plugin blocks in registration order (more follow below the fold).
+// Plugin blocks without an icon get the admin's default Cube.
 const slashItems = [
-	{ label: "Section", description: "Insert a reusable section", icon: ph.stack },
-	{ label: "Hero", description: "Headline with optional links or agent actions", icon: ph.cube },
-	{ label: "Capabilities", description: "Feature bento with product illustrations", icon: ph.cube, active: true },
-	{ label: "Features", description: "Grid of feature cards with icons", icon: ph.cube },
-	{ label: "Testimonials", description: "Customer testimonial cards", icon: ph.cube },
+	{ label: "Section", description: "Insert a reusable section", icon: ph.stack, active: false },
+	...portableTextBlocks.slice(0, 3).map((block) => ({
+		label: block.label,
+		description: block.description ?? `Embed a ${block.label}`,
+		icon: ph.cube,
+		active: block.type === "marketing.capabilities",
+	})),
 ];
+const slashSummary = slashItems.map((item) => item.label);
 
 // Capability labels as the admin's consent dialog words them.
 const consentCapabilities = ["Read your content", "Make network requests to: hooks.slack.com"];
@@ -207,9 +226,7 @@ const schemaFields = [
 		<header class="cap-header">
 			<div class="cap-heading">
 				<p class="cap-eyebrow"><span class="cap-eyebrow-dash" aria-hidden="true"></span>Capabilities</p>
-				<h2 id={headingId} class="cap-headline">
-					{headlineLead}{headlineRest && " "}{headlineRest && <span class="cap-headline-muted">{headlineRest}</span>}
-				</h2>
+				<h2 id={headingId} class="cap-headline">{headline}</h2>
 			</div>
 			{subheadline && <p class="cap-intro">{subheadline}</p>}
 		</header>
@@ -287,7 +304,7 @@ const schemaFields = [
 									</div>
 								</div>
 							</div>
-							<div class="ui-foot ui-foot--end">
+							<div class="ui-foot">
 								<span class="ui-btn ui-btn--primary">Publish</span>
 							</div>
 						</div>
@@ -299,7 +316,7 @@ const schemaFields = [
 						<div
 							class="ui flow-panel"
 							role="img"
-							aria-label="The generated emdash-env.d.ts file, showing the Post interface with system fields followed by title, excerpt, and content."
+							aria-label="The generated emdash-env.d.ts file, showing the Post interface with its id, slug, status, title, excerpt, and content fields."
 						>
 							<div class="ui-bar">
 								<span class="ui-file">emdash-env.d.ts</span>
@@ -308,7 +325,7 @@ const schemaFields = [
 							<div class="code">
 								{typeLines.map((line, index) => (
 									<div class:list={["code-line", { thread: line.thread }]}>
-										<span class="code-n">{typeStartLine + index}</span>
+										<span class="code-n">{typeWindow.start + index}</span>
 										<code set:html={line.html} />
 									</div>
 								))}
@@ -361,15 +378,15 @@ const schemaFields = [
 				<div
 					class="cap-visual visual-familiar"
 					role="img"
-					aria-label="The EmDash admin sidebar with Pages, Posts, and Media under Content, and Comments, Menus, Redirects, Widgets, Sections, Categories, Tags, and Bylines under Manage, beside a completed WordPress import of posts, pages, media, categories, and tags."
+					aria-label="The EmDash admin sidebar with Pages, Posts, and Media under Content, and Comments and Menus under Manage, beside a completed WordPress import of posts, pages, media, categories, and tags."
 				>
 					<div class="ui admin-nav">
 						<div class="admin-brand">
 							<svg class="admin-logo" viewBox="0 0 75 75" fill="none">
-								<rect x="3" y="3" width="69" height="69" rx="10.518" stroke="url(#cap-logo-border)" stroke-width="6" />
-								<rect x="18" y="34" width="39.3661" height="6.56101" fill="url(#cap-logo-dash)" />
+								<rect x="3" y="3" width="69" height="69" rx="10.518" stroke={`url(#${key}-logo-border)`} stroke-width="6" />
+								<rect x="18" y="34" width="39.3661" height="6.56101" fill={`url(#${key}-logo-dash)`} />
 								<defs>
-									<linearGradient id="cap-logo-border" x1="-43" y1="124" x2="92.42" y2="-41.75" gradientUnits="userSpaceOnUse">
+									<linearGradient id={`${key}-logo-border`} x1="-43" y1="124" x2="92.42" y2="-41.75" gradientUnits="userSpaceOnUse">
 										<stop stop-color="#0F006B" />
 										<stop offset="0.1667" stop-color="#5D0C83" />
 										<stop offset="0.3333" stop-color="#CE2F55" />
@@ -378,7 +395,7 @@ const schemaFields = [
 										<stop offset="0.75" stop-color="#FFE9CB" />
 										<stop offset="1" stop-color="white" />
 									</linearGradient>
-									<linearGradient id="cap-logo-dash" x1="91.5" y1="27.5" x2="28.12" y2="54.18" gradientUnits="userSpaceOnUse">
+									<linearGradient id={`${key}-logo-dash`} x1="91.5" y1="27.5" x2="28.12" y2="54.18" gradientUnits="userSpaceOnUse">
 										<stop stop-color="white" />
 										<stop offset="0.1293" stop-color="#FFF8EE" />
 										<stop offset="0.6171" stop-color="#FBAD41" />
@@ -436,7 +453,7 @@ const schemaFields = [
 				<div
 					class="cap-visual visual-editorial"
 					role="img"
-					aria-label="A revision history beside the EmDash publish panel. The live version published on March 12 stays public while saved draft changes wait, ready to publish now or schedule for later."
+					aria-label="The EmDash publish panel. The live version published on March 12 stays public while draft changes wait, ready to publish now or schedule for later."
 				>
 					<div class="timeline">
 						<div class="tl-item">
@@ -452,12 +469,12 @@ const schemaFields = [
 						<div class="tl-item tl-item--current ui">
 							<span class="tl-dot"></span>
 							<p class="tl-time">Just now</p>
-							<p class="tl-label">Draft autosaved</p>
+							<p class="tl-label">Draft saved</p>
 						</div>
 					</div>
 					<div class="ui publish">
 						<div class="publish-bar">
-							<span class="ui-btn ui-btn--primary"><svg class="ph" viewBox="0 0 256 256" set:html={ph.upload} />Publish changes</span>
+							<span class="ui-btn ui-btn--primary">Publish changes<svg class="ph" viewBox="0 0 256 256" set:html={ph.caretDown} /></span>
 						</div>
 						<div class="publish-body">
 							<div class="publish-head">
@@ -480,7 +497,6 @@ const schemaFields = [
 									<p><span>Created and updated</span><svg class="ph" viewBox="0 0 256 256" set:html={ph.caretDown} /></p>
 								</div>
 							</div>
-							<span class="ui-btn publish-schedule"><svg class="ph" viewBox="0 0 256 256" set:html={ph.calendarPlus} />Schedule</span>
 						</div>
 					</div>
 				</div>
@@ -492,14 +508,14 @@ const schemaFields = [
 					<h3 class="cap-title">Built with agents in mind</h3>
 					<p class="cap-text">
 						Every site ships with an MCP server. Connect Claude, Codex, Cursor, or any MCP client to draft, edit,
-						search, and schedule content with the same role-based permissions as your team. Scripts get the same
-						through the REST API and CLI.
+						search, and schedule content with the same permissions as your team. Scripts get the same through the
+						REST API and CLI.
 					</p>
 				</div>
 				<div
 					class="cap-visual visual-agents"
 					role="img"
-					aria-label="Claude, one of several MCP clients alongside Codex, Cursor, and OpenCode, is connected to the site's emdash MCP server. Asked to draft a summer sale post for June 1 at 9 AM, it calls search, content_create, and content_schedule, and the post is scheduled for June 1 at 9 AM."
+					aria-label="A Claude session. Asked to draft a summer sale post for June 1 at 9 AM, it calls the site's search, content_create, and content_schedule MCP tools, and the post is scheduled for June 1 at 9 AM."
 				>
 					<ul class="clients">
 						{agentClients.map((client) => (
@@ -560,7 +576,7 @@ const schemaFields = [
 				<div
 					class="cap-visual visual-extend"
 					role="img"
-					aria-label="This site's marketing-blocks plugin source defining the Capabilities block, beside the editor's insert menu listing Section, Hero, Capabilities, Features, and Testimonials, with Capabilities selected."
+					aria-label={`This site's marketing-blocks plugin source defining the Capabilities block, beside the editor's insert menu listing ${slashSummary.slice(0, -1).join(", ")}, and ${slashSummary.at(-1)}, with Capabilities selected.`}
 				>
 					<div class="ext-stack">
 						<div class="ui ext-code">
@@ -570,7 +586,7 @@ const schemaFields = [
 							<div class="code">
 								{blockLines.map((line, index) => (
 									<div class:list={["code-line", { thread: line.thread }]}>
-										<span class="code-n">{blockStartLine + index}</span>
+										<span class="code-n">{blockWindow.start + index}</span>
 										<code set:html={line.html} />
 									</div>
 								))}
@@ -595,8 +611,8 @@ const schemaFields = [
 				<div class="cap-copy">
 					<h3 class="cap-title">Plugins without the security nightmare</h3>
 					<p class="cap-text">
-						Sandboxed plugins, including every registry install, run in their own isolate. They see no environment
-						variables or filesystem, and get only the capabilities they declare and you approve.
+						Plugins you install from the admin run in their own isolated sandbox. They see no environment variables
+						or filesystem, and get only the capabilities they declare and you approve.
 					</p>
 				</div>
 				<div
@@ -663,6 +679,8 @@ const schemaFields = [
 			0 1px 2px rgba(0, 0, 0, 0.04),
 			0 10px 24px -14px rgba(0, 0, 0, 0.18);
 		--cap-success: #1f9d55;
+		/* Brand orange darkened for small text on light surfaces (4.5:1). */
+		--cap-accent-text: color-mix(in srgb, var(--color-primary) 72%, #000);
 
 		padding: var(--spacing-4xl) 0 var(--spacing-2xl);
 		background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
@@ -677,6 +695,7 @@ const schemaFields = [
 			0 1px 2px rgba(0, 0, 0, 0.3),
 			0 14px 28px -14px rgba(0, 0, 0, 0.7);
 		--cap-success: #4ade80;
+		--cap-accent-text: var(--color-primary);
 	}
 
 	@media (prefers-color-scheme: dark) {
@@ -689,6 +708,7 @@ const schemaFields = [
 				0 1px 2px rgba(0, 0, 0, 0.3),
 				0 14px 28px -14px rgba(0, 0, 0, 0.7);
 			--cap-success: #4ade80;
+			--cap-accent-text: var(--color-primary);
 		}
 	}
 
@@ -729,13 +749,8 @@ const schemaFields = [
 		font-weight: 700;
 		line-height: 1.08;
 		letter-spacing: -0.04em;
+		overflow-wrap: break-word;
 		text-wrap: balance;
-	}
-
-	/* 56% keeps this large text above 3:1 on the light section background. */
-	.cap-headline-muted {
-		display: block;
-		color: color-mix(in srgb, var(--color-text) 56%, transparent);
 	}
 
 	.cap-intro {
@@ -743,6 +758,7 @@ const schemaFields = [
 		color: var(--cap-muted);
 		font-size: var(--font-size-base);
 		line-height: 1.6;
+		overflow-wrap: break-word;
 		text-wrap: pretty;
 	}
 
@@ -1040,7 +1056,7 @@ const schemaFields = [
 	}
 
 	.flow-num {
-		color: var(--color-primary);
+		color: var(--cap-accent-text);
 		font-family: var(--font-mono);
 		font-size: 0.75rem;
 		font-weight: 600;
@@ -1065,8 +1081,15 @@ const schemaFields = [
 	/* The Content field, traced through every step with one quiet marker. */
 	.thread {
 		background: var(--heat-8);
-		border-radius: 2px 6px 6px 2px;
+		border-start-start-radius: 2px;
+		border-start-end-radius: 6px;
+		border-end-end-radius: 6px;
+		border-end-start-radius: 2px;
 		box-shadow: inset 2px 0 0 var(--color-primary);
+	}
+
+	:global([dir="rtl"]) .thread {
+		box-shadow: inset -2px 0 0 var(--color-primary);
 	}
 
 	/* Step 1: schema, modelled on the admin's field list */
@@ -1084,7 +1107,8 @@ const schemaFields = [
 		min-width: 0;
 		align-items: center;
 		gap: 0.375rem;
-		padding: 0.3125rem 0.5rem 0.3125rem 0.375rem;
+		padding-block: 0.3125rem;
+		padding-inline: 0.375rem 0.5rem;
 		white-space: nowrap;
 	}
 
@@ -1232,13 +1256,9 @@ const schemaFields = [
 	.ui-foot {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: flex-end;
 		padding: 0.4375rem 0.75rem;
 		border-top: 1px solid var(--cap-line);
-	}
-
-	.ui-foot--end {
-		justify-content: flex-end;
 	}
 
 	/* Step 3: generated types */
@@ -1379,13 +1399,16 @@ const schemaFields = [
 		padding-bottom: 0;
 	}
 
+	/* Stretched to the stage's visible height, so the fade lands on screen. */
 	.admin-nav {
 		width: 11.5rem;
-		padding-bottom: 1.25rem;
+		flex-shrink: 0;
+		align-self: stretch;
+		overflow: hidden;
 		border-bottom: 0;
 		border-radius: 12px 12px 0 0;
-		-webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
-		mask-image: linear-gradient(to bottom, #000 70%, transparent);
+		-webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+		mask-image: linear-gradient(to bottom, #000 55%, transparent);
 	}
 
 	.admin-brand {
@@ -1533,7 +1556,8 @@ const schemaFields = [
 
 	.tl-item {
 		position: relative;
-		padding: 0.5rem 0.75rem 0.5rem 1.75rem;
+		padding-block: 0.5rem;
+		padding-inline: 1.75rem 0.75rem;
 		font-size: 0.75rem;
 		line-height: 1.35;
 	}
@@ -1680,11 +1704,11 @@ const schemaFields = [
 
 	.publish-meta p {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.5rem;
+		column-gap: 0.5rem;
 		padding: 0.3125rem 0;
-		white-space: nowrap;
 	}
 
 	.publish-meta svg {
@@ -1697,13 +1721,9 @@ const schemaFields = [
 		align-items: center;
 		gap: 0.3125rem;
 		color: var(--cap-muted);
+		white-space: nowrap;
 	}
 
-	.publish-schedule {
-		justify-content: center;
-		background: transparent;
-		border: 1px solid var(--cap-ui-border);
-	}
 
 	/* ---------- Agents ---------- */
 
@@ -1753,6 +1773,12 @@ const schemaFields = [
 		fill: currentColor;
 	}
 
+	/* One box per mark, so labels line up even where a mark is narrower. */
+	.client :global(.agent-logos) {
+		width: var(--agent-logo-size);
+		justify-content: center;
+	}
+
 	.client.is-active {
 		color: var(--color-text);
 		font-weight: 600;
@@ -1783,6 +1809,15 @@ const schemaFields = [
 		gap: 0.4375rem;
 	}
 
+	/* Tracks pinned to the panel width, so nowrap chips and arguments
+	   truncate instead of widening the grid past the panel's clip. */
+	.session-body,
+	.session-tools,
+	.session-tool-detail,
+	.session-result p {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
 	.session-body {
 		display: grid;
 		gap: 0.625rem;
@@ -1794,7 +1829,8 @@ const schemaFields = [
 		max-width: 85%;
 		padding: 0.4375rem 0.6875rem;
 		background: var(--cap-ui-tint);
-		border-radius: 10px 10px 3px 10px;
+		border-radius: 10px;
+		border-end-end-radius: 3px;
 		text-wrap: pretty;
 	}
 
@@ -1873,8 +1909,10 @@ const schemaFields = [
 	.session-tool-detail {
 		display: grid;
 		gap: 0.125rem;
-		margin: 0.125rem 0 0.25rem 0.5rem;
-		padding: 0.125rem 0 0.125rem 0.875rem;
+		margin-block: 0.125rem 0.25rem;
+		margin-inline-start: 0.5rem;
+		padding-block: 0.125rem;
+		padding-inline-start: 0.875rem;
 		border-inline-start: 1px solid var(--cap-ui-border);
 	}
 
@@ -1981,10 +2019,10 @@ const schemaFields = [
 			0 24px 40px -24px rgba(0, 0, 0, 0.35);
 	}
 
-	/* The menu scrolls on past the viewport: fade the row it cuts. */
+	/* The menu scrolls on past its viewport: fade the row it cuts. */
 	.ext-menu-list {
 		display: grid;
-		max-height: 10.75rem;
+		max-height: 10rem;
 		overflow: hidden;
 		-webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2rem), transparent);
 		mask-image: linear-gradient(to bottom, #000 calc(100% - 2rem), transparent);
@@ -2028,10 +2066,12 @@ const schemaFields = [
 
 	/* ---------- Security ---------- */
 
+	/* 17.5 + 1 + 14rem fits the narrowest stage at 640px, so the panels
+	   only stack below that, where the column layout takes over. */
 	.visual-secure {
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 1.25rem;
+		gap: 1rem;
 	}
 
 	/* Mirrors the admin's capability consent dialog. */
@@ -2096,7 +2136,7 @@ const schemaFields = [
 
 	/* What the plugin's isolate can't reach, whatever it declares. */
 	.isolate {
-		width: 14.5rem;
+		width: 14rem;
 		flex: 0 1 auto;
 		overflow: hidden;
 	}
@@ -2187,10 +2227,6 @@ const schemaFields = [
 	/* ---------- Large screens: editorial header, roomier cards ---------- */
 
 	@media (min-width: 1024px) {
-		.capabilities {
-			padding: var(--spacing-4xl) 0 var(--spacing-2xl);
-		}
-
 		.cap-container {
 			gap: var(--spacing-3xl);
 		}
@@ -2252,8 +2288,8 @@ const schemaFields = [
 	/*
 	 * ---------- Desktop bento ----------
 	 * The asymmetric grid and the four-step flow need the full container
-	 * width; below it the cards stack and the flow stays two-by-two so the
-	 * illustrations never clip.
+	 * width. Below it the cards stack, and the flow runs two by two from
+	 * 640px and one column under that.
 	 */
 
 	@media (min-width: 1200px) {
@@ -2289,7 +2325,8 @@ const schemaFields = [
 		}
 
 		.cap-card--secure .cap-copy {
-			padding: var(--spacing-2xl) 0 var(--spacing-2xl) var(--spacing-2xl);
+			padding-block: var(--spacing-2xl);
+			padding-inline: var(--spacing-2xl) 0;
 		}
 
 		.cap-card--secure .cap-visual {
@@ -2386,6 +2423,32 @@ const schemaFields = [
 
 		/* Keep the plugin name and file visible in the narrow code window. */
 		.ui-file-root {
+			display: none;
+		}
+	}
+
+	/* Narrow phones: the side-by-side overlap no longer fits, so the import
+	   card drops below the Content items and pins to the stage's end edge. */
+	@media (max-width: 419.98px) {
+		.visual-familiar {
+			height: 20rem;
+			justify-content: flex-start;
+			padding-inline: var(--spacing-md);
+		}
+
+		.admin-nav {
+			width: 10.5rem;
+		}
+
+		.import-card {
+			position: absolute;
+			inset-block-start: 11rem;
+			inset-inline-end: var(--spacing-md);
+			width: 12.5rem;
+			margin: 0;
+		}
+
+		.import-file {
 			display: none;
 		}
 	}
