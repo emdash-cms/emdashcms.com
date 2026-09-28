@@ -36,9 +36,14 @@ export function readingMinutes(content: PortableTextBlock[] | undefined): number
 export interface PostAuthor {
 	name: string;
 	initials: string;
-	/** Decorative: shown next to the names, so it has no alt text. */
-	avatar: { src: string } | null;
+	/**
+	 * Decorative: shown next to the names, so it has no alt text.
+	 * `color` is the photo's dominant colour, painted while it loads.
+	 */
+	avatar: { src: string; color: string | null } | null;
 }
+
+const HEX_COLOR = /^#[\da-f]{3,8}$/i;
 
 function initialsOf(name: string) {
 	return name
@@ -58,12 +63,18 @@ export function postAuthors(bylines: ContentBylineCredit[] | undefined): PostAut
 		.map(({ byline }) => ({
 			name: byline.displayName,
 			initials: initialsOf(byline.displayName),
-			avatar: byline.avatarStorageKey ? { src: `/_emdash/api/media/file/${byline.avatarStorageKey}` } : null,
+			avatar: byline.avatarStorageKey
+				? {
+						src: `/_emdash/api/media/file/${byline.avatarStorageKey}`,
+						color: byline.avatarDominantColor && HEX_COLOR.test(byline.avatarDominantColor) ? byline.avatarDominantColor : null,
+					}
+				: null,
 		}));
 }
 
-export function formatAuthorNames(authors: PostAuthor[]) {
-	const names = authors.map((author) => author.name);
-	if (names.length <= 2) return names.join(" and ");
-	return `${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
+/** The joiner before the author at `index`: "A and B", "A, B, and C". */
+export function authorSeparator(index: number, count: number) {
+	if (index === 0) return "";
+	if (count === 2) return " and ";
+	return index === count - 1 ? ", and " : ", ";
 }
