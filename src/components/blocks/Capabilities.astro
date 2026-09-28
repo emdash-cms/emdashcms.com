@@ -84,7 +84,28 @@ const ph = {
 	arrowSquareOut: '<path d="M224,104a8,8,0,0,1-16,0V59.32l-66.33,66.34a8,8,0,0,1-11.32-11.32L196.68,48H152a8,8,0,0,1,0-16h64a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/>',
 	check: '<path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/>',
 	fileText: '<path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/>',
+	magnifyingGlass: '<path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>',
+	filePlus: '<path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-40-64a8,8,0,0,1-8,8H136v16a8,8,0,0,1-16,0V160H104a8,8,0,0,1,0-16h16V128a8,8,0,0,1,16,0v16h16A8,8,0,0,1,160,152Z"/>',
+	calendarDots: '<path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-68-76a12,12,0,1,1-12-12A12,12,0,0,1,140,132Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,184,132ZM96,172a12,12,0,1,1-12-12A12,12,0,0,1,96,172Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,140,172Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,184,172Z"/>',
+	shieldCheck: '<path d="M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0ZM82.34,141.66a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32l-56,56a8,8,0,0,1-11.32,0Z"/>',
+	plus: '<path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/>',
 };
+
+// MCP clients on the left of the agents illustration; `logo` keys into AgentLogos.
+const agentClients = [
+	{ label: "Codex", logo: "codex" },
+	{ label: "Cursor", logo: "cursor" },
+	{ label: "Claude", logo: "claude", active: true },
+	{ label: "OpenCode", logo: "opencode" },
+	{ label: "Any MCP client" },
+] as const;
+
+// Real tool names from EmDash's built-in MCP server.
+const agentTools = [
+	{ name: "search", meta: "“summer sale”", icon: ph.magnifyingGlass },
+	{ name: "content_create", meta: "posts · draft", icon: ph.filePlus },
+	{ name: "content_schedule", meta: "Jun 1, 9:00 AM", icon: ph.calendarDots },
+];
 
 // The admin sidebar, in the real admin's order and icons (Dashboard omitted).
 const adminNav = [
@@ -440,25 +461,48 @@ const schemaFields = [
 				<div
 					class="cap-visual visual-agents"
 					role="img"
-					aria-label="An agent receives a request to draft and schedule a post, then calls the content_create and content_schedule tools on the site's MCP server."
+					aria-label="Claude, one of several MCP clients alongside Codex, Cursor, and OpenCode, is connected to the site's emdash MCP server. Asked to draft a summer sale post for June 1 at 9 AM, it calls search, content_create, and content_schedule, and the post is scheduled. The agent is signed in as Ana with the Author role."
 				>
-					<div class="ui chat">
-						<div class="chat-head">
-							<AgentLogos />
-							<span class="chat-endpoint">/_emdash/api/mcp</span>
+					<ul class="clients">
+						{agentClients.map((client) => (
+							<li class:list={["client", { "is-active": "active" in client }]}>
+								{"logo" in client ? (
+									<AgentLogos only={[client.logo]} />
+								) : (
+									<svg class="ph" viewBox="0 0 256 256" set:html={ph.plus} />
+								)}
+								<span>{client.label}</span>
+							</li>
+						))}
+					</ul>
+					<div class="ui session">
+						<div class="ui-bar session-bar">
+							<AgentLogos only={["claude"]} />
+							<span class="ui-strong">Claude</span>
+							<span class="ui-pill"><span class="ui-pill-dot ui-pill-dot--success"></span>emdash</span>
 						</div>
-						<p class="chat-msg chat-msg--user">Draft a post about the summer sale and schedule it for June 1 at 9 AM.</p>
-						<div class="chat-tools">
-							<div class="tool">
-								<svg viewBox="0 0 24 24" set:html={icons.check} />
-								<code>content_create</code>
-								<span>posts · draft</span>
+						<div class="session-body">
+							<p class="session-ask">Draft a summer sale post for June 1 at 9 AM.</p>
+							<div class="session-tools">
+								<p class="session-tools-head"><svg class="ph" viewBox="0 0 256 256" set:html={ph.caretDown} />3 tool calls</p>
+								{agentTools.map((tool) => (
+									<div class="session-tool">
+										<svg class="ph" viewBox="0 0 256 256" set:html={tool.icon} />
+										<code>{tool.name}</code>
+										<span>{tool.meta}</span>
+										<svg class="ph session-tool-ok" viewBox="0 0 256 256" set:html={ph.checkCircle} />
+									</div>
+								))}
 							</div>
-							<div class="tool">
-								<svg viewBox="0 0 24 24" set:html={icons.check} />
-								<code>content_schedule</code>
-								<span>Jun 1, 9:00 AM</span>
+							<div class="session-result">
+								<span class="session-result-icon"><svg class="ph" viewBox="0 0 256 256" set:html={ph.newspaperFill} /></span>
+								<p><strong>Summer sale starts June 1</strong><span>posts/summer-sale</span></p>
+								<span class="ui-pill"><svg class="ph" viewBox="0 0 256 256" set:html={ph.calendarDots} />Scheduled</span>
 							</div>
+						</div>
+						<div class="ui-foot">
+							<span class="session-role"><svg class="ph" viewBox="0 0 256 256" set:html={ph.shieldCheck} />Signed in as <strong>Ana</strong></span>
+							<span class="ui-pill">Author</span>
 						</div>
 					</div>
 				</div>
@@ -1614,76 +1658,218 @@ const schemaFields = [
 
 	/* ---------- Agents ---------- */
 
-	.chat {
-		width: min(100%, 25rem);
-		padding: 0.875rem;
+	/* Clients on the left, one live session on the right, joined by a hairline. */
+	.visual-agents {
+		--agents-gap: 2rem;
+		gap: var(--agents-gap);
 	}
 
-	.chat-head {
-		--agent-logo-size: 0.875rem;
-		--agent-logo-gap: 0.375rem;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
-		padding-bottom: 0.75rem;
-		color: var(--color-text);
-		border-bottom: 1px solid var(--cap-line);
-	}
-
-	.chat-endpoint {
-		color: var(--cap-subtle);
-		font-family: var(--font-mono);
-		font-size: 0.6875rem;
-	}
-
-	.chat-msg {
-		max-width: 88%;
-		margin-top: 0.75rem !important;
-		padding: 0.5rem 0.6875rem;
-		border-radius: 10px;
-		text-wrap: pretty;
-	}
-
-	.chat-msg--user {
-		margin-inline-start: auto;
-		background: var(--cap-ui-sunken);
-		box-shadow: inset 0 0 0 1px var(--cap-line);
-	}
-
-	.chat-tools {
+	.clients {
 		display: grid;
-		gap: 0.375rem;
-		margin-top: 0.75rem;
+		width: 8.75rem;
+		flex: 0 0 auto;
+		gap: 0.125rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
 	}
 
-	.tool {
+	/* Fade toward the ends of the list. A mask would clip the connector. */
+	.client:first-child,
+	.client:last-child {
+		opacity: 0.5;
+	}
+
+	.client:nth-child(2),
+	.client:nth-child(4) {
+		opacity: 0.8;
+	}
+
+	.client {
+		--agent-logo-size: 0.875rem;
+		position: relative;
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.4375rem 0.625rem;
-		border: 1px solid var(--cap-line);
+		color: var(--cap-muted);
+		font-size: 0.75rem;
+		white-space: nowrap;
 		border-radius: 8px;
 	}
 
-	.tool svg {
+	.client svg.ph {
+		width: 0.875rem;
+		height: 0.875rem;
+		fill: currentColor;
+	}
+
+	.client.is-active {
+		color: var(--color-text);
+		font-weight: 600;
+		background: var(--color-surface);
+		box-shadow:
+			0 0 0 1px var(--cap-ui-border),
+			var(--cap-ui-shadow);
+	}
+
+	.client.is-active::after {
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-start: 100%;
+		width: var(--agents-gap);
+		height: 1px;
+		background: var(--cap-ui-border);
+		content: "";
+	}
+
+	.session {
+		width: min(100%, 22.5rem);
+		flex: 0 1 auto;
+		overflow: hidden;
+	}
+
+	.session-bar {
+		--agent-logo-size: 0.875rem;
+		gap: 0.4375rem;
+	}
+
+	.session-body {
+		display: grid;
+		gap: 0.625rem;
+		padding: 0.75rem;
+	}
+
+	.session-ask {
+		justify-self: end;
+		max-width: 85%;
+		padding: 0.4375rem 0.6875rem;
+		background: var(--cap-ui-tint);
+		border-radius: 10px 10px 3px 10px;
+		text-wrap: pretty;
+	}
+
+	.session-tools {
+		display: grid;
+		gap: 0.125rem;
+	}
+
+	.session-tools-head {
+		display: flex;
+		align-items: center;
+		gap: 0.3125rem;
+		margin-bottom: 0.125rem !important;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+	}
+
+	.session-tools-head svg {
+		width: 0.625rem;
+		height: 0.625rem;
+	}
+
+	.session-tool {
+		display: flex;
+		min-width: 0;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.25rem 0.125rem;
+		white-space: nowrap;
+	}
+
+	.session-tool svg {
 		width: 0.8125rem;
 		height: 0.8125rem;
-		color: var(--cap-success);
+		color: var(--cap-subtle);
 	}
 
-	.tool code {
-		color: var(--color-text);
+	.session-tool code {
 		font-family: var(--font-mono);
 		font-size: 0.6875rem;
-		font-weight: 600;
 	}
 
-	.tool span {
+	.session-tool span {
+		min-width: 0;
+		overflow: hidden;
 		margin-inline-start: auto;
 		color: var(--cap-subtle);
 		font-size: 0.6875rem;
-		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.session-tool .session-tool-ok {
+		color: var(--cap-success);
+	}
+
+	.session-result {
+		display: flex;
+		align-items: center;
+		gap: 0.5625rem;
+		padding: 0.5rem 0.625rem 0.5rem 0.5rem;
+		border: 1px solid var(--cap-ui-border);
+		border-radius: 9px;
+	}
+
+	.session-result-icon {
+		display: grid;
+		width: 1.75rem;
+		height: 1.75rem;
+		flex: 0 0 auto;
+		place-items: center;
+		color: var(--color-primary);
+		background: var(--heat-8);
+		border-radius: 7px;
+	}
+
+	.session-result-icon svg {
+		width: 0.875rem;
+		height: 0.875rem;
+	}
+
+	.session-result p {
+		display: grid;
+		min-width: 0;
+		gap: 0.0625rem;
+	}
+
+	.session-result strong {
+		font-weight: 600;
+		text-wrap: balance;
+	}
+
+	.session-result span:not(.ui-pill) {
+		color: var(--cap-subtle);
+		font-family: var(--font-mono);
+		font-size: 0.625rem;
+	}
+
+	.session-result .ui-pill {
+		gap: 0.25rem;
+	}
+
+	.session-result .ui-pill svg,
+	.session-role svg {
+		width: 0.6875rem;
+		height: 0.6875rem;
+	}
+
+	.session-role {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3125rem;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+	}
+
+	.session-role strong {
+		color: var(--color-text);
+		font-weight: 600;
+	}
+
+	.session-role svg {
+		width: 0.8125rem;
+		height: 0.8125rem;
+		color: var(--cap-success);
 	}
 
 	/* ---------- Extend ---------- */
@@ -2101,8 +2287,13 @@ const schemaFields = [
 			align-items: stretch;
 		}
 
-		.timeline {
+		.timeline,
+		.clients {
 			display: none;
+		}
+
+		.session {
+			width: 100%;
 		}
 
 		.publish {
