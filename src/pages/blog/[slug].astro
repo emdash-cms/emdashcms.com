@@ -1,9 +1,19 @@
 ---
-import { decodeSlug, getEmDashEntry } from "emdash";
+import { decodeSlug, getEmDashCollection, getEmDashEntry } from "emdash";
 import { PortableText } from "emdash/ui";
+import PostCover from "../../components/blog/PostCover.astro";
+import PostGrid from "../../components/blog/PostGrid.astro";
+import arrowRightSvg from "../../icons/arrow-right.svg?raw";
 import Base from "../../layouts/Base.astro";
+import { formatAuthorNames, formatPostDate, postAuthors, readingMinutes } from "../../lib/posts";
 
-const slug = decodeSlug(Astro.params.slug);
+let slug: string | undefined;
+try {
+	slug = decodeSlug(Astro.params.slug);
+} catch {
+	// A malformed escape such as `/blog/%25` can't name a post.
+	slug = undefined;
+}
 
 if (!slug) {
 	return Astro.redirect("/404");
@@ -17,206 +27,601 @@ if (!post) {
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-const published = post.data.publishedAt
-	? {
-		datetime: post.data.publishedAt.toISOString(),
-		label: post.data.publishedAt.toLocaleDateString("en-US", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		}),
-	}
-	: null;
+// Other posts for "Keep reading": the newest few, excluding this one.
+const {
+	entries: recentPosts,
+	error: recentPostsError,
+	cacheHint: recentPostsCacheHint,
+} = await getEmDashCollection("posts", {
+	orderBy: { published_at: "desc" },
+	limit: 4,
+});
+if (recentPostsError) console.error("Failed to load posts for Keep reading:", recentPostsError);
+// Only the tags, so publishing a post purges this page but its lastModified stays its own.
+if (Astro.cache?.enabled && recentPostsCacheHint.tags) Astro.cache.set({ tags: recentPostsCacheHint.tags });
+const morePosts = recentPosts.filter((entry) => entry.data.id !== post.data.id).slice(0, 3);
+
+const published = formatPostDate(post.data.publishedAt, "long");
+const minutes = readingMinutes(post.data.content);
+const authors = postAuthors(post.data.bylines);
+const cover = post.data.featured_image;
+const coverStorageKey = typeof cover?.meta?.storageKey === "string" ? cover.meta.storageKey : undefined;
+const coverSrc = cover?.src ?? (coverStorageKey ? `/_emdash/api/media/file/${coverStorageKey}` : undefined);
+// Resolve against the canonical origin, like the canonical link, not the host that served the request.
+const coverOrigin = Astro.site ?? Astro.url;
+const ogImage = coverSrc && URL.canParse(coverSrc, coverOrigin) ? new URL(coverSrc, coverOrigin).href : undefined;
+
 const articleMeta = {
 	publishedTime: post.data.publishedAt?.toISOString() ?? null,
 	modifiedTime: post.data.updatedAt.toISOString(),
-	author: post.data.bylines?.[0]?.byline.displayName ?? null,
+	author: authors[0]?.name ?? null,
 };
 ---
 
 <Base
 	title={post.data.title}
 	description={post.data.excerpt ?? ""}
+	image={ogImage}
 	pageType="article"
 	articleMeta={articleMeta}
 	content={{ collection: "posts", id: post.data.id, slug: post.id }}
 >
-	<article class="post-page">
-		<div class="post-container">
-			<div class="post-rail">
-				<header class="post-header">
-					<p class="eyebrow"><a href="/blog">Blog</a></p>
-					<h1>{post.data.title}</h1>
-					{published && (
-						<p class="post-date">
-							<time datetime={published.datetime}>{published.label}</time>
-						</p>
-					)}
-					{post.data.excerpt && <p class="post-excerpt">{post.data.excerpt}</p>}
-				</header>
-				<div class="post-content">
-					<PortableText value={post.data.content} />
-				</div>
-			</div>
+	<article class="post">
+		<header class="post-header">
+			<a href="/blog" class="post-back">
+				<span class="post-back-arrow" aria-hidden="true" set:html={arrowRightSvg} />
+				Blog
+			</a>
+			{
+				(published || minutes) && (
+					<p class="post-meta">
+						{published && <time datetime={published.datetime}>{published.label}</time>}
+						{published && minutes && <span aria-hidden="true">·</span>}
+						{minutes && <span>{minutes} min read</span>}
+					</p>
+				)
+			}
+			<h1 class="post-title" {...post.edit.title}>{post.data.title}</h1>
+			{
+				post.data.excerpt && (
+					<p class="post-dek" {...post.edit.excerpt}>
+						{post.data.excerpt}
+					</p>
+				)
+			}
+			{
+				authors.length > 0 && (
+					<p class="post-byline">
+						<span class="post-avatars" aria-hidden="true">
+							{authors.slice(0, 3).map((author) =>
+								author.avatar ? (
+									<img class="post-avatar" src={author.avatar.src} alt="" width="32" height="32" />
+								) : (
+									<span class="post-avatar post-avatar--initials">{author.initials}</span>
+								),
+							)}
+						</span>
+						<span>By {formatAuthorNames(authors)}</span>
+					</p>
+				)
+			}
+		</header>
+
+		<div class="post-cover-frame" {...post.edit.featured_image}>
+			<PostCover
+				slug={post.id}
+				image={cover}
+				variant="hero"
+				alt={cover?.alt ?? ""}
+				priority
+				sizes="(min-width: 1040px) 1000px, 100vw"
+			/>
+		</div>
+
+		<div class="post-prose">
+			<PortableText value={post.data.content} />
 		</div>
 	</article>
+
+	{
+		morePosts.length > 0 && (
+			<section class="more" aria-labelledby="more-title">
+				<div class="more-container container">
+					<div class="more-header">
+						<h2 id="more-title" class="more-title">
+							Keep reading
+						</h2>
+						<a href="/blog" class="more-link">
+							All posts
+							<span class="more-link-arrow" aria-hidden="true" set:html={arrowRightSvg} />
+						</a>
+					</div>
+					<PostGrid posts={morePosts} />
+				</div>
+			</section>
+		)
+	}
 </Base>
 
 <style>
-	.post-page {
-		overflow: hidden;
+	.post {
+		--post-measure: 42rem;
+		/* Both stay at or above 4.5:1 for small text on the page background. */
+		--post-muted: color-mix(in srgb, var(--color-text) 72%, transparent);
+		--post-subtle: color-mix(in srgb, var(--color-text) 66%, transparent);
+		--post-line: color-mix(in srgb, var(--color-text) 10%, transparent);
+		--post-sunken: color-mix(in srgb, var(--color-bg) 70%, var(--color-surface));
+		/* EmDash's table stripes read this and fall back to near-white. */
+		--color-bg-subtle: var(--post-sunken);
+		--post-ring: var(--border-faint);
+		--post-border: var(--color-border);
+		/* Brand orange darkened for text on light surfaces (4.5:1). */
+		--post-accent-text: color-mix(in srgb, var(--color-primary) 72%, #000);
+
+		padding: 8.5rem var(--spacing-lg) var(--spacing-4xl);
 		background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
 	}
 
-	.post-container {
-		width: calc(100% - 16px);
-		max-width: 920px;
-		margin: 0 auto;
-		padding: 8.5rem 0 var(--spacing-5xl);
+	:global(:root.dark) .post {
+		--post-sunken: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
+		--post-ring: color-mix(in srgb, var(--color-text) 5%, transparent);
+		--post-border: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+		--post-accent-text: var(--color-primary);
 	}
 
-	.post-rail {
-		max-width: none;
-		padding: 0 var(--spacing-md);
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .post {
+			--post-sunken: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
+			--post-ring: color-mix(in srgb, var(--color-text) 5%, transparent);
+			--post-border: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+			--post-accent-text: var(--color-primary);
+		}
 	}
+
+	/* ---------- Header ---------- */
 
 	.post-header {
-		max-width: 28rem;
-		margin-bottom: var(--spacing-3xl);
+		max-width: var(--post-measure);
+		margin: 0 auto;
 	}
 
-	.eyebrow {
+	.post-back {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.375rem;
+		margin-bottom: var(--spacing-xl);
+		color: var(--color-text);
 		font-size: var(--font-size-sm);
-		font-weight: 400;
-		line-height: 1.5;
-	}
-
-	.eyebrow a {
-		color: color-mix(in srgb, var(--color-text) 72%, transparent);
-		transition: color var(--transition-fast);
-	}
-
-	.eyebrow a:hover {
-		color: var(--color-text);
-	}
-
-	.post-page h1 {
-		max-width: 28rem;
-		margin-top: var(--spacing-md);
-		color: var(--color-text);
-		font-size: var(--font-size-4xl);
 		font-weight: 600;
-		line-height: 1.12;
-		letter-spacing: -0.035em;
-		text-wrap: balance;
-	}
-
-	.post-date {
-		margin-top: var(--spacing-md);
-		margin-bottom: 0;
-		font-size: var(--font-size-sm);
-		color: color-mix(in srgb, var(--color-text) 56%, transparent);
-	}
-
-	.post-excerpt {
-		max-width: 40rem;
-		margin-top: var(--spacing-md);
-		font-size: 0.9375rem;
-		line-height: 1.5;
-		color: color-mix(in srgb, var(--color-text) 62%, transparent);
-		text-wrap: balance;
-	}
-
-	.post-content {
-		font-size: var(--font-size-base);
-		line-height: 1.75;
-		color: color-mix(in srgb, var(--color-text) 72%, transparent);
-	}
-
-	.post-content :global(p) {
-		margin-bottom: 1.25em;
-	}
-
-	.post-content :global(h2) {
-		font-size: var(--font-size-2xl);
-		line-height: 1.12;
-		letter-spacing: -0.035em;
-		margin: 2.25em 0 0.75em;
-	}
-
-	.post-content :global(h3) {
-		font-size: var(--font-size-xl);
-		margin: 1.5em 0 0.5em;
-	}
-
-	.post-content :global(a) {
-		color: var(--color-primary);
-		text-decoration: underline;
-		text-underline-offset: 0.15em;
-	}
-
-	.post-content :global(ul),
-	.post-content :global(ol) {
-		padding-left: 1.5rem;
-		margin-bottom: 1.25em;
-	}
-
-	.post-content :global(li) {
-		margin-bottom: 0.4em;
-	}
-
-	.post-content :global(code) {
-		font-family: var(--font-mono);
-		font-size: 0.9em;
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		padding: 0.15em 0.35em;
+		line-height: 1;
 		border-radius: var(--radius-sm);
 	}
 
-	.post-content :global(pre) {
-		overflow-x: auto;
-		padding: var(--spacing-lg);
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius);
-		margin-bottom: 1.5em;
+	/* The arrow icon points right; flip it to point back (left, or right in RTL). */
+	.post-back-arrow {
+		--flip: -1;
+
+		display: block;
+		width: 1rem;
+		height: 1rem;
+		color: var(--color-primary);
+		transform: scaleX(var(--flip));
+		transition: transform var(--transition-base);
 	}
 
-	.post-content :global(pre code) {
+	:global([dir="rtl"]) .post-back-arrow {
+		--flip: 1;
+	}
+
+	.post-back-arrow :global(svg) {
 		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	/* Translating after the flip nudges the arrow the way it points. */
+	.post-back:hover .post-back-arrow {
+		transform: scaleX(var(--flip)) translateX(2px);
+	}
+
+	.post-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.375rem;
+		color: var(--post-subtle);
+		font-size: var(--font-size-sm);
+		line-height: 1.4;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.post-title {
+		margin-top: var(--spacing-md);
+		color: var(--color-text);
+		font-size: var(--font-size-3xl);
+		font-weight: 700;
+		line-height: 1.08;
+		letter-spacing: -0.04em;
+		overflow-wrap: break-word;
+		text-wrap: balance;
+	}
+
+	.post-dek {
+		margin-top: var(--spacing-md);
+		color: var(--post-muted);
+		font-size: var(--font-size-lg);
+		line-height: 1.55;
+		overflow-wrap: break-word;
+		text-wrap: pretty;
+	}
+
+	.post-byline {
+		display: flex;
+		align-items: center;
+		gap: 0.625rem;
+		margin-top: var(--spacing-lg);
+		color: var(--post-muted);
+		font-size: var(--font-size-sm);
+		font-weight: 500;
+		line-height: 1.3;
+	}
+
+	.post-avatars {
+		display: flex;
+		flex: 0 0 auto;
+	}
+
+	.post-avatar {
+		display: inline-flex;
+		width: 2rem;
+		height: 2rem;
+		align-items: center;
+		justify-content: center;
+		object-fit: cover;
+		background: var(--heat-8);
+		border-radius: var(--radius-full);
+		box-shadow: 0 0 0 2px var(--color-surface);
+	}
+
+	.post-avatar + .post-avatar {
+		margin-inline-start: -0.5rem;
+	}
+
+	.post-avatar--initials {
+		color: var(--post-accent-text);
+		font-size: 0.6875rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	/* ---------- Cover ---------- */
+
+	.post-cover-frame {
+		max-width: 62.5rem;
+		margin: var(--spacing-2xl) auto 0;
+		aspect-ratio: 2 / 1;
+		overflow: hidden;
+		border: 1px solid var(--post-border);
+		border-radius: 18px;
+		box-shadow:
+			0 0 0 4px var(--post-ring),
+			var(--shadow-sm);
+	}
+
+	/* ---------- Body ---------- */
+
+	.post-prose {
+		max-width: var(--post-measure);
+		margin: var(--spacing-2xl) auto 0;
+		color: color-mix(in srgb, var(--color-text) 80%, transparent);
+		font-size: 1.0625rem;
+		line-height: 1.75;
+		overflow-wrap: break-word;
+	}
+
+	.post-prose :global(p) {
+		margin-block: 0 1.25em;
+	}
+
+	.post-prose :global(:is(h2, h3, h4, h5, h6)) {
+		color: var(--color-text);
+		font-weight: 700;
+		text-wrap: balance;
+		scroll-margin-top: 6rem;
+	}
+
+	.post-prose :global(h2) {
+		margin: 2.25em 0 0.75em;
+		font-size: 1.5rem;
+		line-height: 1.2;
+		letter-spacing: -0.03em;
+	}
+
+	.post-prose :global(h3) {
+		margin: 1.9em 0 0.6em;
+		font-size: 1.1875rem;
+		line-height: 1.3;
+		letter-spacing: -0.02em;
+	}
+
+	.post-prose :global(:is(h4, h5, h6)) {
+		margin: 1.75em 0 0.5em;
+		font-size: 1.0625rem;
+		line-height: 1.4;
+		letter-spacing: -0.01em;
+	}
+
+	.post-prose :global(strong) {
+		color: var(--color-text);
+		font-weight: 600;
+	}
+
+	.post-prose :global(a) {
+		color: var(--color-text);
+		text-decoration: underline;
+		text-decoration-color: color-mix(in srgb, var(--color-primary) 60%, transparent);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.2em;
+		transition: text-decoration-color var(--transition-fast);
+	}
+
+	.post-prose :global(a:hover) {
+		text-decoration-color: var(--color-primary);
+	}
+
+	.post-prose :global(:is(ul, ol)) {
+		margin-block: 0 1.25em;
+		padding-inline-start: 1.375em;
+	}
+
+	.post-prose :global(li) {
+		margin-block: 0.4em;
+		padding-inline-start: 0.25em;
+	}
+
+	.post-prose :global(li::marker) {
+		color: var(--post-subtle);
+	}
+
+	.post-prose :global(li > :is(ul, ol)) {
+		margin-block: 0.4em 0;
+	}
+
+	.post-prose :global(blockquote) {
+		margin: 1.75em 0;
+		padding-inline-start: 1.25em;
+		color: var(--color-text);
+		font-size: 1.125rem;
+		line-height: 1.6;
+		border-inline-start: 2px solid var(--color-primary);
+	}
+
+	.post-prose :global(blockquote p:last-child) {
+		margin-bottom: 0;
+	}
+
+	.post-prose :global(hr) {
+		height: 1px;
+		margin: 2.5em 0;
+		background: var(--post-line);
+		border: 0;
+	}
+
+	/* Inline code. Code blocks reset this below. */
+	.post-prose :global(code) {
+		padding: 0.15em 0.35em;
+		color: var(--color-text);
+		font-family: var(--font-mono);
+		font-size: 0.875em;
+		background: var(--post-sunken);
+		border: 1px solid var(--post-line);
+		border-radius: var(--radius-sm);
+	}
+
+	/*
+	 * EmDash's code, image, embed, and table components ship scoped styles
+	 * (the code block is always dark). The extra `.post` makes these selectors
+	 * more specific than EmDash's, so they follow the site's light and dark
+	 * themes whatever order the stylesheets load in.
+	 */
+	.post .post-prose :global(.emdash-code) {
+		margin: 1.75em 0;
+		overflow: hidden;
+		background: var(--post-sunken);
+		border: 1px solid var(--post-line);
+		border-radius: 12px;
+	}
+
+	.post .post-prose :global(.emdash-code .emdash-code-filename) {
+		padding: 0.5rem 1rem;
+		color: var(--post-muted);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		background: transparent;
+		border-bottom: 1px solid var(--post-line);
+		border-radius: 0;
+	}
+
+	/* Size the pre, not just the code, so line boxes use the code's metrics. */
+	.post .post-prose :global(.emdash-code pre) {
+		margin: 0;
+		padding: 1rem 1.25rem;
+		overflow-x: auto;
+		font-size: 0.8125rem;
+		line-height: 1.65;
+		background: transparent;
+		border-radius: 0;
+	}
+
+	.post .post-prose :global(.emdash-code code) {
 		padding: 0;
-		color: inherit;
+		color: var(--color-text);
+		font-family: var(--font-mono);
 		font-size: inherit;
 		background: transparent;
 		border: 0;
 		border-radius: 0;
 	}
 
-	.post-content :global(blockquote) {
-		border-left: 3px solid var(--heat-40);
-		padding-left: var(--spacing-lg);
-		color: var(--color-muted);
-		margin: 1.5em 0;
+	/* Block margins only: EmDash sets inline margins to center images, and floats keep theirs. */
+	.post .post-prose :global(.emdash-image:where(:not(.emdash-image--align-left, .emdash-image--align-right))),
+	.post .post-prose :global(.emdash-embed) {
+		margin-block: 2em;
+	}
+
+	.post .post-prose :global(.emdash-image img) {
+		border-radius: 12px;
+		box-shadow: 0 0 0 1px var(--post-line);
+	}
+
+	.post .post-prose :global(:is(.emdash-image, .emdash-embed) figcaption) {
+		margin-top: 0.75rem;
+		color: var(--post-subtle);
+		font-size: var(--font-size-sm);
+		line-height: 1.5;
+		text-align: start;
+	}
+
+	.post .post-prose :global(.emdash-embed-video) {
+		border-radius: 12px;
+	}
+
+	.post .post-prose :global(.emdash-table-wrapper) {
+		margin: 1.75em 0;
+		border: 1px solid var(--post-line);
+		border-radius: 12px;
+	}
+
+	.post .post-prose :global(.emdash-table) {
+		font-size: 0.9375rem;
+		line-height: 1.5;
+	}
+
+	.post .post-prose :global(.emdash-table :is(th, td)) {
+		padding: 0.625rem 0.875rem;
+		border: 0;
+		border-bottom: 1px solid var(--post-line);
+	}
+
+	.post .post-prose :global(.emdash-table :is(th, td) + :is(th, td)) {
+		border-inline-start: 1px solid var(--post-line);
+	}
+
+	.post .post-prose :global(.emdash-table tr:last-child :is(th, td)) {
+		border-bottom: 0;
+	}
+
+	.post .post-prose :global(.emdash-table th) {
+		color: var(--color-text);
+		font-weight: 600;
+		background: var(--post-sunken);
+	}
+
+	/* Last, so it beats the block margins above. */
+	.post .post-prose > :global(:first-child) {
+		margin-top: 0;
+	}
+
+	/* ---------- Keep reading ---------- */
+
+	.more {
+		padding: var(--spacing-3xl) 0 var(--spacing-4xl);
+		background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+		border-top: 1px solid var(--color-border);
+	}
+
+	.more-container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-lg);
+	}
+
+	.more-header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--spacing-md);
+	}
+
+	.more-title {
+		color: var(--color-text);
+		font-size: var(--font-size-xl);
+		font-weight: 700;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+	}
+
+	.more-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		border-radius: var(--radius-sm);
+		transition: color var(--transition-fast);
+	}
+
+	.more-link:hover {
+		color: var(--color-text);
+	}
+
+	.more-link-arrow {
+		display: block;
+		width: 0.875rem;
+		height: 0.875rem;
+	}
+
+	.more-link-arrow :global(svg) {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	:global([dir="rtl"]) .more-link-arrow {
+		transform: scaleX(-1);
+	}
+
+	@media (min-width: 640px) {
+		.post-title {
+			font-size: var(--font-size-4xl);
+		}
+
+		.post-dek {
+			font-size: 1.25rem;
+		}
 	}
 
 	@media (min-width: 1024px) {
-		.post-container {
+		.post {
 			padding-top: 10rem;
 		}
 
-		.post-excerpt {
-			font-size: var(--font-size-lg);
+		.post-title {
+			font-size: 2.75rem;
+		}
+
+		.post-cover-frame {
+			margin-top: var(--spacing-3xl);
+		}
+
+		.post-prose {
+			margin-top: var(--spacing-3xl);
 		}
 	}
 
-	@media (max-width: 640px) {
-		.post-container {
+	@media (max-width: 639.98px) {
+		.post {
 			padding-top: 7.5rem;
 		}
+	}
 
-		.post-page h1 {
-			font-size: var(--font-size-3xl);
+	@media (prefers-reduced-motion: reduce) {
+		.post-back-arrow {
+			transition: none;
+		}
+
+		.post-back:hover .post-back-arrow {
+			transform: scaleX(var(--flip));
 		}
 	}
 </style>
