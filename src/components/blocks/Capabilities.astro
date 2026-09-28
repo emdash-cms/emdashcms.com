@@ -378,7 +378,7 @@ const schemaFields = [
 				<div
 					class="cap-visual visual-familiar"
 					role="img"
-					aria-label="The EmDash admin sidebar with Pages, Posts, and Media under Content, and Comments and Menus under Manage, beside a completed WordPress import of posts, pages, media, categories, and tags."
+					aria-label="The EmDash admin sidebar with Pages, Posts, and Media under Content, beside a completed WordPress import of posts, pages, media, categories, and tags."
 				>
 					<div class="ui admin-nav">
 						<div class="admin-brand">
@@ -407,7 +407,7 @@ const schemaFields = [
 							My Site
 						</div>
 						{adminNav.map((group) => (
-							<>
+							<div class="admin-section">
 								<p class="admin-group">{group.label}</p>
 								{group.items.map((item) => (
 									<div class:list={["admin-item", { "is-active": item.active }]}>
@@ -415,7 +415,7 @@ const schemaFields = [
 										{item.label}
 									</div>
 								))}
-							</>
+							</div>
 						))}
 					</div>
 					<div class="ui import-card">
@@ -720,8 +720,10 @@ const schemaFields = [
 		gap: var(--spacing-2xl);
 	}
 
+	/* A zero minimum lets long editor-entered words wrap instead of widening the page. */
 	.cap-header {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: var(--spacing-md);
 	}
 
@@ -1399,7 +1401,8 @@ const schemaFields = [
 		padding-bottom: 0;
 	}
 
-	/* Stretched to the stage's visible height, so the fade lands on screen. */
+	/* Stretched to the stage's visible height, so the fade lands on screen.
+	   A fixed-length fade keeps the items above the card's edge crisp. */
 	.admin-nav {
 		width: 11.5rem;
 		flex-shrink: 0;
@@ -1407,8 +1410,8 @@ const schemaFields = [
 		overflow: hidden;
 		border-bottom: 0;
 		border-radius: 12px 12px 0 0;
-		-webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
-		mask-image: linear-gradient(to bottom, #000 55%, transparent);
+		-webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent);
+		mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent);
 	}
 
 	.admin-brand {
@@ -2427,24 +2430,29 @@ const schemaFields = [
 		}
 	}
 
-	/* Narrow phones: the side-by-side overlap no longer fits, so the import
-	   card drops below the Content items and pins to the stage's end edge. */
+	/* Narrow phones: side by side, the import card would cut the sidebar's
+	   labels mid-word. The sidebar spans the stage and keeps only its
+	   Content items, and the card stacks in front of the empty space below
+	   them, inset evenly. */
 	@media (max-width: 419.98px) {
 		.visual-familiar {
 			height: 20rem;
-			justify-content: flex-start;
 			padding-inline: var(--spacing-md);
 		}
 
 		.admin-nav {
-			width: 10.5rem;
+			width: 100%;
+		}
+
+		.admin-section + .admin-section {
+			display: none;
 		}
 
 		.import-card {
 			position: absolute;
-			inset-block-start: 11rem;
-			inset-inline-end: var(--spacing-md);
-			width: 12.5rem;
+			inset-block-start: 11.5rem;
+			inset-inline: calc(var(--spacing-md) + 0.75rem);
+			width: auto;
 			margin: 0;
 		}
 
