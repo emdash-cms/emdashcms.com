@@ -86,7 +86,6 @@ const ph = {
 	magnifyingGlass: '<path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>',
 	filePlus: '<path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-40-64a8,8,0,0,1-8,8H136v16a8,8,0,0,1-16,0V160H104a8,8,0,0,1,0-16h16V128a8,8,0,0,1,16,0v16h16A8,8,0,0,1,160,152Z"/>',
 	calendarDots: '<path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-68-76a12,12,0,1,1-12-12A12,12,0,0,1,140,132Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,184,132ZM96,172a12,12,0,1,1-12-12A12,12,0,0,1,96,172Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,140,172Zm44,0a12,12,0,1,1-12-12A12,12,0,0,1,184,172Z"/>',
-	shieldCheck: '<path d="M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0ZM82.34,141.66a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32l-56,56a8,8,0,0,1-11.32,0Z"/>',
 	plus: '<path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/>',
 };
 
@@ -99,11 +98,17 @@ const agentClients = [
 	{ label: "Any MCP client" },
 ] as const;
 
-// Real tool names from EmDash's built-in MCP server.
+// Tool-call trace: a human label, then the real EmDash MCP tool in a chip.
+// The expanded row shows the arguments the agent passed.
 const agentTools = [
-	{ name: "search", meta: "“summer sale”", icon: ph.magnifyingGlass },
-	{ name: "content_create", meta: "posts · draft", icon: ph.filePlus },
-	{ name: "content_schedule", meta: "Jun 1, 9:00 AM", icon: ph.calendarDots },
+	{ label: "Check for duplicates", tool: "search", icon: ph.magnifyingGlass },
+	{
+		label: "Create draft",
+		tool: "content_create",
+		icon: ph.filePlus,
+		detail: ['title: "Summer sale starts June 1"', 'status: "draft"'],
+	},
+	{ label: "Schedule for June 1", tool: "content_schedule", icon: ph.calendarDots },
 ];
 
 // The admin sidebar, in the real admin's order and icons (Dashboard omitted).
@@ -458,7 +463,7 @@ const schemaFields = [
 				<div
 					class="cap-visual visual-agents"
 					role="img"
-					aria-label="Claude, one of several MCP clients alongside Codex, Cursor, and OpenCode, is connected to the site's emdash MCP server. Asked to draft a summer sale post for June 1 at 9 AM, it calls search, content_create, and content_schedule, and the post is scheduled. The agent is signed in as Ana with the Author role."
+					aria-label="Claude, one of several MCP clients alongside Codex, Cursor, and OpenCode, is connected to the site's emdash MCP server. Asked to draft a summer sale post for June 1 at 9 AM, it calls search, content_create, and content_schedule, and the post is scheduled for June 1 at 9 AM."
 				>
 					<ul class="clients">
 						{agentClients.map((client) => (
@@ -483,22 +488,25 @@ const schemaFields = [
 								<p class="session-tools-head"><svg class="ph" viewBox="0 0 256 256" set:html={ph.caretDown} />3 tool calls</p>
 								{agentTools.map((tool) => (
 									<div class="session-tool">
-										<svg class="ph" viewBox="0 0 256 256" set:html={tool.icon} />
-										<code>{tool.name}</code>
-										<span>{tool.meta}</span>
-										<svg class="ph session-tool-ok" viewBox="0 0 256 256" set:html={ph.checkCircle} />
+										<div class="session-tool-row">
+											<span class="session-tool-icon">
+												<svg class="ph" viewBox="0 0 256 256" set:html={tool.detail ? ph.caretDown : tool.icon} />
+											</span>
+											<span class="session-tool-label">{tool.label}</span>
+											<code class="session-tool-chip">{tool.tool}</code>
+										</div>
+										{tool.detail && (
+											<div class="session-tool-detail">
+												{tool.detail.map((line) => <code>{line}</code>)}
+											</div>
+										)}
 									</div>
 								))}
 							</div>
 							<div class="session-result">
 								<span class="session-result-icon"><svg class="ph" viewBox="0 0 256 256" set:html={ph.newspaperFill} /></span>
-								<p><strong>Summer sale starts June 1</strong><span>posts/summer-sale</span></p>
-								<span class="ui-pill"><svg class="ph" viewBox="0 0 256 256" set:html={ph.calendarDots} />Scheduled</span>
+								<p><strong>Summer sale starts June 1</strong><span>Scheduled for Jun 1, 9:00 AM</span></p>
 							</div>
-						</div>
-						<div class="ui-foot">
-							<span class="session-role"><svg class="ph" viewBox="0 0 256 256" set:html={ph.shieldCheck} />Signed in as <strong>Ana</strong></span>
-							<span class="ui-pill">Author</span>
 						</div>
 					</div>
 				</div>
@@ -1735,56 +1743,94 @@ const schemaFields = [
 		text-wrap: pretty;
 	}
 
+	/* Tool-call trace: collapsible header, icon + label + chip rows, one expanded. */
 	.session-tools {
 		display: grid;
-		gap: 0.125rem;
 	}
 
 	.session-tools-head {
 		display: flex;
 		align-items: center;
-		gap: 0.3125rem;
-		margin-bottom: 0.125rem !important;
-		color: var(--cap-subtle);
-		font-size: 0.6875rem;
+		gap: 0.375rem;
+		color: var(--cap-muted);
+		font-variant-numeric: tabular-nums;
 	}
 
 	.session-tools-head svg {
-		width: 0.625rem;
-		height: 0.625rem;
+		width: 0.6875rem;
+		height: 0.6875rem;
 	}
 
-	.session-tool {
+	.session-tool:first-of-type {
+		margin-top: 0.375rem;
+	}
+
+	.session-tool + .session-tool {
+		margin-top: 0.25rem;
+	}
+
+	.session-tool-row {
 		display: flex;
 		min-width: 0;
+		height: 1.625rem;
 		align-items: center;
 		gap: 0.5rem;
-		padding: 0.25rem 0.125rem;
+	}
+
+	.session-tool-icon {
+		display: grid;
+		width: 1rem;
+		height: 1rem;
+		flex: 0 0 auto;
+		place-items: center;
+		color: var(--cap-subtle);
+	}
+
+	.session-tool-icon svg {
+		width: 0.8125rem;
+		height: 0.8125rem;
+	}
+
+	.session-tool-label {
+		flex: 0 0 auto;
+		font-weight: 500;
 		white-space: nowrap;
 	}
 
-	.session-tool svg {
-		width: 0.8125rem;
-		height: 0.8125rem;
-		color: var(--cap-subtle);
-	}
-
-	.session-tool code {
+	.session-tool-chip {
+		display: block;
+		min-width: 0;
+		flex: 1 1 auto;
+		height: 1.3125rem;
+		overflow: hidden;
+		padding: 0 0.375rem;
+		color: var(--cap-muted);
 		font-family: var(--font-mono);
 		font-size: 0.6875rem;
-	}
-
-	.session-tool span {
-		min-width: 0;
-		overflow: hidden;
-		margin-inline-start: auto;
-		color: var(--cap-subtle);
-		font-size: 0.6875rem;
+		line-height: 1.3125rem;
 		text-overflow: ellipsis;
+		white-space: nowrap;
+		background: var(--cap-ui-tint);
+		border-radius: 5px;
+		box-shadow: inset 0 0 0 1px var(--cap-line);
 	}
 
-	.session-tool .session-tool-ok {
-		color: var(--cap-success);
+	.session-tool-detail {
+		display: grid;
+		gap: 0.125rem;
+		margin: 0.125rem 0 0.25rem 0.5rem;
+		padding: 0.125rem 0 0.125rem 0.875rem;
+		border-inline-start: 1px solid var(--cap-ui-border);
+	}
+
+	.session-tool-detail code {
+		overflow: hidden;
+		color: var(--cap-muted);
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		line-height: 1.6;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.session-result {
@@ -1823,39 +1869,9 @@ const schemaFields = [
 		text-wrap: balance;
 	}
 
-	.session-result span:not(.ui-pill) {
-		color: var(--cap-subtle);
-		font-family: var(--font-mono);
-		font-size: 0.625rem;
-	}
-
-	.session-result .ui-pill {
-		gap: 0.25rem;
-	}
-
-	.session-result .ui-pill svg,
-	.session-role svg {
-		width: 0.6875rem;
-		height: 0.6875rem;
-	}
-
-	.session-role {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.3125rem;
+	.session-result span {
 		color: var(--cap-subtle);
 		font-size: 0.6875rem;
-	}
-
-	.session-role strong {
-		color: var(--color-text);
-		font-weight: 600;
-	}
-
-	.session-role svg {
-		width: 0.8125rem;
-		height: 0.8125rem;
-		color: var(--cap-success);
 	}
 
 	/* ---------- Extend ---------- */
