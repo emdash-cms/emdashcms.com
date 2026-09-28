@@ -76,6 +76,11 @@
 					"type": "string",
 					"defaultValue": "Announcement",
 					"validation": { "maxLength": 24 }
+				},
+				{
+					"slug": "featured_image",
+					"label": "Featured image",
+					"type": "image"
 				}
 			]
 		}
