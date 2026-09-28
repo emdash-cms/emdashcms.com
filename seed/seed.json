@@ -55,6 +55,27 @@
 					"label": "Content",
 					"type": "portableText",
 					"searchable": true
+				},
+				{
+					"slug": "featured_on_homepage",
+					"label": "Feature on homepage",
+					"type": "boolean",
+					"defaultValue": false,
+					"indexed": true,
+					"translatable": false
+				},
+				{
+					"slug": "featured_pill_text",
+					"label": "Featured pill text",
+					"type": "string",
+					"validation": { "maxLength": 80 }
+				},
+				{
+					"slug": "featured_pill_tag",
+					"label": "Featured pill tag",
+					"type": "string",
+					"defaultValue": "Announcement",
+					"validation": { "maxLength": 24 }
 				}
 			]
 		}
@@ -227,6 +248,9 @@
 				"data": {
 					"title": "EmDash is live",
 					"excerpt": "A quick look at what EmDash is, what shipped in the first public release, and where to go next.",
+					"featured_on_homepage": true,
+					"featured_pill_text": "EmDash is live",
+					"featured_pill_tag": "Announcement",
 					"content": [
 						{
 							"_type": "block",

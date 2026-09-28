@@ -25,6 +25,9 @@ export interface Post {
   title: string;
   excerpt?: string;
   content?: PortableTextBlock[];
+  featured_on_homepage?: boolean;
+  featured_pill_text?: string;
+  featured_pill_tag?: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
