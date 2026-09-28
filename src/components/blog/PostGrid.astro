@@ -1,0 +1,57 @@
+---
+/**
+ * A grid of post cards sized to the number of posts: one post spans the row
+ * (and lays out as a wide card), two sit side by side, and three or more
+ * form a three-up grid on large screens. Below that, cards stack.
+ */
+import type { ContentEntry, InferCollectionData } from "emdash";
+import PostCard from "./PostCard.astro";
+
+interface Props {
+	posts: ContentEntry<InferCollectionData<"posts">>[];
+	headingLevel?: 2 | 3;
+}
+
+const { posts, headingLevel = 3 } = Astro.props;
+const count = Math.min(posts.length, 3);
+
+/**
+ * Cover widths per column count. Between 640px and 1024px every card spans the
+ * row with its cover beside the copy, at about 40% of the card.
+ */
+const SIZES = {
+	1: "(min-width: 1280px) 480px, (min-width: 640px) 40vw, 100vw",
+	2: "(min-width: 1024px) 560px, (min-width: 640px) 40vw, 100vw",
+	3: "(min-width: 1024px) 380px, (min-width: 640px) 40vw, 100vw",
+} as const;
+const sizes = count > 0 ? SIZES[count as 1 | 2 | 3] : undefined;
+---
+
+<ul class="post-grid" role="list" data-count={count}>
+	{
+		posts.map((post) => (
+			<li>
+				<PostCard post={post} headingLevel={headingLevel} sizes={sizes} />
+			</li>
+		))
+	}
+</ul>
+
+<style>
+	.post-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1.25rem;
+		list-style: none;
+	}
+
+	@media (min-width: 1024px) {
+		.post-grid[data-count="2"] {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.post-grid[data-count="3"] {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+</style>
