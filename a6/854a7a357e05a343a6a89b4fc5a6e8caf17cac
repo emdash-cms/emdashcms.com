@@ -1,0 +1,31 @@
+emdash-env.d.ts
+  s_dc3a5dba463fac::t_c23cc65f88778e 28-30
+seed/seed.json
+  s_424f2aaf2b0116::t_889f43e25a194a 58-78,251-253
+src/components/blocks/Hero.astro
+  s_424f2aaf2b0116::t_045fb67b6059e5 2,26-44,60-73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a6854a7a357e05a343a6a89b4fc5a6e8caf17cac",
+  "prompts": {},
+  "sessions": {
+    "s_424f2aaf2b0116": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e6a3-e6fb-78e3-bc0d-e3d54827d479",
+        "model": "unknown"
+      },
+      "human_author": "Matt Kane <mkane@cloudflare.com>"
+    },
+    "s_dc3a5dba463fac": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e6a3-b239-7902-9790-1c3afb342b54",
+        "model": "unknown"
+      },
+      "human_author": "Matt Kane <mkane@cloudflare.com>"
+    }
+  }
+}
