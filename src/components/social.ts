@@ -13,6 +13,42 @@ export const SOCIAL_ICON_PATHS: Record<SocialType, string> = {
 	x: "M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z",
 };
 
+/** Fallback glyph for links that aren't a known network. */
+export const EXTERNAL_ICON_PATH = "M14 3h7v7h-2V6.41l-9.29 9.3l-1.42-1.42l9.3-9.29H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z";
+
+export interface CommunityLink {
+	label: string;
+	description: string;
+	url: string;
+	type: SocialType;
+}
+
+/** EmDash's own community channels, shown in the header Community menu. */
+export const COMMUNITY_LINKS: CommunityLink[] = [
+	{
+		label: "Discord",
+		description: "Chat with the team and community",
+		url: "https://discord.gg/YY9vBaQRYt",
+		type: "discord",
+	},
+	{
+		label: "Bluesky",
+		description: "Follow @emdashcms.com",
+		url: "https://bsky.app/profile/emdashcms.com",
+		type: "bluesky",
+	},
+	{
+		label: "X",
+		description: "Follow @EmDashCMS",
+		url: "https://x.com/EmDashCMS",
+		type: "x",
+	},
+];
+
+function isHost(host: string, domain: string) {
+	return host === domain || host.endsWith(`.${domain}`);
+}
+
 function getHostname(url: string) {
 	try {
 		return new URL(url).hostname.replace(/^www\./, "").toLowerCase();
@@ -25,9 +61,9 @@ function getHostname(url: string) {
 export function getSocialType(label: string, url: string): SocialType | "external" {
 	const name = label.trim().toLowerCase();
 	const host = getHostname(url);
-	if (name.includes("github") || host === "github.com") return "github";
-	if (name.includes("discord") || host === "discord.gg" || host.endsWith("discord.com")) return "discord";
-	if (name.includes("bluesky") || host === "bsky.app") return "bluesky";
-	if (name === "x" || name.includes("twitter") || host === "x.com" || host === "twitter.com") return "x";
+	if (name.includes("github") || isHost(host, "github.com")) return "github";
+	if (name.includes("discord") || isHost(host, "discord.gg") || isHost(host, "discord.com")) return "discord";
+	if (name.includes("bluesky") || isHost(host, "bsky.app")) return "bluesky";
+	if (name === "x" || name.includes("twitter") || isHost(host, "x.com") || isHost(host, "twitter.com")) return "x";
 	return "external";
 }

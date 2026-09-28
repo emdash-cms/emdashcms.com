@@ -1,6 +1,6 @@
 ---
 import { sanitizeHref } from "emdash";
-import { SOCIAL_ICON_PATHS, getSocialType } from "./social";
+import { EXTERNAL_ICON_PATH, SOCIAL_ICON_PATHS, getSocialType } from "./social";
 
 interface MenuItem {
 	label: string;
@@ -55,13 +55,10 @@ const footerColumns = rawFooterColumns
 	}))
 	.filter((column) => column.menu.items.length > 0);
 
-const EXTERNAL_ICON_PATH = "M14 3h7v7h-2V6.41l-9.29 9.3l-1.42-1.42l9.3-9.29H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z";
-
-const socialLinks = rawSocialLinks.map((item) => ({
-	...item,
-	url: sanitizeHref(item.url?.trim()),
-	type: getSocialType(item.label, item.url ?? ""),
-}));
+const socialLinks = rawSocialLinks.map((item) => {
+	const url = sanitizeHref(item.url?.trim());
+	return { ...item, url, type: getSocialType(item.label, url) };
+});
 ---
 
 <footer class="site-footer">

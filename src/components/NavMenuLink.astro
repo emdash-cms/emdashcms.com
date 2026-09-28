@@ -1,0 +1,108 @@
+---
+import { Icon } from "astro-iconset/components";
+import { SOCIAL_ICON_PATHS, type SocialType } from "./social";
+
+interface Props {
+	href: string;
+	label: string;
+	description: string;
+	target?: string;
+	rel?: string;
+	/** astro-iconset name, e.g. "ph:sparkle". */
+	icon?: string;
+	/** Brand glyph from social.ts; used when `icon` is not set. */
+	social?: SocialType;
+	/** Which open menu a click should close: a desktop dropdown or the mobile panel. */
+	closes: "dropdown" | "menu";
+}
+
+const { href, label, description, target, rel, icon, social, closes } = Astro.props;
+---
+
+<a
+	class="menu-link"
+	href={href}
+	target={target}
+	rel={rel}
+	data-dropdown-close={closes === "dropdown" ? "" : undefined}
+	data-menu-close={closes === "menu" ? "" : undefined}
+>
+	<span class="menu-link-icon" aria-hidden="true">
+		{icon ? (
+			<Icon name={icon} />
+		) : social ? (
+			<svg viewBox="0 0 24 24">
+				<path fill="currentColor" d={SOCIAL_ICON_PATHS[social]} />
+			</svg>
+		) : null}
+	</span>
+	<span class="menu-link-text">
+		<span class="menu-link-label">{label}</span>
+		<span class="menu-link-description">{description}</span>
+	</span>
+</a>
+
+<style>
+	.menu-link {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		padding: 10px;
+		border-radius: 12px;
+		transition: background var(--transition-fast);
+	}
+
+	.menu-link:hover {
+		background: var(--button-secondary-bg);
+	}
+
+	.menu-link-icon {
+		display: inline-flex;
+		flex: none;
+		width: 32px;
+		height: 32px;
+		align-items: center;
+		justify-content: center;
+		color: var(--color-text);
+		background: var(--color-bg);
+		border: 1px solid var(--color-border);
+		border-radius: 9px;
+		transition: color var(--transition-fast);
+	}
+
+	.menu-link-icon :global(svg) {
+		width: 18px;
+		height: 18px;
+	}
+
+	.menu-link:hover .menu-link-icon {
+		color: var(--color-primary);
+	}
+
+	.menu-link-text {
+		display: grid;
+		gap: 2px;
+		min-width: 0;
+	}
+
+	.menu-link-label {
+		font-size: var(--font-size-sm);
+		font-weight: 500;
+		line-height: 1.4;
+		color: var(--color-text);
+	}
+
+	.menu-link-description {
+		font-size: 0.8125rem;
+		line-height: 1.4;
+		color: var(--color-muted);
+		text-wrap: pretty;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.menu-link,
+		.menu-link-icon {
+			transition: none;
+		}
+	}
+</style>

@@ -1,7 +1,7 @@
 ---
-import { Icon } from "astro-iconset/components";
 import { sanitizeHref } from "emdash";
-import { SOCIAL_ICON_PATHS, getSocialType, type SocialType } from "./social";
+import NavMenuLink from "./NavMenuLink.astro";
+import { COMMUNITY_LINKS, SOCIAL_ICON_PATHS, getSocialType } from "./social";
 
 interface MenuItem {
 	label: string;
@@ -45,7 +45,7 @@ function getRel(item: MenuItem) {
 }
 
 function isGitHubItem(item: MenuItem) {
-	return item.label.toLowerCase() === "github" || item.url.includes("github.com");
+	return getSocialType(item.label, item.url) === "github";
 }
 
 const safeMenuItems = menuItems.map((item) => ({
@@ -63,76 +63,34 @@ interface ProductLink {
 	description: string;
 	url: string;
 	icon: string;
-	badge?: string;
-}
-
-interface ProductGroup {
-	id: string;
-	heading: string;
-	items: ProductLink[];
 }
 
 // The Product menu lists EmDash's own properties, so it lives in code rather
-// than the editable "primary" menu. Keep it short: two groups, two links each.
-const productGroups: ProductGroup[] = [
+// than the editable "primary" menu. Keep it to a short list of places people
+// can use today.
+const productLinks: ProductLink[] = [
 	{
-		id: "start",
-		heading: "Start building",
-		items: [
-			{
-				label: "Build",
-				description: "Generate a site from a prompt",
-				url: "https://build.emdashcms.com",
-				icon: "ph:sparkle",
-				badge: "New",
-			},
-			{
-				label: "Playground",
-				description: "Try the admin in your browser",
-				url: safePlaygroundUrl,
-				icon: "ph:app-window",
-			},
-		],
+		label: "Playground",
+		description: "Try the admin in your browser",
+		url: safePlaygroundUrl,
+		icon: "ph:app-window",
 	},
 	{
-		id: "extend",
-		heading: "Extend",
-		items: [
-			{
-				label: "Plugins",
-				description: "Browse the plugin registry",
-				url: "https://plugins.emdashcms.com",
-				icon: "ph:puzzle-piece",
-				badge: "New",
-			},
-			{
-				label: "Build a plugin",
-				description: "Hooks, routes, and admin pages",
-				url: "https://docs.emdashcms.com/plugins/creating-plugins/choosing-a-format/",
-				icon: "ph:code",
-			},
-		],
+		label: "Plugins",
+		description: "Browse the plugin registry",
+		url: "https://plugins.emdashcms.com",
+		icon: "ph:puzzle-piece",
+	},
+	{
+		label: "Build a plugin",
+		description: "Hooks, routes, and admin pages",
+		url: "https://docs.emdashcms.com/plugins/creating-plugins/choosing-a-format/",
+		icon: "ph:code",
 	},
 ];
-const productItems = productGroups.flatMap((group) => group.items);
 
-const communityLinks: { label: string; description: string; url: string; type: SocialType }[] = [
-	{
-		label: "Discord",
-		description: "Chat with the team and community",
-		url: "https://discord.gg/YY9vBaQRYt",
-		type: "discord",
-	},
-	{
-		label: "Bluesky",
-		description: "Follow @emdashcms.com",
-		url: "https://bsky.app/profile/emdashcms.com",
-		type: "bluesky",
-	},
-	{ label: "X", description: "Follow @EmDashCMS", url: "https://x.com/EmDashCMS", type: "x" },
-];
 // The Community menu replaces CMS links it already covers (e.g. Discord).
-const communityTypes = new Set<string>(communityLinks.map((link) => link.type));
+const communityTypes = new Set<string>(COMMUNITY_LINKS.map((link) => link.type));
 const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(item.label, item.url)));
 ---
 
@@ -196,39 +154,23 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 									<path d="m4 6 4 4 4-4" />
 								</svg>
 							</button>
-							<div class="nav-dropdown-panel" id="nav-product-panel" data-dropdown-panel>
-								<div class="product-menu">
-									{productGroups.map((group) => (
-										<div class="product-group">
-											<p class="product-group-heading" id={`nav-product-${group.id}`}>
-												{group.heading}
-											</p>
-											<ul class="product-list" aria-labelledby={`nav-product-${group.id}`}>
-												{group.items.map((item) => (
-													<li>
-														<a
-															class="product-link"
-															href={item.url}
-															target={getTarget(item)}
-															rel={getRel(item)}
-															data-dropdown-close
-														>
-															<span class="product-link-icon" aria-hidden="true">
-																<Icon name={item.icon} />
-															</span>
-															<span class="product-link-text">
-																<span class="product-link-label">
-																	{item.label}
-																	{item.badge && <span class="product-badge">{item.badge}</span>}
-																</span>
-																<span class="product-link-description">{item.description}</span>
-															</span>
-														</a>
-													</li>
-												))}
-											</ul>
-										</div>
-									))}
+							<div class="nav-dropdown-panel" id="nav-product-panel">
+								<div class="menu-card">
+									<ul class="menu-list">
+										{productLinks.map((item) => (
+											<li>
+												<NavMenuLink
+													href={item.url}
+													label={item.label}
+													description={item.description}
+													target={getTarget(item)}
+													rel={getRel(item)}
+													icon={item.icon}
+													closes="dropdown"
+												/>
+											</li>
+										))}
+									</ul>
 								</div>
 							</div>
 						</li>
@@ -257,28 +199,20 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 									<path d="m4 6 4 4 4-4" />
 								</svg>
 							</button>
-							<div class="nav-dropdown-panel" id="nav-community-panel" data-dropdown-panel>
-								<div class="product-menu product-menu--single">
-									<ul class="product-list">
-										{communityLinks.map((link) => (
+							<div class="nav-dropdown-panel" id="nav-community-panel">
+								<div class="menu-card">
+									<ul class="menu-list">
+										{COMMUNITY_LINKS.map((link) => (
 											<li>
-												<a
-													class="product-link"
+												<NavMenuLink
 													href={link.url}
+													label={link.label}
+													description={link.description}
 													target="_blank"
 													rel="noreferrer"
-													data-dropdown-close
-												>
-													<span class="product-link-icon" aria-hidden="true">
-														<svg viewBox="0 0 24 24">
-															<path fill="currentColor" d={SOCIAL_ICON_PATHS[link.type]} />
-														</svg>
-													</span>
-													<span class="product-link-text">
-														<span class="product-link-label">{link.label}</span>
-														<span class="product-link-description">{link.description}</span>
-													</span>
-												</a>
+													social={link.type}
+													closes="dropdown"
+												/>
 											</li>
 										))}
 									</ul>
@@ -290,28 +224,19 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 
 				<div class="nav-panel" id="site-nav-panel" data-nav-panel>
 					<div class="nav-mobile-links">
-						<p class="nav-mobile-heading" id="nav-mobile-product">Product</p>
-						<ul class="product-list nav-mobile-products" aria-labelledby="nav-mobile-product">
-							{productItems.map((item) => (
+						<p class="menu-heading" id="nav-mobile-product">Product</p>
+						<ul class="menu-list nav-mobile-products" aria-labelledby="nav-mobile-product">
+							{productLinks.map((item) => (
 								<li>
-									<a
-										class="product-link"
+									<NavMenuLink
 										href={item.url}
+										label={item.label}
+										description={item.description}
 										target={getTarget(item)}
 										rel={getRel(item)}
-										data-menu-close
-									>
-										<span class="product-link-icon" aria-hidden="true">
-											<Icon name={item.icon} />
-										</span>
-										<span class="product-link-text">
-											<span class="product-link-label">
-												{item.label}
-												{item.badge && <span class="product-badge">{item.badge}</span>}
-											</span>
-											<span class="product-link-description">{item.description}</span>
-										</span>
-									</a>
+										icon={item.icon}
+										closes="menu"
+									/>
 								</li>
 							))}
 						</ul>
@@ -334,11 +259,17 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 						)}
 
 						<div class="community-row">
-							<p class="community-heading" id="nav-mobile-community">Community</p>
+							<p class="menu-heading" id="nav-mobile-community">Community</p>
 							<ul class="community-list" aria-labelledby="nav-mobile-community">
-								{communityLinks.map((link) => (
+								{COMMUNITY_LINKS.map((link) => (
 									<li>
-										<a class="community-link" href={link.url} target="_blank" rel="noreferrer" data-menu-close>
+										<a
+											class="community-link"
+											href={link.url}
+											target="_blank"
+											rel="noreferrer"
+											data-menu-close
+										>
 											<svg viewBox="0 0 24 24" aria-hidden="true">
 												<path fill="currentColor" d={SOCIAL_ICON_PATHS[link.type]} />
 											</svg>
@@ -440,6 +371,13 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 			root.addEventListener("pointerleave", (event) => {
 				if (event.pointerType !== "mouse" || !dropdown.openedByHover) return;
 				dropdown.closeTimer = window.setTimeout(() => setDropdown(dropdown, false), 160);
+			});
+
+			// Focus on a panel link pins a hover-opened panel so moving the mouse
+			// away doesn't hide the link that has keyboard focus. The trigger is
+			// excluded: clicking it focuses it, and the click handler pins instead.
+			root.addEventListener("focusin", (event) => {
+				if (event.target !== trigger) dropdown.openedByHover = false;
 			});
 
 			root.addEventListener("focusout", (event) => {
@@ -653,7 +591,6 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 		font-size: var(--font-size-sm);
 		font-weight: 500;
 		color: var(--color-muted);
-		transition: color var(--transition-fast);
 	}
 
 	.nav-link:hover,
@@ -740,12 +677,9 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 			visibility 0s;
 	}
 
-	.product-menu {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: var(--spacing-md);
-		width: 584px;
-		padding: 20px;
+	.menu-card {
+		width: 320px;
+		padding: 10px;
 		background: var(--color-surface);
 		border: 1px solid var(--color-border);
 		border-radius: 18px;
@@ -754,84 +688,17 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 			var(--shadow-lg);
 	}
 
-	.product-menu--single {
-		grid-template-columns: minmax(0, 1fr);
-		width: 320px;
-		padding: 10px;
-	}
-
-	.product-group-heading,
-	.nav-mobile-heading {
+	.menu-heading {
 		margin: 0 0 6px;
-		padding: 0 10px;
 		font-size: var(--font-size-xs);
 		font-weight: 500;
 		line-height: 1.4;
 		color: var(--color-muted);
 	}
 
-	.product-list {
+	.menu-list {
 		display: grid;
 		gap: 2px;
-	}
-
-	.product-link {
-		display: flex;
-		align-items: flex-start;
-		gap: 12px;
-		padding: 10px;
-		border-radius: 12px;
-		transition: background var(--transition-fast);
-	}
-
-	.product-link:hover {
-		background: var(--button-secondary-bg);
-	}
-
-	.product-link-icon {
-		display: inline-flex;
-		flex: none;
-		width: 32px;
-		height: 32px;
-		align-items: center;
-		justify-content: center;
-		color: var(--color-text);
-		background: var(--color-bg);
-		border: 1px solid var(--color-border);
-		border-radius: 9px;
-		transition: color var(--transition-fast);
-	}
-
-	.product-link-icon :global(svg) {
-		width: 18px;
-		height: 18px;
-	}
-
-	.product-link:hover .product-link-icon {
-		color: var(--color-primary);
-	}
-
-	.product-link-text {
-		display: grid;
-		gap: 2px;
-		min-width: 0;
-	}
-
-	.product-link-label {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		font-size: var(--font-size-sm);
-		font-weight: 500;
-		line-height: 1.4;
-		color: var(--color-text);
-	}
-
-	.product-link-description {
-		font-size: 0.8125rem;
-		line-height: 1.4;
-		color: var(--color-muted);
-		text-wrap: pretty;
 	}
 
 	/* Mobile-only: the desktop nav has a Community dropdown instead. */
@@ -843,12 +710,8 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 		border-top: 1px solid var(--color-border);
 	}
 
-	.community-heading {
+	.community-row .menu-heading {
 		margin: 0;
-		font-size: var(--font-size-xs);
-		font-weight: 500;
-		line-height: 1.4;
-		color: var(--color-muted);
 	}
 
 	.community-list {
@@ -884,16 +747,6 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 		height: 15px;
 	}
 
-	.product-badge {
-		padding: 1px 6px;
-		font-size: 0.6875rem;
-		font-weight: 600;
-		line-height: 1.4;
-		color: var(--color-primary);
-		background: var(--color-primary-light);
-		border-radius: var(--radius-full);
-	}
-
 	.nav-panel {
 		display: block;
 		width: 100%;
@@ -917,10 +770,6 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 		margin-bottom: var(--spacing-xl);
 	}
 
-	.nav-mobile-heading {
-		padding: 0;
-	}
-
 	.nav-mobile-products {
 		margin: 0 -10px var(--spacing-lg);
 	}
@@ -934,6 +783,7 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 
 	.nav-mobile-list a {
 		font-size: var(--font-size-base);
+		transition: color var(--transition-fast);
 	}
 
 	.nav-actions {
@@ -1060,20 +910,19 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 		.nav-toggle-icon,
 		.nav-action,
 		.nav-link,
+		.nav-mobile-list a,
 		.nav-dropdown-caret,
-		.product-link,
-		.product-link-icon,
 		.community-link {
 			transition: none;
 		}
 
-		.nav-dropdown-panel,
-		.nav-dropdown[data-state="open"] .nav-dropdown-panel {
+		.nav-dropdown-panel {
 			transform: translate(-50%, 0);
 			transition: opacity 120ms linear, visibility 0s linear 120ms;
 		}
 
 		.nav-dropdown[data-state="open"] .nav-dropdown-panel {
+			transform: translate(-50%, 0);
 			transition: opacity 120ms linear, visibility 0s;
 		}
 

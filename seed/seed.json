@@ -102,7 +102,6 @@
 			"label": "Footer: Product",
 			"items": [
 				{ "type": "custom", "label": "Playground", "url": "https://try.emdashcms.com", "target": "_blank" },
-				{ "type": "custom", "label": "EmDash Build", "url": "https://build.emdashcms.com", "target": "_blank" },
 				{ "type": "custom", "label": "Plugins", "url": "https://plugins.emdashcms.com", "target": "_blank" }
 			]
 		},
