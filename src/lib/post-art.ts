@@ -19,6 +19,18 @@ export const ART_CELL = 10;
 /** Dot diameter for each intensity level, as a share of the cell. */
 const LEVEL_DIAMETERS = [0.14, 0.24, 0.34, 0.45, 0.57, 0.7];
 
+/** Grid size per cover variant, roughly matching the aspect ratio each is shown at. */
+export const ART_GRIDS = {
+	card: { columns: 36, rows: 22 },
+	feature: { columns: 52, rows: 38 },
+	hero: { columns: 64, rows: 32 },
+} as const;
+
+export type ArtVariant = keyof typeof ART_GRIDS;
+
+/** Dot diameter in SVG user units for a zero-based size level. */
+const dotDiameter = (level: number) => Math.round(LEVEL_DIAMETERS[level] * ART_CELL * 100) / 100;
+
 /** Samples below this intensity draw no dot. */
 const THRESHOLD = 0.07;
 
@@ -34,6 +46,14 @@ export interface ArtLayer {
 	d: string;
 }
 
+/** One dot, in SVG user units. */
+export interface ArtDot {
+	cx: number;
+	cy: number;
+	diameter: number;
+	accent: boolean;
+}
+
 export interface HalftoneArt {
 	/** A short, ID-safe key derived from the seed. */
 	key: string;
@@ -41,6 +61,8 @@ export interface HalftoneArt {
 	width: number;
 	height: number;
 	layers: ArtLayer[];
+	/** The same dots as `layers`, one entry each, for drawing outside SVG. */
+	dots: ArtDot[];
 }
 
 /** FNV-1a: a small, stable string hash. */
@@ -220,6 +242,7 @@ export function halftoneArt(seed: string, columns: number, rows: number): Halfto
 
 	const levels = LEVEL_DIAMETERS.length;
 	const paths: string[] = Array.from({ length: levels * 2 }, () => "");
+	const dots: ArtDot[] = [];
 	for (let row = 0; row < rows; row++) {
 		for (let column = 0; column < columns; column++) {
 			const u = (column + 0.5) / columns;
@@ -232,6 +255,7 @@ export function halftoneArt(seed: string, columns: number, rows: number): Halfto
 			const cx = column * ART_CELL + ART_CELL / 2;
 			const cy = row * ART_CELL + ART_CELL / 2;
 			paths[(accent ? levels : 0) + level] += `M${cx} ${cy}h0`;
+			dots.push({ cx, cy, diameter: dotDiameter(level), accent });
 		}
 	}
 
@@ -246,11 +270,12 @@ export function halftoneArt(seed: string, columns: number, rows: number): Halfto
 						{
 							level: (index % levels) + 1,
 							accent: index >= levels,
-							width: Math.round(LEVEL_DIAMETERS[index % levels] * ART_CELL * 100) / 100,
+							width: dotDiameter(index % levels),
 							d,
 						},
 					]
 				: [],
 		),
+		dots,
 	};
 }

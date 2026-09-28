@@ -6,19 +6,12 @@
  */
 import type { ImageValue } from "emdash";
 import { Image } from "emdash/ui";
-import { halftoneArt } from "../../lib/post-art";
-
-/** Grid size per variant, roughly matching the aspect ratio each is shown at. */
-const GRIDS = {
-	card: { columns: 36, rows: 22 },
-	feature: { columns: 52, rows: 38 },
-	hero: { columns: 64, rows: 32 },
-} as const;
+import { ART_GRIDS, type ArtVariant, halftoneArt } from "../../lib/post-art";
 
 interface Props {
 	slug: string;
 	image?: ImageValue | null;
-	variant: keyof typeof GRIDS;
+	variant: ArtVariant;
 	/**
 	 * Alt text for the featured image. Defaults to empty, because cards and
 	 * the post header already carry the title.
@@ -29,7 +22,7 @@ interface Props {
 }
 
 const { slug, image, variant, alt = "", priority = false, sizes } = Astro.props;
-const { columns, rows } = GRIDS[variant];
+const { columns, rows } = ART_GRIDS[variant];
 const art = image ? null : halftoneArt(slug, columns, rows);
 const paperId = art ? `post-art-paper-${variant}-${art.key}` : undefined;
 ---
