@@ -8,7 +8,6 @@ interface Props {
 	description: string;
 	target?: string;
 	rel?: string;
-	badge?: string;
 	/** astro-iconset name, e.g. "ph:sparkle". */
 	icon?: string;
 	/** Brand glyph from social.ts; used when `icon` is not set. */
@@ -17,7 +16,7 @@ interface Props {
 	closes: "dropdown" | "menu";
 }
 
-const { href, label, description, target, rel, badge, icon, social, closes } = Astro.props;
+const { href, label, description, target, rel, icon, social, closes } = Astro.props;
 ---
 
 <a
@@ -38,10 +37,7 @@ const { href, label, description, target, rel, badge, icon, social, closes } = A
 		) : null}
 	</span>
 	<span class="menu-link-text">
-		<span class="menu-link-label">
-			{label}
-			{badge && <span class="menu-link-badge">{badge}</span>}
-		</span>
+		<span class="menu-link-label">{label}</span>
 		<span class="menu-link-description">{description}</span>
 	</span>
 </a>
@@ -90,23 +86,10 @@ const { href, label, description, target, rel, badge, icon, social, closes } = A
 	}
 
 	.menu-link-label {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
 		font-size: var(--font-size-sm);
 		font-weight: 500;
 		line-height: 1.4;
 		color: var(--color-text);
-	}
-
-	.menu-link-badge {
-		padding: 1px 6px;
-		font-size: 0.6875rem;
-		font-weight: 600;
-		line-height: 1.4;
-		color: var(--color-primary);
-		background: var(--color-primary-light);
-		border-radius: var(--radius-full);
 	}
 
 	.menu-link-description {

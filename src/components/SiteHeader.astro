@@ -63,58 +63,31 @@ interface ProductLink {
 	description: string;
 	url: string;
 	icon: string;
-	badge?: string;
-}
-
-interface ProductGroup {
-	id: string;
-	heading: string;
-	items: ProductLink[];
 }
 
 // The Product menu lists EmDash's own properties, so it lives in code rather
-// than the editable "primary" menu. Keep it short: two groups, two links each.
-const productGroups: ProductGroup[] = [
+// than the editable "primary" menu. Keep it to a short list of places people
+// can use today.
+const productLinks: ProductLink[] = [
 	{
-		id: "start",
-		heading: "Start building",
-		items: [
-			{
-				label: "Build",
-				description: "Generate a site from a prompt",
-				url: "https://build.emdashcms.com",
-				icon: "ph:sparkle",
-				badge: "New",
-			},
-			{
-				label: "Playground",
-				description: "Try the admin in your browser",
-				url: safePlaygroundUrl,
-				icon: "ph:app-window",
-			},
-		],
+		label: "Playground",
+		description: "Try the admin in your browser",
+		url: safePlaygroundUrl,
+		icon: "ph:app-window",
 	},
 	{
-		id: "extend",
-		heading: "Extend",
-		items: [
-			{
-				label: "Plugins",
-				description: "Browse the plugin registry",
-				url: "https://plugins.emdashcms.com",
-				icon: "ph:puzzle-piece",
-				badge: "New",
-			},
-			{
-				label: "Build a plugin",
-				description: "Hooks, routes, and admin pages",
-				url: "https://docs.emdashcms.com/plugins/creating-plugins/choosing-a-format/",
-				icon: "ph:code",
-			},
-		],
+		label: "Plugins",
+		description: "Browse the plugin registry",
+		url: "https://plugins.emdashcms.com",
+		icon: "ph:puzzle-piece",
+	},
+	{
+		label: "Build a plugin",
+		description: "Hooks, routes, and admin pages",
+		url: "https://docs.emdashcms.com/plugins/creating-plugins/choosing-a-format/",
+		icon: "ph:code",
 	},
 ];
-const productItems = productGroups.flatMap((group) => group.items);
 
 // The Community menu replaces CMS links it already covers (e.g. Discord).
 const communityTypes = new Set<string>(COMMUNITY_LINKS.map((link) => link.type));
@@ -183,29 +156,21 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 							</button>
 							<div class="nav-dropdown-panel" id="nav-product-panel">
 								<div class="menu-card">
-									{productGroups.map((group) => (
-										<div>
-											<p class="menu-heading" id={`nav-product-${group.id}`}>
-												{group.heading}
-											</p>
-											<ul class="menu-list" aria-labelledby={`nav-product-${group.id}`}>
-												{group.items.map((item) => (
-													<li>
-														<NavMenuLink
-															href={item.url}
-															label={item.label}
-															description={item.description}
-															target={getTarget(item)}
-															rel={getRel(item)}
-															badge={item.badge}
-															icon={item.icon}
-															closes="dropdown"
-														/>
-													</li>
-												))}
-											</ul>
-										</div>
-									))}
+									<ul class="menu-list">
+										{productLinks.map((item) => (
+											<li>
+												<NavMenuLink
+													href={item.url}
+													label={item.label}
+													description={item.description}
+													target={getTarget(item)}
+													rel={getRel(item)}
+													icon={item.icon}
+													closes="dropdown"
+												/>
+											</li>
+										))}
+									</ul>
 								</div>
 							</div>
 						</li>
@@ -235,7 +200,7 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 								</svg>
 							</button>
 							<div class="nav-dropdown-panel" id="nav-community-panel">
-								<div class="menu-card menu-card--single">
+								<div class="menu-card">
 									<ul class="menu-list">
 										{COMMUNITY_LINKS.map((link) => (
 											<li>
@@ -261,7 +226,7 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 					<div class="nav-mobile-links">
 						<p class="menu-heading" id="nav-mobile-product">Product</p>
 						<ul class="menu-list nav-mobile-products" aria-labelledby="nav-mobile-product">
-							{productItems.map((item) => (
+							{productLinks.map((item) => (
 								<li>
 									<NavMenuLink
 										href={item.url}
@@ -269,7 +234,6 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 										description={item.description}
 										target={getTarget(item)}
 										rel={getRel(item)}
-										badge={item.badge}
 										icon={item.icon}
 										closes="menu"
 									/>
@@ -714,11 +678,8 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 	}
 
 	.menu-card {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: var(--spacing-md);
-		width: 584px;
-		padding: 20px;
+		width: 320px;
+		padding: 10px;
 		background: var(--color-surface);
 		border: 1px solid var(--color-border);
 		border-radius: 18px;
@@ -727,15 +688,8 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 			var(--shadow-lg);
 	}
 
-	.menu-card--single {
-		grid-template-columns: minmax(0, 1fr);
-		width: 320px;
-		padding: 10px;
-	}
-
 	.menu-heading {
 		margin: 0 0 6px;
-		padding: 0 10px;
 		font-size: var(--font-size-xs);
 		font-weight: 500;
 		line-height: 1.4;
@@ -754,10 +708,6 @@ const topNavItems = navItems.filter((item) => !communityTypes.has(getSocialType(
 		margin-top: var(--spacing-lg);
 		padding-top: var(--spacing-md);
 		border-top: 1px solid var(--color-border);
-	}
-
-	.nav-mobile-links .menu-heading {
-		padding: 0;
 	}
 
 	.community-row .menu-heading {
