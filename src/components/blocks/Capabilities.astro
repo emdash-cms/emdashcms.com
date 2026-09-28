@@ -40,18 +40,10 @@ const headlineRest = headlineMatch ? headlineMatch[2] : undefined;
 
 // 24px line icons, drawn with currentColor strokes.
 const icons = {
-	page: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
-	post: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
-	media: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="m21 16-5-5-9 9"/>',
-	menu: '<path d="M4 6h16M4 12h16M4 18h10"/>',
 	widgets:
 		'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
-	folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
-	tag: '<path d="M3.5 12.5V4.5a1 1 0 0 1 1-1h8l8 8a1.5 1.5 0 0 1 0 2.1l-7 7a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.25"/>',
 	check: '<path d="m5 12.5 4.5 4.5L19 7"/>',
 	x: '<path d="M7 7l10 10M17 7 7 17"/>',
-	calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
-	eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.75"/>',
 	plug: '<path d="M9 3v5M15 3v5M6.5 8h11v3.5a5.5 5.5 0 0 1-11 0zM12 17v4"/>',
 	hero: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9.5h10M7 13.5h6"/>',
 	quote: '<path d="M6 8h4.5v4.5C10.5 15 9 16.5 7 17.5M14 8h4.5v4.5c0 2.5-1.5 4-3.5 5"/>',
@@ -66,6 +58,64 @@ const icons = {
 	lock: '<rect x="5.5" y="11" width="13" height="9" rx="2"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/>',
 	chevron: '<path d="m9.5 6.5 5.5 5.5-5.5 5.5"/>',
 };
+
+// Phosphor icons (regular weight unless noted), copied from @phosphor-icons/react:
+// the same set the EmDash admin uses. Filled paths on a 256 viewBox; render with
+// `<svg class="ph" viewBox="0 0 256 256">`.
+const ph = {
+	browser: '<path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V88H40V56Zm0,144H40V104H216v96Z"/>',
+	newspaperFill: '<path d="M216,48H56A16,16,0,0,0,40,64V184a8,8,0,0,1-16,0V88A8,8,0,0,0,8,88v96.11A24,24,0,0,0,32,208H208a24,24,0,0,0,24-24V64A16,16,0,0,0,216,48ZM176,152H96a8,8,0,0,1,0-16h80a8,8,0,0,1,0,16Zm0-32H96a8,8,0,0,1,0-16h80a8,8,0,0,1,0,16Z"/>',
+	imagesSquare: '<path d="M208,32H80A16,16,0,0,0,64,48V64H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V192h16a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM80,48H208v69.38l-16.7-16.7a16,16,0,0,0-22.62,0L93.37,176H80Zm96,160H48V80H64v96a16,16,0,0,0,16,16h96Zm32-32H116l64-64,28,28v36Zm-88-64A24,24,0,1,0,96,88,24,24,0,0,0,120,112Zm0-32a8,8,0,1,1-8,8A8,8,0,0,1,120,80Z"/>',
+	chats: '<path d="M216,80H184V48a16,16,0,0,0-16-16H40A16,16,0,0,0,24,48V176a8,8,0,0,0,13,6.22L72,154V184a16,16,0,0,0,16,16h93.59L219,230.22a8,8,0,0,0,5,1.78,8,8,0,0,0,8-8V96A16,16,0,0,0,216,80ZM66.55,137.78,40,159.25V48H168v88H71.58A8,8,0,0,0,66.55,137.78ZM216,207.25l-26.55-21.47a8,8,0,0,0-5-1.78H88V152h80a16,16,0,0,0,16-16V96h32Z"/>',
+	rows: '<path d="M208,136H48a16,16,0,0,0-16,16v40a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V152A16,16,0,0,0,208,136Zm0,56H48V152H208v40Zm0-144H48A16,16,0,0,0,32,64v40a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V64A16,16,0,0,0,208,48Zm0,56H48V64H208v40Z"/>',
+	path: '<path d="M200,168a32.06,32.06,0,0,0-31,24H72a32,32,0,0,1,0-64h96a40,40,0,0,0,0-80H72a8,8,0,0,0,0,16h96a24,24,0,0,1,0,48H72a48,48,0,0,0,0,96h97a32,32,0,1,0,31-40Zm0,48a16,16,0,1,1,16-16A16,16,0,0,1,200,216Z"/>',
+	puzzlePiece: '<path d="M220.27,158.54a8,8,0,0,0-7.7-.46,20,20,0,1,1,0-36.16A8,8,0,0,0,224,114.69V72a16,16,0,0,0-16-16H171.78a35.36,35.36,0,0,0,.22-4,36.11,36.11,0,0,0-11.36-26.24,36,36,0,0,0-60.55,23.62,36.56,36.56,0,0,0,.14,6.62H64A16,16,0,0,0,48,72v32.22a35.36,35.36,0,0,0-4-.22,36.12,36.12,0,0,0-26.24,11.36,35.7,35.7,0,0,0-9.69,27,36.08,36.08,0,0,0,33.31,33.6,35.68,35.68,0,0,0,6.62-.14V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V165.31A8,8,0,0,0,220.27,158.54ZM208,208H64V165.31a8,8,0,0,0-11.43-7.23,20,20,0,1,1,0-36.16A8,8,0,0,0,64,114.69V72h46.69a8,8,0,0,0,7.23-11.43,20,20,0,1,1,36.16,0A8,8,0,0,0,161.31,72H208v32.23a35.68,35.68,0,0,0-6.62-.14A36,36,0,0,0,204,176a35.36,35.36,0,0,0,4-.22Z"/>',
+	cardsThree: '<path d="M208,88H48a16,16,0,0,0-16,16v96a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V104A16,16,0,0,0,208,88Zm0,112H48V104H208v96ZM48,64a8,8,0,0,1,8-8H200a8,8,0,0,1,0,16H56A8,8,0,0,1,48,64ZM64,32a8,8,0,0,1,8-8H184a8,8,0,0,1,0,16H72A8,8,0,0,1,64,32Z"/>',
+	folders: '<path d="M224,64H154.67L126.93,43.2a16.12,16.12,0,0,0-9.6-3.2H72A16,16,0,0,0,56,56V72H40A16,16,0,0,0,24,88V200a16,16,0,0,0,16,16H192.89A15.13,15.13,0,0,0,208,200.89V184h16.89A15.13,15.13,0,0,0,240,168.89V80A16,16,0,0,0,224,64ZM192,200H40V88H85.33l29.87,22.4A8,8,0,0,0,120,112h72Zm32-32H208V112a16,16,0,0,0-16-16H122.67L94.93,75.2a16.12,16.12,0,0,0-9.6-3.2H72V56h45.33L147.2,78.4A8,8,0,0,0,152,80h72Z"/>',
+	tag: '<path d="M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63Zm-96,96L48,132.69V48h84.69L232,147.31ZM96,84A12,12,0,1,1,84,72,12,12,0,0,1,96,84Z"/>',
+	signature: '<path d="M232,168H63.86c2.66-5.24,5.33-10.63,8-16.11,15,1.65,32.58-8.78,52.66-31.14,5,13.46,14.45,30.93,30.58,31.25,9.06.18,18.11-5.2,27.42-16.37C189.31,143.75,203.3,152,232,152a8,8,0,0,0,0-16c-30.43,0-39.43-10.45-40-16.11a7.67,7.67,0,0,0-5.46-7.75,8.14,8.14,0,0,0-9.25,3.49c-12.07,18.54-19.38,20.43-21.92,20.37-8.26-.16-16.66-19.52-19.54-33.42a8,8,0,0,0-14.09-3.37C101.54,124.55,88,133.08,79.57,135.29,88.06,116.42,94.4,99.85,98.46,85.9c6.82-23.44,7.32-39.83,1.51-50.1-3-5.38-9.34-11.8-22.06-11.8C61.85,24,49.18,39.18,43.14,65.65c-3.59,15.71-4.18,33.21-1.62,48s7.87,25.55,15.59,31.94c-3.73,7.72-7.53,15.26-11.23,22.41H24a8,8,0,0,0,0,16H37.41c-11.32,21-20.12,35.64-20.26,35.88a8,8,0,1,0,13.71,8.24c.15-.26,11.27-18.79,24.7-44.12H232a8,8,0,0,0,0-16ZM58.74,69.21C62.72,51.74,70.43,40,77.91,40c5.33,0,7.1,1.86,8.13,3.67,3,5.33,6.52,24.19-21.66,86.39C56.12,118.78,53.31,93,58.74,69.21Z"/>',
+	checkCircle: '<path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/>',
+	arrowsClockwise: '<path d="M224,48V96a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h28.69L182.06,73.37a79.56,79.56,0,0,0-56.13-23.43h-.45A79.52,79.52,0,0,0,69.59,72.71,8,8,0,0,1,58.41,61.27a96,96,0,0,1,135,.79L208,76.69V48a8,8,0,0,1,16,0ZM186.41,183.29a80,80,0,0,1-112.47-.66L59.31,168H88a8,8,0,0,0,0-16H40a8,8,0,0,0-8,8v48a8,8,0,0,0,16,0V179.31l14.63,14.63A95.43,95.43,0,0,0,130,222.06h.53a95.36,95.36,0,0,0,67.07-27.33,8,8,0,0,0-11.18-11.44Z"/>',
+	pencilSimple: '<path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/>',
+	caretDown: '<path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/>',
+	calendarPlus: '<path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-48-56a8,8,0,0,1-8,8H136v16a8,8,0,0,1-16,0V160H104a8,8,0,0,1,0-16h16V128a8,8,0,0,1,16,0v16h16A8,8,0,0,1,160,152Z"/>',
+	dotsSixVertical: '<path d="M104,60A12,12,0,1,1,92,48,12,12,0,0,1,104,60Zm60,12a12,12,0,1,0-12-12A12,12,0,0,0,164,72ZM92,116a12,12,0,1,0,12,12A12,12,0,0,0,92,116Zm72,0a12,12,0,1,0,12,12A12,12,0,0,0,164,116ZM92,184a12,12,0,1,0,12,12A12,12,0,0,0,92,184Zm72,0a12,12,0,1,0,12,12A12,12,0,0,0,164,184Z"/>',
+	upload: '<path d="M240,136v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V136a16,16,0,0,1,16-16H80a8,8,0,0,1,0,16H32v64H224V136H176a8,8,0,0,1,0-16h48A16,16,0,0,1,240,136ZM85.66,77.66,120,43.31V128a8,8,0,0,0,16,0V43.31l34.34,34.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,77.66ZM200,168a12,12,0,1,0-12,12A12,12,0,0,0,200,168Z"/>',
+	arrowSquareOut: '<path d="M224,104a8,8,0,0,1-16,0V59.32l-66.33,66.34a8,8,0,0,1-11.32-11.32L196.68,48H152a8,8,0,0,1,0-16h64a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/>',
+	check: '<path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/>',
+	fileText: '<path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/>',
+};
+
+// The admin sidebar, in the real admin's order and icons (Dashboard omitted).
+const adminNav = [
+	{
+		label: "Content",
+		items: [
+			{ label: "Pages", icon: ph.browser },
+			{ label: "Posts", icon: ph.newspaperFill, active: true },
+			{ label: "Media", icon: ph.imagesSquare },
+		],
+	},
+	{
+		label: "Manage",
+		items: [
+			{ label: "Comments", icon: ph.chats },
+			{ label: "Menus", icon: ph.rows },
+			{ label: "Redirects", icon: ph.path },
+			{ label: "Widgets", icon: ph.puzzlePiece },
+			{ label: "Sections", icon: ph.cardsThree },
+			{ label: "Categories", icon: ph.folders },
+			{ label: "Tags", icon: ph.tag },
+			{ label: "Bylines", icon: ph.signature },
+		],
+	},
+];
+
+const importRows = [
+	{ label: "Posts and pages", count: 128 },
+	{ label: "Media files", count: 342 },
+	{ label: "Categories and tags", count: 36 },
+];
 
 // A window onto this site's real `emdash-env.d.ts`, starting at the Post
 // interface's own line number. The panel clips and fades the rest of the file.
@@ -252,28 +302,64 @@ const schemaFields = [
 				<div
 					class="cap-visual visual-familiar"
 					role="img"
-					aria-label="EmDash admin sidebar listing Pages, Posts, Media, Menus, Widgets, Categories, and Tags, beside a completed WordPress import."
+					aria-label="The EmDash admin sidebar with Pages, Posts, and Media under Content, and Comments, Menus, Redirects, Widgets, Sections, Categories, Tags, and Bylines under Manage, beside a completed WordPress import of posts, pages, media, categories, and tags."
 				>
 					<div class="ui admin-nav">
-						<div class="admin-brand"><span class="admin-logo"></span>My Site</div>
-						<p class="admin-group">Content</p>
-						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.page} />Pages</div>
-						<div class="admin-item is-active"><svg viewBox="0 0 24 24" set:html={icons.post} />Posts</div>
-						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.media} />Media</div>
-						<p class="admin-group">Manage</p>
-						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.menu} />Menus</div>
-						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.widgets} />Widgets</div>
-						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.folder} />Categories</div>
-						<div class="admin-item"><svg viewBox="0 0 24 24" set:html={icons.tag} />Tags</div>
+						<div class="admin-brand">
+							<svg class="admin-logo" viewBox="0 0 75 75" fill="none">
+								<rect x="3" y="3" width="69" height="69" rx="10.518" stroke="url(#cap-logo-border)" stroke-width="6" />
+								<rect x="18" y="34" width="39.3661" height="6.56101" fill="url(#cap-logo-dash)" />
+								<defs>
+									<linearGradient id="cap-logo-border" x1="-43" y1="124" x2="92.42" y2="-41.75" gradientUnits="userSpaceOnUse">
+										<stop stop-color="#0F006B" />
+										<stop offset="0.1667" stop-color="#5D0C83" />
+										<stop offset="0.3333" stop-color="#CE2F55" />
+										<stop offset="0.4167" stop-color="#FF6633" />
+										<stop offset="0.5833" stop-color="#FBAD41" />
+										<stop offset="0.75" stop-color="#FFE9CB" />
+										<stop offset="1" stop-color="white" />
+									</linearGradient>
+									<linearGradient id="cap-logo-dash" x1="91.5" y1="27.5" x2="28.12" y2="54.18" gradientUnits="userSpaceOnUse">
+										<stop stop-color="white" />
+										<stop offset="0.1293" stop-color="#FFF8EE" />
+										<stop offset="0.6171" stop-color="#FBAD41" />
+										<stop offset="0.848" stop-color="#F6821F" />
+										<stop offset="1" stop-color="#FF6633" />
+									</linearGradient>
+								</defs>
+							</svg>
+							My Site
+						</div>
+						{adminNav.map((group) => (
+							<>
+								<p class="admin-group">{group.label}</p>
+								{group.items.map((item) => (
+									<div class:list={["admin-item", { "is-active": item.active }]}>
+										<svg class="ph" viewBox="0 0 256 256" set:html={item.icon} />
+										{item.label}
+									</div>
+								))}
+							</>
+						))}
 					</div>
 					<div class="ui import-card">
-						<p class="import-title">Import WordPress</p>
-						<p class="import-file">export.xml</p>
-						<div class="import-bar"><span></span></div>
+						<div class="ui-bar">
+							<span class="ui-strong">Import from WordPress</span>
+							<span class="ui-pill"><span class="ui-pill-dot ui-pill-dot--success"></span>Complete</span>
+						</div>
+						<div class="import-file">
+							<svg class="ph" viewBox="0 0 256 256" set:html={ph.fileText} />
+							<code>export.xml</code>
+							<span>2.4 MB</span>
+						</div>
 						<ul class="import-list">
-							<li><svg viewBox="0 0 24 24" set:html={icons.check} />Posts and pages</li>
-							<li><svg viewBox="0 0 24 24" set:html={icons.check} />Media library</li>
-							<li><svg viewBox="0 0 24 24" set:html={icons.check} />Authors and taxonomies</li>
+							{importRows.map((row) => (
+								<li>
+									<svg class="ph" viewBox="0 0 256 256" set:html={ph.checkCircle} />
+									<span>{row.label}</span>
+									<span class="import-count">{row.count}</span>
+								</li>
+							))}
 						</ul>
 					</div>
 				</div>
@@ -291,7 +377,7 @@ const schemaFields = [
 				<div
 					class="cap-visual visual-editorial"
 					role="img"
-					aria-label="A revision history beside the EmDash publish panel. The live version stays public while draft changes wait, scheduled for June 1 at 9:00 AM."
+					aria-label="A revision history beside the EmDash publish panel. The live version published on March 12 stays public while saved draft changes wait, ready to publish now or schedule for later."
 				>
 					<div class="timeline">
 						<div class="tl-item">
@@ -311,23 +397,32 @@ const schemaFields = [
 						</div>
 					</div>
 					<div class="ui publish">
-						<p class="publish-title">Publish</p>
-						<div class="publish-row">
-							<span class="publish-dot publish-dot--live"></span>
-							<p><strong>Live version</strong><span>Visitors still see the published page</span></p>
+						<div class="publish-bar">
+							<span class="ui-saved"><svg class="ph" viewBox="0 0 256 256" set:html={ph.check} />Saved</span>
+							<span class="ui-btn ui-btn--primary"><svg class="ph" viewBox="0 0 256 256" set:html={ph.upload} />Publish changes</span>
 						</div>
-						<div class="publish-row">
-							<span class="publish-dot publish-dot--draft"></span>
-							<p><strong>Draft changes</strong><span>Ready to publish</span></p>
-						</div>
-						<div class="publish-schedule">
-							<svg viewBox="0 0 24 24" set:html={icons.calendar} />
-							<span>Scheduled</span>
-							<strong>Jun 1, 9:00 AM</strong>
-						</div>
-						<div class="publish-actions">
-							<span class="ui-btn"><svg viewBox="0 0 24 24" set:html={icons.eye} />Preview draft</span>
-							<span class="ui-btn ui-btn--primary">Publish changes</span>
+						<div class="publish-body">
+							<div class="publish-head">
+								<p class="publish-title">Publish</p>
+								<svg class="ph publish-handle" viewBox="0 0 256 256" set:html={ph.dotsSixVertical} />
+							</div>
+							<div class="publish-summary">
+								<div class="publish-versions">
+									<div class="publish-row">
+										<svg class="ph publish-icon publish-icon--live" viewBox="0 0 256 256" set:html={ph.checkCircle} />
+										<p><strong>Live version</strong><span>Visitors still see the published version</span></p>
+									</div>
+									<div class="publish-row">
+										<svg class="ph publish-icon publish-icon--draft" viewBox="0 0 256 256" set:html={ph.arrowsClockwise} />
+										<p><strong>Draft changes</strong><span>Ready to publish now or schedule for later</span></p>
+									</div>
+								</div>
+								<div class="publish-meta">
+									<p><span>Publication date</span><span class="publish-value">Mar 12, 9:00 AM<svg class="ph" viewBox="0 0 256 256" set:html={ph.pencilSimple} /></span></p>
+									<p><span>Created and updated</span><svg class="ph" viewBox="0 0 256 256" set:html={ph.caretDown} /></p>
+								</div>
+							</div>
+							<span class="ui-btn publish-schedule"><svg class="ph" viewBox="0 0 256 256" set:html={ph.calendarPlus} />Schedule</span>
 						</div>
 					</div>
 				</div>
@@ -457,6 +552,7 @@ const schemaFields = [
 		--cap-card-ring: var(--border-faint);
 		--cap-ui-bg: var(--color-surface);
 		--cap-ui-sunken: color-mix(in srgb, var(--color-bg) 70%, var(--color-surface));
+		--cap-ui-tint: color-mix(in srgb, var(--color-text) 5%, transparent);
 		--cap-ui-border: color-mix(in srgb, var(--color-text) 10%, transparent);
 		--cap-ui-shadow:
 			0 1px 2px rgba(0, 0, 0, 0.04),
@@ -751,7 +847,6 @@ const schemaFields = [
 	.flow {
 		--flow-gap: 1.75rem;
 		--flow-panel-h: 13.5rem;
-		--cap-ui-tint: color-mix(in srgb, var(--color-text) 5%, transparent);
 		position: relative;
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
@@ -1193,7 +1288,7 @@ const schemaFields = [
 
 	.admin-nav {
 		width: 11.5rem;
-		padding: 0.75rem 0.5rem 1.25rem;
+		padding-bottom: 1.25rem;
 		border-bottom: 0;
 		border-radius: 12px 12px 0 0;
 		-webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
@@ -1204,102 +1299,118 @@ const schemaFields = [
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		padding: 0 0.5rem 0.625rem;
+		padding: 0.75rem 1rem;
+		font-size: 0.8125rem;
 		font-weight: 600;
+		border-bottom: 1px solid var(--cap-line);
 	}
 
-	.admin-logo {
+	.admin-brand .admin-logo {
 		width: 1rem;
 		height: 1rem;
-		border: 1.5px solid var(--color-primary);
-		border-radius: 4px;
-		background: linear-gradient(var(--color-primary), var(--color-primary)) center / 0.5rem 1.5px no-repeat;
+		stroke: none;
 	}
 
 	.admin-group {
-		padding: 0.5rem 0.5rem 0.25rem;
+		margin: 0.625rem 0.5rem 0.25rem !important;
+		padding: 0 0.5rem 0.3125rem;
 		color: var(--cap-subtle);
-		font-size: 0.625rem;
+		font-size: 0.6875rem;
 		font-weight: 500;
+		border-bottom: 1px solid var(--cap-line);
 	}
 
 	.admin-item {
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.625rem;
+		margin-inline: 0.5rem;
 		padding: 0.3125rem 0.5rem;
-		color: var(--cap-muted);
-		border-radius: 6px;
+		font-weight: 500;
+		border-radius: 7px;
 	}
 
 	.admin-item svg {
 		width: 0.875rem;
 		height: 0.875rem;
+		opacity: 0.45;
 	}
 
 	.admin-item.is-active {
-		color: var(--color-text);
-		font-weight: 500;
-		background: var(--cap-ui-sunken);
-		box-shadow: inset 0 0 0 1px var(--cap-line);
+		background: var(--cap-ui-tint);
 	}
 
-	.admin-item.is-active svg {
-		color: var(--color-primary);
+	/* Phosphor glyphs are filled shapes, not strokes. */
+	.ui svg.ph,
+	.ui-btn svg.ph {
+		fill: currentColor;
+		stroke: none;
+	}
+
+	.ui-pill-dot--success {
+		background: var(--cap-success);
 	}
 
 	.import-card {
-		width: 12.5rem;
-		margin-top: 3.5rem;
+		width: 14.5rem;
+		margin-top: 3.25rem;
 		margin-inline-start: -2.5rem;
-		padding: 0.875rem;
-	}
-
-	.import-title {
-		font-weight: 600;
+		overflow: hidden;
 	}
 
 	.import-file {
-		margin-top: 0.125rem !important;
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+		margin: 0.625rem 0.75rem 0.25rem;
+		padding: 0.375rem 0.5rem;
 		color: var(--cap-subtle);
+		font-size: 0.625rem;
+		border: 1px solid var(--cap-ui-border);
+		border-radius: 7px;
+	}
+
+	.import-file svg {
+		width: 0.875rem;
+		height: 0.875rem;
+	}
+
+	.import-file code {
+		color: var(--color-text);
 		font-family: var(--font-mono);
 		font-size: 0.6875rem;
 	}
 
-	.import-bar {
-		height: 0.25rem;
-		margin: 0.625rem 0;
-		overflow: hidden;
-		background: var(--cap-skeleton);
-		border-radius: var(--radius-full);
-	}
-
-	.import-bar span {
-		display: block;
-		width: 100%;
-		height: 100%;
-		background: var(--color-primary);
+	.import-file span {
+		margin-inline-start: auto;
 	}
 
 	.import-list {
 		display: grid;
-		gap: 0.375rem;
+		gap: 0.125rem;
 		margin: 0;
-		padding: 0;
+		padding: 0.25rem 0.75rem 0.625rem;
 		list-style: none;
-		color: var(--cap-muted);
 	}
 
 	.import-list li {
 		display: flex;
 		align-items: center;
-		gap: 0.375rem;
+		gap: 0.4375rem;
+		padding: 0.25rem 0.125rem;
 	}
 
 	.import-list svg {
-		width: 0.8125rem;
-		height: 0.8125rem;
+		width: 0.875rem;
+		height: 0.875rem;
 		color: var(--cap-success);
+	}
+
+	.import-count {
+		margin-inline-start: auto;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+		font-variant-numeric: tabular-nums;
 	}
 
 	/* ---------- Editorial workflow ---------- */
@@ -1370,89 +1481,135 @@ const schemaFields = [
 		font-weight: 500;
 	}
 
+	/* Mirrors the editor's Publish panel: action bar, summary card, schedule. */
 	.publish {
-		width: 16.25rem;
+		width: 18.25rem;
 		flex: 0 0 auto;
-		padding: 0.875rem;
+		overflow: hidden;
+	}
+
+	.publish-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid var(--cap-line);
+	}
+
+	.publish-body {
+		display: grid;
+		gap: 0.625rem;
+		padding: 0.75rem;
+	}
+
+	.publish-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 	}
 
 	.publish-title {
-		margin-bottom: 0.625rem !important;
+		font-size: 0.8125rem;
 		font-weight: 600;
 	}
 
+	.publish-handle {
+		width: 0.875rem;
+		height: 0.875rem;
+		color: var(--cap-subtle);
+	}
+
+	.publish-summary {
+		overflow: hidden;
+		border: 1px solid var(--cap-ui-border);
+		border-radius: 9px;
+	}
+
+	.publish-versions {
+		display: grid;
+		gap: 0.75rem;
+		padding: 0.625rem;
+	}
+
 	.publish-row {
+		position: relative;
 		display: flex;
 		align-items: flex-start;
 		gap: 0.5rem;
-		padding: 0.4375rem 0;
 	}
 
-	.publish-row + .publish-row {
-		border-top: 1px solid var(--cap-line);
+	/* Connector between the live and draft rows, as in the admin. */
+	.publish-row:first-child::after {
+		position: absolute;
+		inset-block: 1.125rem -0.625rem;
+		inset-inline-start: calc(0.4375rem - 0.5px);
+		width: 1px;
+		background: var(--cap-ui-border);
+		content: "";
+	}
+
+	.publish-icon {
+		width: 0.875rem;
+		height: 0.875rem;
+		margin-top: 0.0625rem;
+	}
+
+	.publish-icon--live {
+		color: var(--cap-success);
+	}
+
+	.publish-icon--draft {
+		color: var(--color-warning);
 	}
 
 	.publish-row p {
 		display: grid;
-		gap: 0.0625rem;
+		gap: 0.125rem;
 	}
 
 	.publish-row strong {
-		font-weight: 500;
+		font-weight: 600;
 	}
 
 	.publish-row span {
 		color: var(--cap-subtle);
 		font-size: 0.6875rem;
+		text-wrap: pretty;
 	}
 
-	.publish-dot {
-		width: 0.4375rem;
-		height: 0.4375rem;
-		flex: 0 0 auto;
-		margin-top: 0.3125rem;
-		border-radius: 50%;
+	.publish-meta {
+		display: grid;
+		padding: 0.25rem 0.625rem;
+		color: var(--cap-subtle);
+		font-size: 0.6875rem;
+		border-top: 1px solid var(--cap-line);
 	}
 
-	.publish-dot--live {
-		background: var(--cap-success);
+	.publish-meta p {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		padding: 0.3125rem 0;
+		white-space: nowrap;
 	}
 
-	.publish-dot--draft {
-		background: var(--color-warning);
+	.publish-meta svg {
+		width: 0.6875rem;
+		height: 0.6875rem;
+	}
+
+	.publish-value {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3125rem;
+		color: var(--cap-muted);
 	}
 
 	.publish-schedule {
-		display: flex;
-		align-items: center;
-		gap: 0.375rem;
-		margin: 0.5rem 0 0.75rem;
-		padding: 0.4375rem 0.5625rem;
-		color: var(--cap-muted);
-		font-size: 0.6875rem;
-		background: var(--cap-ui-sunken);
-		border-radius: 7px;
-	}
-
-	.publish-schedule svg {
-		width: 0.8125rem;
-		height: 0.8125rem;
-	}
-
-	.publish-schedule strong {
-		margin-inline-start: auto;
-		color: var(--color-text);
-		font-weight: 500;
-	}
-
-	.publish-actions {
-		display: flex;
-		gap: 0.375rem;
-	}
-
-	.publish-actions .ui-btn {
-		flex: 1 1 auto;
 		justify-content: center;
+		background: transparent;
+		border: 1px solid var(--cap-ui-border);
 	}
 
 	/* ---------- Agents ---------- */
@@ -1952,9 +2109,14 @@ const schemaFields = [
 			width: 100%;
 		}
 
+		/* The green checks already say "complete"; the pill doesn't fit here. */
 		.import-card {
-			width: 11rem;
-			margin-inline-start: -3.5rem;
+			width: 12.5rem;
+			margin-inline-start: -4.75rem;
+		}
+
+		.import-card .ui-pill {
+			display: none;
 		}
 
 		.visual-secure {
