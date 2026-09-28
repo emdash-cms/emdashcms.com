@@ -1,0 +1,37 @@
+public/social/home.svg
+  s_bf6c4e65e38922::t_7d7b1b316e569e 2,8-9
+scripts/generate-social-cards.mjs
+  s_bf6c4e65e38922::t_641b6a803e4a4a 64-66
+scripts/social-cards.manifest.json
+  s_bf6c4e65e38922::t_5f541dadfed1bb 2,5-6
+seed/seed.json
+  s_bf6c4e65e38922::t_4e659a00131733 122-127,132-133,136-138,142-143,146-148,152-153,156-158,161-163,170,173-178,205,208-209,212-213,217
+src/components/SiteHeader.astro
+  s_bf6c4e65e38922::t_0cddbc7e9394cb 450
+src/components/blocks/Hero.astro
+  s_bf6c4e65e38922::t_48c6bb16839bd1 18-19,40-43,64
+src/components/blocks/Testimonials.astro
+  s_bf6c4e65e38922::t_51d8735b974cdb 27,50,64-75,80,82-87,90-92,104-105,107-114,116,118-119,121-122,124,127-129,132-136,138-141,144-148
+src/pages/index.astro
+  s_bf6c4e65e38922::t_c42c58a550f00a 16,18
+src/plugins/marketing-blocks/index.ts
+  s_bf6c4e65e38922::t_eae13707d6f29b 62-63,188
+src/styles/theme.css
+  s_bf6c4e65e38922::t_5f9fc7c6d048fd 17,22,38,55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2db6ca820fac5ebc5a128a4084d32e7748d99a71",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

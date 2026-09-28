@@ -1,0 +1,29 @@
+src/components/FeatureVisual.astro
+  s_bf6c4e65e38922::t_3cf2044499a11b 140,142
+src/components/blocks/FAQ.astro
+  s_bf6c4e65e38922::t_0ae8635cdb57cd 159,190-191
+src/components/blocks/Features.astro
+  s_bf6c4e65e38922::t_2e46e98201cbe5 128
+src/components/blocks/Hero.astro
+  s_bf6c4e65e38922::t_3cf6f4aef4e7e0 175
+src/components/blocks/Testimonials.astro
+  s_bf6c4e65e38922::t_c1b3d27f844856 130,141,143
+src/styles/theme.css
+  s_bf6c4e65e38922::t_49743ac51bbdaa 18-19,36-37,55-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a9965cb3023837a02e6c19c3d93be7b2d21abb25",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

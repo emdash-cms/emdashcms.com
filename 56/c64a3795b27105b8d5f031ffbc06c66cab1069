@@ -1,0 +1,21 @@
+src/pages/sitemap-[collection].xml.ts
+  s_bf6c4e65e38922::t_11c057260a6ea4 1-5
+src/pages/sitemap.xml.ts
+  s_bf6c4e65e38922::t_f131f59e16714c 1-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "56c64a3795b27105b8d5f031ffbc06c66cab1069",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

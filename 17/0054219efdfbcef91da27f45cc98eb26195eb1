@@ -1,0 +1,35 @@
+public/brand/products/SOURCES.md
+  s_bf6c4e65e38922::t_bfc141b0761f78 1-3
+public/brand/products/astro-logo-dark.svg
+  s_bf6c4e65e38922::t_0203f2c340a064 1-9
+public/brand/products/astro-logo-light-gradient.svg
+  s_bf6c4e65e38922::t_2f041cbb656ec7 1-16
+public/brand/products/d1.svg
+  s_bf6c4e65e38922::t_afb7a2df756272 1
+public/brand/products/r2.svg
+  s_bf6c4e65e38922::t_5a2b164da373c2 1
+public/brand/products/workers.svg
+  s_bf6c4e65e38922::t_d6f3b6fbeca331 1
+src/components/FeatureIntroVisual.astro
+  s_bf6c4e65e38922::t_3caf89ab287002 3-10,12,15,21-49,51-59,61-62
+src/components/FeatureVisual.astro
+  s_bf6c4e65e38922::t_a001e312adf94f 14,21-24,37-41,43-45,47-51,58,62-67,69-73,88-89,91,93,95-96,129-149,160-172,175,194-196,198-208,210-211,213-214,221-222,227-237,243-252,259-260,263-266,272
+src/components/blocks/Features.astro
+  s_bf6c4e65e38922::t_c9375284c3da05 29,59,77-80,167-175
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "170054219efdfbcef91da27f45cc98eb26195eb1",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

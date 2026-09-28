@@ -1,0 +1,25 @@
+seed/seed.json
+  s_9ee41b607fb076::t_614fa954a3c580 128-133
+src/components/MarketingBlocks.astro
+  s_9ee41b607fb076::t_eead26aa9e1ed5 12,27
+src/components/blocks/index.ts
+  s_9ee41b607fb076::t_67a58fd644dce9 2
+src/plugins/marketing-blocks/index.ts
+  s_9ee41b607fb076::t_41b967b7457dbf 4,75-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "7709f3e93cfcff9748e27d19dfae1144c91ada68",
+  "prompts": {},
+  "sessions": {
+    "s_9ee41b607fb076": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e501-d06e-72c2-9612-cc20bf002014",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

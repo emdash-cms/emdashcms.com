@@ -1,0 +1,53 @@
+public/brand/products/SOURCES.md
+  s_bf6c4e65e38922::t_256774ea10e7c7 1-3
+public/brand/products/astro-logo-dark.svg
+  s_bf6c4e65e38922::t_6366fd53aecc93 1-9
+public/brand/products/astro-logo-light-gradient.svg
+  s_bf6c4e65e38922::t_4747cfa926a6d3 1-16
+public/brand/products/d1.svg
+  s_bf6c4e65e38922::t_de1a83c948a56d 1
+public/brand/products/r2.svg
+  s_bf6c4e65e38922::t_6d3c44a11bbe76 1
+public/brand/products/workers.svg
+  s_bf6c4e65e38922::t_0b6b25e2a94af4 1
+public/start.md
+  s_bf6c4e65e38922::t_9349c8ed340f47 1-23
+seed/seed.json
+  s_bf6c4e65e38922::t_8b01a9d20733d0 122-124,132-133,136-138,142-143,146-148,152-153,156-158,161-163,170,176-178,184-186,192-194,205,208-209,212-213,217
+src/components/CopyPromptButton.astro
+  s_bf6c4e65e38922::t_1926ec92f38659 1-270
+src/components/FeatureIntroVisual.astro
+  s_bf6c4e65e38922::t_8448e14dba0067 1-63
+src/components/FeatureVisual.astro
+  s_bf6c4e65e38922::t_3c751f6fe17539 1-280
+src/components/blocks/FAQ.astro
+  s_bf6c4e65e38922::t_02f41148bfee2e 6,14-16,19-39,41-43,45-46,143-147,150-170,173-175,178,181-184,190-192,194-197,199-201,203-209,212-213,216
+src/components/blocks/Features.astro
+  s_bf6c4e65e38922::t_8f65fc0bd65a13 3-10,17,23-30,48-90,93-94,99-105,107-113,116-119,122-139,141-145,147,149-151,154,156-171,173-185
+src/components/blocks/Hero.astro
+  s_bf6c4e65e38922::t_9267aaec0199d3 7,14-15,20,33-34,49,58-77,133,226,241-243,247-324
+src/components/blocks/Testimonials.astro
+  s_bf6c4e65e38922::t_8f43363969644a 2-3,9-11,24,27,35-37,39-46,48,50-77,79-101,103-110,119,121-122,124,131-133,138-148
+src/pages/index.astro
+  s_bf6c4e65e38922::t_1f5ede568424aa 16
+src/plugins/marketing-blocks/index.ts
+  s_bf6c4e65e38922::t_d92a9bc5a16b00 51,62-63,66-68,77,129-131,197
+src/styles/theme.css
+  s_bf6c4e65e38922::t_c63a7f8a9ec8bb 22,38,55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "735dedebce0994b17edbb3d8842baf82078d9813",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

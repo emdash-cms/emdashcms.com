@@ -1,0 +1,25 @@
+scripts/home-content-migration.md
+  s_bf6c4e65e38922::t_c6a29c70ae5580 5
+scripts/home-content-plan.mjs
+  s_bf6c4e65e38922::t_aa9687bc31ffe9 26-27
+scripts/home-content-plan.test.mjs
+  s_bf6c4e65e38922::t_4945bd30f7756a 17,86-93
+scripts/plan-home-content.mjs
+  s_bf6c4e65e38922::t_a01bb0aba5ea5a 56-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "de38d512e46bab31fff6e1b5524e9775012f60e4",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

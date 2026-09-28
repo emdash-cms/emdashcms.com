@@ -1,0 +1,19 @@
+src/components/blocks/Capabilities.astro
+  s_1fabfb704b9004::t_60456733b0cbbf 226,250,1177-1178,1524
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "96a1997d39fe831970a5decc82c514ca57d64289",
+  "prompts": {},
+  "sessions": {
+    "s_1fabfb704b9004": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f1ae6e056ffeX0OIPOrUHEZYkh",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}

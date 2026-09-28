@@ -1,0 +1,19 @@
+src/components/SiteHeader.astro
+  s_8b1e8b484b7359::t_1965ddfc1dda4c 29-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "54837589e13098d52c07932a13c919d963bf6ab0",
+  "prompts": {},
+  "sessions": {
+    "s_8b1e8b484b7359": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a05496-261f-7072-8960-ee2666b071a4",
+        "model": "unknown"
+      },
+      "human_author": "Noah Pham <npham@cloudflare.com>"
+    }
+  }
+}

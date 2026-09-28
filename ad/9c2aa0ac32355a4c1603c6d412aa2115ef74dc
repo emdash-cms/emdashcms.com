@@ -1,0 +1,19 @@
+src/components/blocks/Features.astro
+  s_bf6c4e65e38922::t_fa2f40998773a3 4-9,15,21-28,46-62,64-65,67-79,81-82,87-88,91-95,99-103,108-109,114-122,124-133,136-137,141,144-148,151-158,161-165,168-171,174-177,180-184,187-191,194-198,201-205,208-212,215-216
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ad9c2aa0ac32355a4c1603c6d412aa2115ef74dc",
+  "prompts": {},
+  "sessions": {
+    "s_bf6c4e65e38922": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0da0a-338a-7940-9a75-dba7a5831d75",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
