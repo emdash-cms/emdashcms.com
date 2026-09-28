@@ -23,12 +23,12 @@ const { node } = Astro.props;
 const key = node._key || "capabilities";
 const headingId = `${key}-title`;
 
-const headline = node.headline?.trim() || "Familiar where it matters. Modern everywhere else.";
+const headline = node.headline?.trim() || "Build your next blog or microsite today";
 // The default applies only when the field is absent (e.g. the home-page
 // fallback block). An editor who clears the introduction hides it.
 const subheadline =
 	node.subheadline === undefined
-		? "The editing experience people already know, on a typed, Astro-native foundation that agents and plugins can build on."
+		? "EmDash combines with Astro to create one end-to-end TypeScript CMS and frontend."
 		: node.subheadline.trim();
 
 // Render the first sentence at full strength and the rest muted. The split
@@ -218,10 +218,10 @@ const schemaFields = [
 			{/* 1. Astro foundation: the anchor. */}
 			<div class="cap-card cap-card--anchor">
 				<div class="cap-copy cap-copy--anchor">
-					<h3 class="cap-title cap-title--anchor">Everything you expect from a CMS. Built for Astro.</h3>
+					<h3 class="cap-title cap-title--anchor">The Astro-native CMS</h3>
 					<p class="cap-text">
-						Create content types in the admin and edit them with drafts, revisions, and preview. EmDash generates
-						TypeScript types from your schema, and Astro renders every entry on the server from structured JSON.
+						First-class Astro integration. Define content types in the admin, get TypeScript types generated from
+						your schema, and render every entry on the server from structured JSON.
 					</p>
 				</div>
 
@@ -352,10 +352,10 @@ const schemaFields = [
 			{/* 2. Familiar CMS experience. */}
 			<div class="cap-card cap-card--familiar">
 				<div class="cap-copy">
-					<h3 class="cap-title">Familiar from the first login</h3>
+					<h3 class="cap-title">A spiritual WordPress successor</h3>
 					<p class="cap-text">
-						Pages, posts, media, menus, widgets, and taxonomies, organized the way WordPress users expect. Bring
-						existing content over with the built-in WordPress importer.
+						Everything you love about WordPress in a fast, modern admin. Pages, posts, media, menus, widgets, and
+						taxonomies are where you expect them, and the built-in importer brings your content over.
 					</p>
 				</div>
 				<div
@@ -427,10 +427,10 @@ const schemaFields = [
 			{/* 3. Editorial workflows. */}
 			<div class="cap-card cap-card--editorial">
 				<div class="cap-copy">
-					<h3 class="cap-title">Drafts, revisions, and scheduling built in</h3>
+					<h3 class="cap-title">Drafts, revisions, and scheduling</h3>
 					<p class="cap-text">
-						Changes save as drafts while the live page stays untouched. Restore earlier revisions, schedule
-						publishing, and share signed preview links before anything goes live.
+						Edit drafts while the live page stays untouched. Restore earlier revisions, schedule publishing, and
+						share preview links before anything goes live.
 					</p>
 				</div>
 				<div
@@ -489,10 +489,11 @@ const schemaFields = [
 			{/* 4. Agents. */}
 			<div class="cap-card cap-card--agents">
 				<div class="cap-copy">
-					<h3 class="cap-title">An MCP server in every site</h3>
+					<h3 class="cap-title">Built with agents in mind</h3>
 					<p class="cap-text">
-						Connect Claude, Codex, Cursor, or any MCP client to draft, edit, search, and schedule content under the
-						same publishing rules as your team. Scripts get the same operations through the REST API and CLI.
+						Every site ships with an MCP server. Connect Claude, Codex, Cursor, or any MCP client to draft, edit,
+						search, and schedule content with the same role-based permissions as your team. Scripts get the same
+						through the REST API and CLI.
 					</p>
 				</div>
 				<div
@@ -550,10 +551,10 @@ const schemaFields = [
 			{/* 5. Extensibility. */}
 			<div class="cap-card cap-card--extend">
 				<div class="cap-copy">
-					<h3 class="cap-title">Make it yours with plugins</h3>
+					<h3 class="cap-title">Extend with plugins</h3>
 					<p class="cap-text">
-						Add custom block types, admin pages, hooks, storage, and API routes in TypeScript. Every section on this
-						page is a block from this site’s own plugin.
+						Add your own block types, admin pages, hooks, storage, and API routes in TypeScript. Every section on
+						this page is a block from this site’s own plugin.
 					</p>
 				</div>
 				<div
@@ -594,8 +595,8 @@ const schemaFields = [
 				<div class="cap-copy">
 					<h3 class="cap-title">Plugins without the security nightmare</h3>
 					<p class="cap-text">
-						Sandboxed plugins, including every install from the registry, run in their own isolate. They see no
-						environment variables or filesystem, and only get the capabilities they declare and you approve.
+						Sandboxed plugins, including every registry install, run in their own isolate. They see no environment
+						variables or filesystem, and get only the capabilities they declare and you approve.
 					</p>
 				</div>
 				<div

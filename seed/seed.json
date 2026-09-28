@@ -128,8 +128,8 @@
 						{
 							"_type": "marketing.capabilities",
 							"_key": "capabilities",
-							"headline": "Familiar where it matters. Modern everywhere else.",
-							"subheadline": "The editing experience people already know, on a typed, Astro-native foundation that agents and plugins can build on."
+							"headline": "Build your next blog or microsite today",
+							"subheadline": "EmDash combines with Astro to create one end-to-end TypeScript CMS and frontend."
 						},
 						{
 							"_type": "marketing.features",
