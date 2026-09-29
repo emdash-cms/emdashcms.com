@@ -7,6 +7,15 @@ const { entry: page, cacheHint } = await getEmDashEntry("pages", "home");
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
+Astro.response.headers.set(
+	"Link",
+	[
+		'<https://docs.emdashcms.com/>; rel="service-doc"',
+		'<https://docs.emdashcms.com/llms.txt>; rel="describedby"; type="text/plain"',
+		'</start.md>; rel="describedby"; type="text/markdown"; title="Build a site with EmDash"',
+	].join(", "),
+);
+
 const pageTitle = page?.data.title;
 
 // The capabilities bento replaces the home page's features grid. Home content
