@@ -4,6 +4,7 @@ export const prerender = false;
 
 const robots = [
 	"User-agent: *",
+	"Content-Signal: search=yes, ai-input=yes, ai-train=yes",
 	"Allow: /_emdash/api/media/file/",
 	"Disallow: /_emdash/",
 	"",
