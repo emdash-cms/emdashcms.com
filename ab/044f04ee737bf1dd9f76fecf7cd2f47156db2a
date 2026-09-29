@@ -1,0 +1,21 @@
+src/layouts/Base.astro
+  s_37ab78ec784783::t_1492be0db8f077 95
+src/pages/rss.xml.ts
+  s_37ab78ec784783::t_f12795bfde3fab 1-70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ab044f04ee737bf1dd9f76fecf7cd2f47156db2a",
+  "prompts": {},
+  "sessions": {
+    "s_37ab78ec784783": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e8c2-e57f-7163-bf0a-4e1b88c737d6",
+        "model": "unknown"
+      },
+      "human_author": "Matt Kane <mkane@cloudflare.com>"
+    }
+  }
+}
