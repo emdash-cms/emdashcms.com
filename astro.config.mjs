@@ -4,7 +4,24 @@ import react from "@astrojs/react";
 import { access, d1, r2 } from "@emdash-cms/cloudflare";
 import icon from "astro-iconset";
 import { defineConfig, fontProviders } from "astro/config";
+import { fileURLToPath } from "node:url";
 import emdash from "emdash/astro";
+import { writeAgentSkills } from "./scripts/agent-skills.mjs";
+
+/** @type {import("astro").AstroIntegration} */
+const agentSkills = {
+	name: "agent-skills",
+	hooks: {
+		"astro:build:done": async ({ dir, logger }) => {
+			try {
+				const count = await writeAgentSkills(fileURLToPath(dir));
+				logger.info(`Published ${count} agent skills`);
+			} catch (error) {
+				logger.warn(`Skipped agent skills index: ${error instanceof Error ? error.message : error}`);
+			}
+		},
+	},
+};
 
 export default defineConfig({
 	site: "https://emdashcms.com",
@@ -30,6 +47,7 @@ export default defineConfig({
 	},
 	integrations: [
 		react(),
+		agentSkills,
 		icon({
 			// Only ship the Phosphor icons actually referenced in templates,
 			// not the full @iconify-json/ph set (which adds megabytes to the
