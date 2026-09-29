@@ -1,0 +1,25 @@
+seed/seed.json
+  s_1dd5f76b4ce0f4::t_4ad4c8494a13e4 20,40
+src/pages/404.astro
+  s_1dd5f76b4ce0f4::t_ef4eb989513a8b 12
+src/pages/home.ts
+  s_1dd5f76b4ce0f4::t_4690bc7d9abfc6 1-5
+src/pages/posts/[slug].ts
+  s_1dd5f76b4ce0f4::t_4128dcefef0a74 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "1e423f1ae9b1b7d597e6cc87d52f114ea9cea2eb",
+  "prompts": {},
+  "sessions": {
+    "s_1dd5f76b4ce0f4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ecc5-cbc5-7aa0-9e12-b2e66cceb95b",
+        "model": "unknown"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
