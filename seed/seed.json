@@ -17,6 +17,7 @@
 			"slug": "pages",
 			"label": "Pages",
 			"labelSingular": "Page",
+			"routable": false,
 			"supports": ["drafts", "revisions", "seo"],
 			"fields": [
 				{
@@ -36,6 +37,7 @@
 			"slug": "posts",
 			"label": "Posts",
 			"labelSingular": "Post",
+			"urlPattern": "/blog/{slug}",
 			"supports": ["drafts", "revisions", "search", "seo"],
 			"fields": [
 				{
