@@ -88,6 +88,28 @@
 		}
 	],
 
+	"taxonomies": [
+		{
+			"name": "tag",
+			"label": "Tags",
+			"labelSingular": "Tag",
+			"hierarchical": false,
+			"collections": ["posts"],
+			"terms": [
+				{
+					"slug": "announcement",
+					"label": "Announcement",
+					"description": "Major EmDash announcements and project news."
+				},
+				{
+					"slug": "changelog",
+					"label": "Changelog",
+					"description": "Release notes and shipped changes across EmDash."
+				}
+			]
+		}
+	],
+
 	"menus": [
 		{
 			"name": "primary",
@@ -254,6 +276,9 @@
 							]
 						}
 					]
+				},
+				"taxonomies": {
+					"tag": ["announcement"]
 				}
 			}
 		]

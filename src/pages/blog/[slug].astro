@@ -45,6 +45,7 @@ const morePosts = recentPosts.filter((entry) => entry.data.id !== post.data.id).
 const published = formatPostDate(post.data.publishedAt, "long");
 const minutes = readingMinutes(post.data.content);
 const authors = postAuthors(post.data.bylines);
+const tags = post.data.terms?.tag ?? [];
 const cover = post.data.featured_image;
 const coverStorageKey = typeof cover?.meta?.storageKey === "string" ? cover.meta.storageKey : undefined;
 const coverSrc = cover?.src ?? (coverStorageKey ? `/_emdash/api/media/file/${coverStorageKey}` : undefined);
@@ -99,6 +100,19 @@ const articleMeta = {
 					<div class="post-byline">
 						<PostByline authors={authors} size="post" />
 					</div>
+				)
+			}
+			{
+				tags.length > 0 && (
+					<nav class="post-tags" aria-label="Post tags">
+						<ul role="list">
+							{tags.map((tag) => (
+								<li>
+									<a href={`/blog/tag/${encodeURIComponent(tag.slug)}`}>{tag.label}</a>
+								</li>
+							))}
+						</ul>
+					</nav>
 				)
 			}
 		</header>
@@ -257,6 +271,33 @@ const articleMeta = {
 		--byline-accent: var(--post-accent-text);
 
 		margin-top: var(--spacing-xl);
+	}
+
+	.post-tags {
+		margin-top: var(--spacing-lg);
+	}
+
+	.post-tags ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		list-style: none;
+	}
+
+	.post-tags a {
+		display: inline-flex;
+		padding: 0.375rem 0.625rem;
+		color: var(--post-accent-text);
+		font-size: 0.8125rem;
+		font-weight: 650;
+		line-height: 1;
+		background: color-mix(in srgb, var(--color-primary) 10%, var(--post-sunken));
+		border: 1px solid color-mix(in srgb, var(--color-primary) 24%, var(--post-border));
+		border-radius: var(--radius-full);
+	}
+
+	.post-tags a:hover {
+		background: color-mix(in srgb, var(--color-primary) 17%, var(--post-sunken));
 	}
 
 	/* ---------- Cover ---------- */

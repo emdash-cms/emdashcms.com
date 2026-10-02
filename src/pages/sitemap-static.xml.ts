@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 
 export const prerender = false;
 
-const routes = ["/", "/blog"];
+const routes = ["/", "/blog", "/blog/tags"];
 
 export const GET: APIRoute = ({ site }) => {
 	const siteUrl = site ?? new URL("https://emdashcms.com/");

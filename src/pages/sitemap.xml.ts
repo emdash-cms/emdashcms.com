@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 
 export const prerender = false;
 
-const sitemapPaths = ["/sitemap-static.xml", "/sitemap-posts.xml"];
+const sitemapPaths = ["/sitemap-static.xml", "/sitemap-posts.xml", "/sitemap-tags.xml"];
 
 export const GET: APIRoute = ({ site }) => {
 	const siteUrl = site ?? new URL("https://emdashcms.com/");

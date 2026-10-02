@@ -1,0 +1,179 @@
+---
+import { decodeSlug, getEmDashCollection, getTaxonomyTermsWithCacheHint } from "emdash";
+import PostGrid from "../../../components/blog/PostGrid.astro";
+import Base from "../../../layouts/Base.astro";
+
+let slug: string | undefined;
+try {
+	slug = decodeSlug(Astro.params.slug);
+} catch {
+	slug = undefined;
+}
+
+if (!slug) return Astro.rewrite("/404");
+
+const { data: tags, cacheHint: tagsCacheHint } = await getTaxonomyTermsWithCacheHint("tag", {
+	includeCounts: false,
+});
+if (Astro.cache?.enabled) Astro.cache.set(tagsCacheHint);
+
+const tag = tags.find((term) => term.slug === slug);
+if (!tag) return Astro.rewrite("/404");
+
+const { entries: posts, error, cacheHint } = await getEmDashCollection("posts", {
+	status: "published",
+	where: { tag: tag.slug },
+	orderBy: { published_at: "desc" },
+});
+
+if (error) console.error(`Failed to load posts tagged ${tag.slug}:`, error);
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+---
+
+<Base
+	title={`${tag.label} posts`}
+	description={tag.description ?? `Browse EmDash blog posts tagged ${tag.label}.`}
+>
+	<section class="tag-archive" aria-labelledby="tag-archive-title">
+		<div class="tag-archive-container container">
+			<header class="tag-archive-header">
+				<nav aria-label="Breadcrumb">
+					<ol class="tag-archive-breadcrumb" role="list">
+						<li><a href="/blog">Blog</a></li>
+						<li aria-hidden="true">/</li>
+						<li><a href="/blog/tags">Tags</a></li>
+					</ol>
+				</nav>
+				<p class="tag-archive-eyebrow">
+					<span class="tag-archive-eyebrow-dash" aria-hidden="true"></span>Tag
+				</p>
+				<h1 id="tag-archive-title" class="tag-archive-title">{tag.label}</h1>
+				{
+					tag.description && <p class="tag-archive-description">{tag.description}</p>
+				}
+			</header>
+
+			{
+				posts.length > 0 ? (
+					<PostGrid posts={posts} headingLevel={2} />
+				) : (
+					<div class="tag-archive-empty">
+						<h2>No published posts yet</h2>
+						<p>Posts tagged {tag.label} will appear here after they are published.</p>
+						<a href="/blog" class="btn btn-secondary">Browse all posts</a>
+					</div>
+				)
+			}
+		</div>
+	</section>
+</Base>
+
+<style>
+	.tag-archive {
+		min-height: calc(100vh - 200px);
+		padding: 8.5rem 0 var(--spacing-5xl);
+		background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+	}
+
+	.tag-archive-container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-2xl);
+	}
+
+	.tag-archive-header {
+		max-width: 46rem;
+	}
+
+	.tag-archive-breadcrumb {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: var(--spacing-xl);
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		list-style: none;
+	}
+
+	.tag-archive-breadcrumb a {
+		color: inherit;
+		border-radius: var(--radius-sm);
+	}
+
+	.tag-archive-breadcrumb a:hover {
+		color: var(--color-text);
+	}
+
+	.tag-archive-eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: var(--spacing-md);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		line-height: 1;
+	}
+
+	.tag-archive-eyebrow-dash {
+		width: 0.875rem;
+		height: 2px;
+		background: var(--color-primary);
+		border-radius: var(--radius-full);
+	}
+
+	.tag-archive-title {
+		color: var(--color-text);
+		font-size: var(--font-size-3xl);
+		font-weight: 700;
+		line-height: 1.08;
+		letter-spacing: -0.04em;
+		overflow-wrap: anywhere;
+		text-wrap: balance;
+	}
+
+	.tag-archive-description {
+		max-width: 38rem;
+		margin-top: var(--spacing-md);
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+		font-size: var(--font-size-base);
+		line-height: 1.6;
+		text-wrap: pretty;
+	}
+
+	.tag-archive-empty {
+		padding: var(--spacing-3xl) var(--spacing-xl);
+		text-align: center;
+		background: var(--color-surface);
+		border: 1px dashed var(--color-border);
+		border-radius: 18px;
+	}
+
+	.tag-archive-empty h2 {
+		margin-bottom: var(--spacing-sm);
+		font-size: var(--font-size-xl);
+	}
+
+	.tag-archive-empty p {
+		margin-bottom: var(--spacing-lg);
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+	}
+
+	@media (min-width: 640px) {
+		.tag-archive-title {
+			font-size: var(--font-size-4xl);
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.tag-archive {
+			padding-top: 10rem;
+		}
+	}
+
+	@media (max-width: 639.98px) {
+		.tag-archive {
+			padding-top: 7.5rem;
+		}
+	}
+</style>

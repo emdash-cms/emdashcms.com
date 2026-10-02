@@ -1,0 +1,208 @@
+---
+import { getTaxonomyTermsWithCacheHint } from "emdash";
+import Base from "../../layouts/Base.astro";
+
+const { data: tags, cacheHint } = await getTaxonomyTermsWithCacheHint("tag");
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const sortedTags = tags.toSorted((a, b) => a.label.localeCompare(b.label));
+---
+
+<Base title="Blog tags" description="Browse EmDash release notes and product updates by tag.">
+	<section class="tag-directory" aria-labelledby="tag-directory-title">
+		<div class="tag-directory-container container">
+			<header class="tag-directory-header">
+				<a href="/blog" class="tag-directory-back">Blog</a>
+				<p class="tag-directory-eyebrow">
+					<span class="tag-directory-eyebrow-dash" aria-hidden="true"></span>Tags
+				</p>
+				<h1 id="tag-directory-title" class="tag-directory-title">Browse the EmDash blog by tag</h1>
+				<p class="tag-directory-intro">
+					Find release notes, announcements, and product updates grouped by topic.
+				</p>
+			</header>
+
+			{
+				sortedTags.length > 0 ? (
+					<ul class="tag-list" role="list">
+						{sortedTags.map((tag) => {
+							const count = tag.count ?? 0;
+							return (
+								<li>
+									<a href={`/blog/tag/${encodeURIComponent(tag.slug)}`} class="tag-card">
+										<span class="tag-card-label">{tag.label}</span>
+										<span class="tag-card-count">
+											{count} {count === 1 ? "post" : "posts"}
+										</span>
+										{tag.description && <span class="tag-card-description">{tag.description}</span>}
+									</a>
+								</li>
+							);
+						})}
+					</ul>
+				) : (
+					<div class="tag-directory-empty">
+						<h2>No tags yet</h2>
+						<p>Tags will appear here after they are added in the EmDash admin.</p>
+					</div>
+				)
+			}
+		</div>
+	</section>
+</Base>
+
+<style>
+	.tag-directory {
+		min-height: calc(100vh - 200px);
+		padding: 8.5rem 0 var(--spacing-5xl);
+		background: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+	}
+
+	.tag-directory-container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-2xl);
+	}
+
+	.tag-directory-header {
+		max-width: 46rem;
+	}
+
+	.tag-directory-back {
+		display: inline-flex;
+		margin-bottom: var(--spacing-xl);
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		border-radius: var(--radius-sm);
+	}
+
+	.tag-directory-back:hover {
+		color: var(--color-text);
+	}
+
+	.tag-directory-eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: var(--spacing-md);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		line-height: 1;
+	}
+
+	.tag-directory-eyebrow-dash {
+		width: 0.875rem;
+		height: 2px;
+		background: var(--color-primary);
+		border-radius: var(--radius-full);
+	}
+
+	.tag-directory-title {
+		color: var(--color-text);
+		font-size: var(--font-size-3xl);
+		font-weight: 700;
+		line-height: 1.08;
+		letter-spacing: -0.04em;
+		text-wrap: balance;
+	}
+
+	.tag-directory-intro {
+		max-width: 38rem;
+		margin-top: var(--spacing-md);
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+		font-size: var(--font-size-base);
+		line-height: 1.6;
+		text-wrap: pretty;
+	}
+
+	.tag-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+		gap: 1.25rem;
+		list-style: none;
+	}
+
+	.tag-card {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 0.5rem var(--spacing-md);
+		height: 100%;
+		padding: var(--spacing-xl);
+		color: var(--color-text);
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 18px;
+		box-shadow:
+			0 0 0 4px var(--border-faint),
+			var(--shadow-sm);
+		transition:
+			border-color var(--transition-base),
+			box-shadow var(--transition-base);
+	}
+
+	.tag-card:hover {
+		border-color: color-mix(in srgb, var(--color-text) 18%, var(--color-surface));
+		box-shadow:
+			0 0 0 4px var(--border-faint),
+			var(--shadow-lg);
+	}
+
+	.tag-card-label {
+		min-width: 0;
+		font-size: var(--font-size-lg);
+		font-weight: 650;
+		overflow-wrap: anywhere;
+	}
+
+	.tag-card-count {
+		align-self: center;
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-size: var(--font-size-sm);
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+
+	.tag-card-description {
+		grid-column: 1 / -1;
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+		font-size: 0.9375rem;
+		line-height: 1.55;
+		text-wrap: pretty;
+	}
+
+	.tag-directory-empty {
+		padding: var(--spacing-3xl) var(--spacing-xl);
+		text-align: center;
+		background: var(--color-surface);
+		border: 1px dashed var(--color-border);
+		border-radius: 18px;
+	}
+
+	.tag-directory-empty h2 {
+		margin-bottom: var(--spacing-sm);
+		font-size: var(--font-size-xl);
+	}
+
+	.tag-directory-empty p {
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+	}
+
+	@media (min-width: 640px) {
+		.tag-directory-title {
+			font-size: var(--font-size-4xl);
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.tag-directory {
+			padding-top: 10rem;
+		}
+	}
+
+	@media (max-width: 639.98px) {
+		.tag-directory {
+			padding-top: 7.5rem;
+		}
+	}
+</style>

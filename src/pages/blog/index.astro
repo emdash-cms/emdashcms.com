@@ -28,9 +28,12 @@ const [latest, ...earlier] = sortedPosts;
 						<span class="blog-title-lead">Release notes and product updates from</span> EmDash
 					</h1>
 				</div>
-				<p class="blog-intro">
-					This is where we announce new releases, notable improvements, and major changes to EmDash CMS.
-				</p>
+				<div class="blog-intro-group">
+					<p class="blog-intro">
+						This is where we announce new releases, notable improvements, and major changes to EmDash CMS.
+					</p>
+					<a href="/blog/tags" class="blog-tags-link">Browse by tag</a>
+				</div>
 			</header>
 
 			{
@@ -120,6 +123,30 @@ const [latest, ...earlier] = sortedPosts;
 		text-wrap: pretty;
 	}
 
+	.blog-intro-group {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--spacing-md);
+	}
+
+	.blog-tags-link {
+		color: color-mix(in srgb, var(--color-primary) 72%, #000);
+		font-size: var(--font-size-sm);
+		font-weight: 650;
+		border-radius: var(--radius-sm);
+	}
+
+	:global(:root.dark) .blog-tags-link {
+		color: var(--color-primary);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .blog-tags-link {
+			color: var(--color-primary);
+		}
+	}
+
 	.blog-earlier {
 		display: flex;
 		flex-direction: column;
@@ -175,7 +202,7 @@ const [latest, ...earlier] = sortedPosts;
 			gap: var(--spacing-2xl);
 		}
 
-		.blog-intro {
+		.blog-intro-group {
 			justify-self: end;
 		}
 	}
