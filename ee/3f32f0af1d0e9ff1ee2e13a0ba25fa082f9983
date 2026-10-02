@@ -1,0 +1,19 @@
+.agents/skills/writing-changelog-posts/references/editorial-patterns.md
+  s_d7b5aa4a49e9a5::t_63d79c690e639f 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ee3f32f0af1d0e9ff1ee2e13a0ba25fa082f9983",
+  "prompts": {},
+  "sessions": {
+    "s_d7b5aa4a49e9a5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0fc09-e304-7513-8f6e-441a2a656097",
+        "model": "unknown"
+      },
+      "human_author": "Matt Kane <mkane@cloudflare.com>"
+    }
+  }
+}
