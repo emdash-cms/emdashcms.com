@@ -1,0 +1,19 @@
+public/seed.schema.json
+  s_1dd5f76b4ce0f4::t_5b8811d556e23f 1-497
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f1d151abe08c72112443962895dd0c1e72716d92",
+  "prompts": {},
+  "sessions": {
+    "s_1dd5f76b4ce0f4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ecc5-cbc5-7aa0-9e12-b2e66cceb95b",
+        "model": "unknown"
+      },
+      "human_author": "Noah (Nguyen Pham) <ptknguyen04@gmail.com>"
+    }
+  }
+}
