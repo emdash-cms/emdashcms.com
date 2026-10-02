@@ -1,0 +1,45 @@
+.agents/skills/writing-changelog-posts/agents/openai.yaml
+  s_f3de321435a40c::t_d2543c3b3224cc 1-4
+AGENTS.md
+  s_f3de321435a40c::t_610ad09977b6c3 30
+seed/seed.json
+  s_82353d3549c067::t_7922a1c9437f1d 91-112,279-281
+src/pages/blog/[slug].astro
+  s_82353d3549c067::t_47166236996c85 48,105-117,276-302
+src/pages/blog/index.astro
+  s_82353d3549c067::t_32fb44e422f3e0 31-36,126-149,205
+src/pages/blog/tag/[slug].astro
+  s_82353d3549c067::t_5ae9698ae1b7ff 1-179
+src/pages/blog/tags.astro
+  s_82353d3549c067::t_809beb4cf1a755 1-208
+src/pages/sitemap-static.xml.ts
+  s_82353d3549c067::t_7db4d0fd3a3360 5
+src/pages/sitemap-tags.xml.ts
+  s_82353d3549c067::t_661a9a7900849d 1-29
+src/pages/sitemap.xml.ts
+  s_82353d3549c067::t_4ac9a56854b9aa 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2363d5e30e2d571bad4e1b13e851e2cb741ed10f",
+  "prompts": {},
+  "sessions": {
+    "s_82353d3549c067": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0fbe2-e23a-72e0-ba7c-5f4fb01051f2",
+        "model": "unknown"
+      },
+      "human_author": "Matt Kane <mkane@cloudflare.com>"
+    },
+    "s_f3de321435a40c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0fbde-e80c-73d3-bca4-d5944b209a6d",
+        "model": "unknown"
+      },
+      "human_author": "Matt Kane <mkane@cloudflare.com>"
+    }
+  }
+}
