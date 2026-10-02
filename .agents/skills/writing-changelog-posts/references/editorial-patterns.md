@@ -1,6 +1,6 @@
 # Editorial Patterns
 
-These are the synthesized editorial rules for EmDash changelog posts. Apply them directly. Do not research or imitate other companies' release posts unless the user explicitly asks for a fresh comparison.
+Use these editorial principles as a starting point, adapting the structure and emphasis to the evidence for each release.
 
 ## Core rules
 
