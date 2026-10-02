@@ -9,6 +9,7 @@
  * `--byline-ring` to the background behind the byline so the gap between
  * overlapping avatars matches it.
  */
+import { getImage } from "astro:assets";
 import { authorSeparator, type PostAuthor } from "../../lib/posts";
 
 interface Props {
@@ -24,6 +25,21 @@ const shown = authors.slice(0, MAX_AVATARS);
 const hidden = authors.length - shown.length;
 const pixels = size === "post" ? 40 : 24;
 
+// Uploaded avatars are full-size photos; request one at the displayed size and 2x.
+const avatars = await Promise.all(
+	shown.map((author) =>
+		author.avatar
+			? getImage({
+					src: new URL(author.avatar.src, Astro.site ?? Astro.url).href,
+					width: pixels,
+					height: pixels,
+					layout: "fixed",
+					format: "webp",
+				})
+			: null,
+	),
+);
+
 // The post header names everyone. Cards name the authors whose avatars show, then count the rest.
 const names = (size === "post" ? authors : shown).map((author) => ({ text: author.name, count: false }));
 if (size === "card" && hidden > 0) names.push({ text: `${hidden} ${hidden === 1 ? "other" : "others"}`, count: true });
@@ -33,14 +49,16 @@ if (size === "card" && hidden > 0) names.push({ text: `${hidden} ${hidden === 1 
 	authors.length > 0 && (
 		<p class:list={["byline", `byline--${size}`]}>
 			<span class="byline-avatars" aria-hidden="true">
-				{shown.map((author) =>
+				{shown.map((author, index) =>
 					author.avatar ? (
 						<span
 							class="byline-avatar"
 							style={author.avatar.color ? `--avatar-bg: ${author.avatar.color}` : undefined}
 						>
 							<img
-								src={author.avatar.src}
+								src={avatars[index]?.src ?? author.avatar.src}
+								srcset={avatars[index]?.srcSet.attribute || undefined}
+								sizes={`${pixels}px`}
 								alt=""
 								width={pixels}
 								height={pixels}
