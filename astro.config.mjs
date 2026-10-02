@@ -58,6 +58,8 @@ export default defineConfig({
 			},
 		}),
 		emdash({
+			// Known at build time so Astro's image service resizes media from this origin.
+			siteUrl: "https://emdashcms.com",
 			database: d1({ binding: "DB", session: "auto" }),
 			storage: r2({ binding: "MEDIA" }),
 			// Cloudflare Access for admin UI auth.
