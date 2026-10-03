@@ -1,0 +1,4 @@
+interface:
+  display_name: "Writing EmDash changelog posts"
+  short_description: "Research and write EmDash release blog posts"
+  default_prompt: "Research the specified EmDash release and draft a complete changelog blog post."
