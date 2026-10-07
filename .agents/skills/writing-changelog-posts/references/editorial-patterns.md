@@ -18,6 +18,15 @@ Use these editorial principles as a starting point, adapting the structure and e
 - Link directly to the release, source PRs, and current documentation.
 - End with complete smaller-change coverage and contributor acknowledgement.
 
+## Voice and level of detail
+
+- Use the words a site builder would use, not terms from PR descriptions, changesets, or code. PR descriptions are likely to use technical jargon that should be translated into user-facing language. The focus should be on how behaviour changes for the user.
+- You do not need to enumerate every changed visual detail unless they materially affect the user's experience. Just keep a representative view.
+- Keep headings literal. A heading that characterizes a feature reads as a promise; put that kind of impression in a qualified sentence in the body instead.
+- Include a caveat only when it changes what a reader does. Leave out limitations that are accurate but inconsequential.
+- Do not feature security fixes as highlights or in the introduction. Describe them plainly in the smaller-changes roundup without labelling them as security issues, and confirm with the user whether each one belongs in the post.
+- Keep the introduction short and general, in a conversational tone, with short paragraphs. A plain closing line about the usual reliability and bug fixes is enough; there is no need to list fix areas there.
+
 ## Recommended article shape
 
 Adapt the shape to the release rather than filling headings mechanically:
