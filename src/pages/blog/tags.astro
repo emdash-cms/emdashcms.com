@@ -69,7 +69,8 @@ const sortedTags = tags.toSorted((a, b) => a.label.localeCompare(b.label));
 	}
 
 	.tag-directory-back {
-		display: inline-flex;
+		display: flex;
+		width: fit-content;
 		margin-bottom: var(--spacing-xl);
 		color: color-mix(in srgb, var(--color-text) 72%, transparent);
 		font-size: var(--font-size-sm);
