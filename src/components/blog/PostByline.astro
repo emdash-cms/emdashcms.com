@@ -9,6 +9,7 @@
  * `--byline-ring` to the background behind the byline so the gap between
  * overlapping avatars matches it.
  */
+import { Image } from "astro:assets";
 import { authorSeparator, type PostAuthor } from "../../lib/posts";
 
 interface Props {
@@ -39,13 +40,13 @@ if (size === "card" && hidden > 0) names.push({ text: `${hidden} ${hidden === 1 
 							class="byline-avatar"
 							style={author.avatar.color ? `--avatar-bg: ${author.avatar.color}` : undefined}
 						>
-							<img
-								src={author.avatar.src}
+							<Image
+								src={new URL(author.avatar.src, Astro.site ?? Astro.url).href}
 								alt=""
 								width={pixels}
 								height={pixels}
+								layout="fixed"
 								loading={size === "post" ? "eager" : "lazy"}
-								decoding="async"
 							/>
 						</span>
 					) : (
