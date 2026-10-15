@@ -3,7 +3,7 @@ This is an EmDash site -- a CMS built on Astro with a full admin UI.
 ## Commands
 
 ```bash
-npx emdash dev        # Start dev server (runs migrations, seeds, generates types)
+pnpm dev              # Start dev server (runs migrations, seeds, generates types)
 npx emdash types      # Regenerate TypeScript types from schema
 ```
 
