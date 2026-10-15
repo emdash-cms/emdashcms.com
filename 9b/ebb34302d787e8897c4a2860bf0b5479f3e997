@@ -1,0 +1,87 @@
+.agents/skills/building-emdash-site/SKILL.md
+  s_a016f302cd318b::t_91d6308d7c0b8a 3,16,20,62,67,70,82,87,89,91,96,103,108-109,116,129
+.agents/skills/building-emdash-site/references/configuration.md
+  s_a016f302cd318b::t_8168904630026e 35-60,80,93,108-110,114-126,132,137,163,182-184,199,203,218-223,233-234,237
+.agents/skills/building-emdash-site/references/querying-and-rendering.md
+  s_a016f302cd318b::t_66fc0d1904a6c7 45,53,61,82-107,116,120,137,142,145,151-175,197-214,235,241,243,246,260,265,268,270,278,280-284,306,310-315,317,320,322-325,436,448
+.agents/skills/building-emdash-site/references/schema-and-seed.md
+  s_a016f302cd318b::t_773e3fe1b3af77 3,17,45-52,66,70-72,74-77,79-80,96,125-126,139-195,217,269,275,294-298,368,442-444,447-452,455-456,458-459,462,465-468,523,525,527,529-531,533-535,538,543-544,546-548
+.agents/skills/building-emdash-site/references/site-features.md
+  s_a016f302cd318b::t_eb73d25ad7e90c 6,17-20,23,30,37-40,52-56,93-99,105-110,131,162-163,238,241,286-301,318-320,324-337,344,417,487,494
+.agents/skills/creating-plugins/SKILL.md
+  s_a016f302cd318b::t_050f37af785542 3,6,8,10,12-15,17,19,21-25,28,30-31,33,35-36,39,41,44,46,48,50-78,80,82,84-88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124-135
+.agents/skills/creating-plugins/references/admin-ui.md
+  s_a016f302cd318b::t_4f133e45746e49 1,3,5,7,9-19,21-62,64-84,86-87,90,92,94-128,131,134,136,138,140,142,144,146-160,164,166,168-172,174,176,178,180,182,184-187,189-191,193-195,198,201-207,209,212,214
+.agents/skills/creating-plugins/references/api-routes.md
+  s_a016f302cd318b::t_bc51972b0618be 1,3,5,7-9,11-14,16,19-26,28,32,34-35,37,40-53,57-73,75-91,94-99,103,105,107-108,110-113,116-119,122-123,125,127,129,131-136,138-141,143,145,149-152,154,157,159,161,163-166,168-186,188-205,207-212,216-227,229,232,234-239,241-243,245
+.agents/skills/creating-plugins/references/block-kit.md
+  s_a016f302cd318b::t_f20f867907cf72 7,19-20,24-28,61-79,83-98,114,141-142,148-151,162-196,206-207,243-250,255-256,367-478,507-518,567-568,574,586-631,638
+.agents/skills/creating-plugins/references/comments.md
+  s_a016f302cd318b::t_f6a38b3e95e877 1-13
+.agents/skills/creating-plugins/references/content.md
+  s_a016f302cd318b::t_68cbd0f6df4db9 1-43
+.agents/skills/creating-plugins/references/hooks.md
+  s_a016f302cd318b::t_db42d109b0ad8e 1,3,16,18-30,33-52,61,115,119-125,129-130,137-138,151,185-274,319,324-327,335,340-356,358,366,371-374,380-454,462-464,466-471,519,521,556-558,565,569-600
+.agents/skills/creating-plugins/references/media.md
+  s_a016f302cd318b::t_90d64c6a324a3a 1-25
+.agents/skills/creating-plugins/references/portable-text-blocks.md
+  s_a016f302cd318b::t_b4be55b43b30f5 3-5,83
+.agents/skills/creating-plugins/references/publishing.md
+  s_a016f302cd318b::t_eddbf6fb4ece7b 1,3,5,7,9-15,17,19-25,27-29,32,34,36,38,40-42,44-67,70,72,74-77,79-89,91,93,95,97,99,101
+.agents/skills/creating-plugins/references/sandbox-boundaries.md
+  s_a016f302cd318b::t_253b60ca223670 1-43
+.agents/skills/creating-plugins/references/storage.md
+  s_a016f302cd318b::t_184635dd629003 1,3,5-9,11,13,15-22,25,28-30,32,35-39,41-60,63-65,68,70-79,81-82,84,87-89,91,94-99,102-104,107,109-114,116,118,120,123-125,128-130,133-141,144,146,148-153,155,157,159,162-171,174,176-182,190-196,200,203,205-206,209,211,213
+.agents/skills/creating-plugins/references/taxonomies-and-redirects.md
+  s_a016f302cd318b::t_cd9365f2407dfa 1-19
+.agents/skills/emdash-cli/EDITING-FLOW.md
+  s_a016f302cd318b::t_58707113631f07 142,144-145,147-155,158-162
+.agents/skills/emdash-cli/SKILL.md
+  s_a016f302cd318b::t_b26ba1719ab291 3,8,10-13,24,30,33,36,39,67,69-78,88,100,108-109,159-161,171,211-240,255
+.agents/skills/upgrading-emdash/SKILL.md
+  s_a016f302cd318b::t_f8a96a4ee6a11d 1-33
+.agents/skills/wordpress-plugin-to-emdash/SKILL.md
+  s_a016f302cd318b::t_52c6819cf3c528 1-96
+.agents/skills/wordpress-theme-to-emdash/SKILL.md
+  s_a016f302cd318b::t_3d9901a2e05ad0 1-59
+.agents/skills/wordpress-theme-to-emdash/phases/1-discovery.md
+  s_a016f302cd318b::t_bbf4252773f263 1-147
+.agents/skills/wordpress-theme-to-emdash/phases/2-design.md
+  s_a016f302cd318b::t_91de26ad373026 1-122
+.agents/skills/wordpress-theme-to-emdash/phases/3-templates.md
+  s_a016f302cd318b::t_e1489841702339 1-41
+.agents/skills/wordpress-theme-to-emdash/phases/4-dynamic.md
+  s_a016f302cd318b::t_e55ac5203a935e 1-23
+.agents/skills/wordpress-theme-to-emdash/phases/5-seed.md
+  s_a016f302cd318b::t_5ffccd93e3b545 1-23
+.agents/skills/wordpress-theme-to-emdash/phases/6-verify.md
+  s_a016f302cd318b::t_e5989eb50df2fd 1-54
+.agents/skills/wordpress-theme-to-emdash/references/concept-mapping.md
+  s_a016f302cd318b::t_919ae7062e8927 1-164
+AGENTS.md
+  s_a016f302cd318b::t_9cc6a2b45b034b 6
+astro.config.mjs
+  s_a016f302cd318b::t_5f6a97afdcaded 63
+package.json
+  s_a016f302cd318b::t_e795ec4ee27397 17,21
+pnpm-lock.yaml
+  s_a016f302cd318b::t_2d71d9e9c0f146 174,176-177,188-189,649-678,711-712,717-718,726-727,732-733,754-755,757-758,760-761,763-764,769-770,1338-1355,1441-1443,2317-2319,2460-2461,3504-3506,4153,4158,4292,4297,4301,4305,4330,4332,4337,4339-4340,4342,4363,4365,4368,4370,4381,4389,4533-4605,4641,4645-4652,4656-4659,4661,4696,4701,4728,4734,4740,4756,4762,4800,4805,4809,4819,4826,4838,4840-4841,5225-5252,5339-5340,5345,5355-5356,5942,5944-5946,6170,6174,6271-6272,6320,6323-6324,6406,6408,6410,6413-6420,6422,6425,6436-6437,6600,6602-6603,6608,6611,6616,6621,6632-6634,6671,6673,7414,7416,7461,7463,7483,7488,7605-7606
+skills-lock.json
+  s_a016f302cd318b::t_f005a2d2091286 1-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9bebb34302d787e8897c4a2860bf0b5479f3e997",
+  "prompts": {},
+  "sessions": {
+    "s_a016f302cd318b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2a8ef026-0370-4e8e-8cdb-8a0531348bac",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Matt Kane <mkane@cloudflare.com>"
+    }
+  }
+}
