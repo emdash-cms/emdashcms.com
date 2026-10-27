@@ -1,7 +1,7 @@
 /**
  * A small rasteriser for generated images: an RGB float canvas, discs, filled
- * paths, masks and blurs, and a PNG encoder. It needs no rendering engine and
- * no WebAssembly, so it runs in a Worker.
+ * paths, masks, gradients and blurs, and a PNG encoder. It needs no
+ * rendering engine and no WebAssembly, so it runs in a Worker.
  *
  * Colours are 0–1 floats in sRGB and blend in sRGB, as browsers do. They are
  * rounded to 8 bits once, when the image is encoded.
@@ -270,8 +270,52 @@ export function blurMask(mask: Mask, sigma: number): Mask {
 	return blurred;
 }
 
+/** A colour at an offset from 0 to 1 along a gradient. */
+export interface GradientStop {
+	offset: number;
+	color: Rgb;
+}
+
+/** A linear gradient from (x1, y1) to (x2, y2) in pixels, with its stops in order of offset. */
+export interface LinearGradient {
+	x1: number;
+	y1: number;
+	x2: number;
+	y2: number;
+	stops: readonly GradientStop[];
+}
+
+/**
+ * Blend a linear gradient over the canvas through `mask`, at `opacity`, as SVG
+ * paints one by default: each pixel is projected onto the gradient's line,
+ * held at the end colours past either end, and its colour interpolated
+ * between the stops either side in sRGB.
+ */
+export function fillMaskGradient(canvas: Canvas, mask: Mask, gradient: LinearGradient, opacity = 1) {
+	const { x1, y1, stops } = gradient;
+	const dx = gradient.x2 - x1;
+	const dy = gradient.y2 - y1;
+	const length2 = dx * dx + dy * dy;
+	const color: [number, number, number] = [0, 0, 0];
+	blendThrough(canvas, mask, opacity, (x, y) => {
+		const t = Math.min(1, Math.max(0, ((x + 0.5 - x1) * dx + (y + 0.5 - y1) * dy) / length2));
+		let next = stops.findIndex((stop) => stop.offset >= t);
+		if (next === -1) next = stops.length - 1;
+		const from = stops[Math.max(0, next - 1)];
+		const to = stops[next];
+		const span = to.offset - from.offset;
+		const share = span > 0 ? (t - from.offset) / span : 1;
+		for (let c = 0; c < 3; c++) color[c] = from.color[c] + (to.color[c] - from.color[c]) * share;
+		return color;
+	});
+}
+
 /** Blend `color` over the canvas through `mask`, at `opacity`. */
 export function fillMask(canvas: Canvas, mask: Mask, color: Rgb, opacity = 1) {
+	blendThrough(canvas, mask, opacity, () => color);
+}
+
+function blendThrough(canvas: Canvas, mask: Mask, opacity: number, colorAt: (x: number, y: number) => Rgb) {
 	const { width, height, pixels } = canvas;
 	const x0 = Math.max(0, mask.x);
 	const x1 = Math.min(width, mask.x + mask.width);
@@ -282,6 +326,7 @@ export function fillMask(canvas: Canvas, mask: Mask, color: Rgb, opacity = 1) {
 			const a = Math.min(1, mask.alpha[(y - mask.y) * mask.width + x - mask.x]) * opacity;
 			if (a <= 0) continue;
 			const i = (y * width + x) * 3;
+			const color = colorAt(x, y);
 			pixels[i] += (color[0] - pixels[i]) * a;
 			pixels[i + 1] += (color[1] - pixels[i + 1]) * a;
 			pixels[i + 2] += (color[2] - pixels[i + 2]) * a;

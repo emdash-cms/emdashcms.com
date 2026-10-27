@@ -4,14 +4,15 @@
  * og:image points to.
  *
  * Release posts lead with the version number and other posts with the title,
- * at the bottom left, under the EmDash logo and the tag. The motif fades in
- * from the left, away from the text. Its grey and orange dots can still sit
- * behind the text, so a scrim in the cover's background colour darkens a band
- * at the top and the corner behind the text, each only as far as this card
- * needs for its text to reach WCAG contrast.
+ * at the bottom left, under the EmDash logo and the tag. The motif is composed
+ * for the region right of the text, on the same dot lattice as the paper, so
+ * it fills the right of the card and keeps clear of the text. A very long
+ * title or the pill can still sit over its dots, so a scrim in the cover's
+ * background colour darkens a band at the top and the corner behind the text,
+ * each only as far as this card needs for its text to reach WCAG contrast.
  */
 import type { ContentEntry, InferCollectionData } from "emdash";
-import { ART_CELL, ART_GRIDS, halftoneArt } from "./post-art";
+import { ART_CELL, halftoneArt } from "./post-art";
 import { authorSeparator, formatPostDate, postAuthors, readingMinutes } from "./posts";
 import {
 	blendDisc,
@@ -20,10 +21,13 @@ import {
 	createCanvas,
 	encodePng,
 	fillMask,
+	fillMaskGradient,
 	fillPath,
+	type LinearGradient,
 	type Mask,
 	type PathCommand,
 	parseHex,
+	type Rgb,
 	WHITE,
 } from "./raster";
 import { blockHeight, blockOutline, blockWidth, type Face, fitText, loadInter, type TextBlock, type TextStyle } from "./text";
@@ -71,16 +75,58 @@ const WIDTH = 1200;
 const HEIGHT = 630;
 const PADDING = 72;
 
-/** public/brand/logo-dark-text.svg: the wordmark's six paths, then the mark's two, in a 471 × 118 view box. */
-const LOGO_PATHS = [
+/**
+ * public/brand/logo-light-text.svg, the logo the site header shows in dark
+ * mode, in a 471 × 118 view box: the wordmark's six paths, which are white.
+ */
+const WORDMARK_PATHS = [
 	"M154.762 90V27.4834H194.447V35.8449H164.467V54.0844H192.844V62.2293H164.467V81.6385H194.447V90H154.762Z",
 	"M204.172 90V44.4231H213.53V51.4849H213.747C215.697 46.7193 220.332 43.5566 226.311 43.5566C232.593 43.5566 237.185 46.8059 239.005 52.5247H239.222C241.561 46.9792 246.933 43.5566 253.432 43.5566C262.443 43.5566 268.335 49.5353 268.335 58.6767V90H258.934V60.9296C258.934 54.9942 255.771 51.5716 250.226 51.5716C244.68 51.5716 240.825 55.7307 240.825 61.4928V90H231.64V60.2364C231.64 54.9508 228.304 51.5716 223.018 51.5716C217.473 51.5716 213.53 55.9473 213.53 61.8394V90H204.172Z",
 	"M279.404 90V27.4834H301.456C319.998 27.4834 331.046 38.8776 331.046 58.5467V58.6334C331.046 78.3892 320.085 90 301.456 90H279.404ZM289.108 81.5951H300.546C313.803 81.5951 321.125 73.4935 321.125 58.72V58.6334C321.125 43.9465 313.716 35.8449 300.546 35.8449H289.108V81.5951Z",
 	"M353.379 90.8232C344.281 90.8232 338.172 85.2344 338.172 77.0461V76.9595C338.172 69.0312 344.324 64.1789 355.112 63.529L367.502 62.7925V59.3699C367.502 54.3443 364.253 51.3116 358.448 51.3116C353.032 51.3116 349.696 53.8677 348.916 57.507L348.83 57.8969H339.992L340.035 57.4203C340.685 49.5787 347.487 43.5566 358.708 43.5566C369.842 43.5566 376.904 49.4487 376.904 58.5901V90H367.502V82.8082H367.329C364.686 87.7038 359.401 90.8232 353.379 90.8232ZM347.617 76.8295C347.617 80.8153 350.909 83.3281 355.935 83.3281C362.52 83.3281 367.502 78.8657 367.502 72.9303V69.3778L356.368 70.0709C350.736 70.4175 347.617 72.887 347.617 76.7428V76.8295Z",
 	"M403.959 90.9098C392.564 90.9098 385.893 85.2777 384.939 76.9595L384.896 76.5695H394.167L394.254 77.0028C395.121 81.2052 398.24 83.6747 404.002 83.6747C409.634 83.6747 413.013 81.3352 413.013 77.6527V77.6093C413.013 74.6633 411.367 72.9737 406.471 71.8039L399.02 70.1143C390.355 68.1214 386.066 63.9623 386.066 57.3337V57.2903C386.066 49.1454 393.171 43.5566 403.655 43.5566C414.443 43.5566 420.942 49.5787 421.418 57.3337L421.462 57.8536H412.667L412.624 57.5503C412.06 53.5645 408.941 50.7917 403.655 50.7917C398.63 50.7917 395.467 53.1746 395.467 56.8138V56.8571C395.467 59.6732 397.33 61.5794 402.226 62.7492L409.634 64.4388C418.949 66.605 422.501 70.2876 422.501 76.8295V76.8728C422.501 85.191 414.703 90.9098 403.959 90.9098Z",
 	"M431.014 90V27.4834H440.372V51.9182H440.588C443.014 46.6326 447.91 43.5566 454.712 43.5566C464.46 43.5566 470.872 50.8351 470.872 61.8394V90H461.514V63.6157C461.514 56.0773 457.701 51.5716 451.116 51.5716C444.661 51.5716 440.372 56.5105 440.372 63.6157V90H431.014Z",
-	"M0.410156 96.5125V21.2097C0.410156 9.48841 9.91245 -0.013916 21.6338 -0.013916V9.40601L21.3291 9.40991C14.9509 9.57133 9.83008 14.7927 9.83008 21.2097V96.5125C9.83008 102.93 14.9509 108.151 21.3291 108.312L21.6338 108.316H96.9365L97.2412 108.312C103.518 108.153 108.577 103.094 108.736 96.8171L108.74 96.5125V21.2097C108.74 14.6909 103.455 9.40601 96.9365 9.40601V-0.013916C108.658 -0.013916 118.16 9.48838 118.16 21.2097V96.5125C118.16 108.234 108.658 117.736 96.9365 117.736H21.6338C9.91248 117.736 0.410156 108.234 0.410156 96.5125ZM96.9365 -0.013916V9.40601H21.6338V-0.013916H96.9365Z",
-	"M28.6699 53.366H90.4746V63.6668H28.6699V53.366Z",
+];
+
+/** The same file's mark: its ring and bar, each filled with a linear gradient whose ends are in view box units. */
+const MARK_PATHS: readonly {
+	d: string;
+	from: readonly [number, number];
+	to: readonly [number, number];
+	stops: readonly (readonly [offset: number, hex: string])[];
+}[] = [
+	{
+		d: "M0.410156 96.5125V21.2097C0.410156 9.48841 9.91245 -0.013916 21.6338 -0.013916V9.40601L21.3291 9.40991C14.9509 9.57133 9.83008 14.7927 9.83008 21.2097V96.5125C9.83008 102.93 14.9509 108.151 21.3291 108.312L21.6338 108.316H96.9365L97.2412 108.312C103.518 108.153 108.577 103.094 108.736 96.8171L108.74 96.5125V21.2097C108.74 14.6909 103.455 9.40601 96.9365 9.40601V-0.013916C108.658 -0.013916 118.16 9.48838 118.16 21.2097V96.5125C118.16 108.234 108.658 117.736 96.9365 117.736H21.6338C9.91248 117.736 0.410156 108.234 0.410156 96.5125ZM96.9365 -0.013916V9.40601H21.6338V-0.013916H96.9365Z",
+		from: [-67.1002, 194.666],
+		to: [145.514, -65.5554],
+		stops: [
+			[0, "#0F006B"],
+			[0.0833333, "#281A81"],
+			[0.166667, "#5D0C83"],
+			[0.25, "#911475"],
+			[0.333333, "#CE2F55"],
+			[0.416667, "#FF6633"],
+			[0.5, "#F6821F"],
+			[0.583333, "#FBAD41"],
+			[0.666667, "#FFCD89"],
+			[0.75, "#FFE9CB"],
+			[0.833333, "#FFF7EC"],
+			[0.916667, "#FFF8EE"],
+			[1, "#FFFFFF"],
+		],
+	},
+	{
+		d: "M28.6699 53.366H90.4746V63.6668H28.6699V53.366Z",
+		from: [144.064, 43.1581],
+		to: [44.5609, 85.0447],
+		stops: [
+			[0, "#FFFFFF"],
+			[0.129253, "#FFF8EE"],
+			[0.617058, "#FBAD41"],
+			[0.848019, "#F6821F"],
+			[1, "#FF6633"],
+		],
+	},
 ];
 const LOGO_VIEWBOX_HEIGHT = 118;
 const LOGO_HEIGHT = 43;
@@ -152,9 +198,6 @@ const META_GAP = 26;
 const RELEASE_TITLE_FIT = { maxWidth: 672, maxLines: 2, balance: true };
 const ARTICLE_TITLE_FIT = { maxWidth: 792, maxLines: 3, minSize: 50, balance: true };
 
-/** The motif fades in across this share of the width, from transparent to full, as `linear-gradient(90deg, transparent 30%, #000 72%)`. */
-const MOTIF_FADE = [0.3, 0.72] as const;
-
 /*
  * PostCover's dark-mode colours as the browser resolves them from Base.astro
  * and theme.css: --art-bg mixes --color-bg #0a0a0a 40% into --color-surface
@@ -168,13 +211,29 @@ const INK_OPACITY = 0.5;
 /** Radius of the paper dot at the centre of every cell, in art units. */
 const PAPER_RADIUS = 0.75;
 
+/** Pixels per art unit. The card's dot lattice is the art's cells at this scale: 60 columns, and 31 rows centred down the card. */
+const ART_SCALE = 2;
+const LATTICE = ART_CELL * ART_SCALE;
+const COLUMNS = WIDTH / LATTICE;
+const ROWS = Math.floor(HEIGHT / LATTICE);
+const LATTICE_TOP = (HEIGHT - ROWS * LATTICE) / 2;
+
+/**
+ * The motif's region runs the full height from the first lattice column at
+ * least `gap` pixels right of the text block to the right edge, at least
+ * `minColumns` and at most `maxColumns` wide. It fades in over its first
+ * `fadeColumns`, so its left edge isn't a hard line.
+ */
+const MOTIF = { gap: 40, minColumns: 18, maxColumns: 33, fadeColumns: 3 };
+
 const SHADOW_BLUR = 10;
 const SHADOW_OPACITY = 0.3;
 
 /**
- * The scrim's shape, in pixels. The band runs across the top behind the logo
- * and pill, solid down to `solidTo` and clear from `clearFrom`, and blends
- * from its left strength to its right one between `leftTo` and `rightFrom`.
+ * The scrim's shape, in pixels. The band runs across the top behind the
+ * wordmark and pill, solid down to `solidTo` and clear from `clearFrom`, and
+ * blends from its left strength to its right one between `leftTo` and
+ * `rightFrom`.
  * The corner covers the text block, fading in from `above` its top to
  * `below` it, and out from `inside` its right edge to `outside` it.
  */
@@ -198,30 +257,34 @@ interface ScrimStrength {
 
 /**
  * Each text element's minimum contrast against white, 4.5:1 for normal text
- * and 3:1 for large text, and the part of the scrim behind it.
+ * and 3:1 for large text, and the part of the scrim behind it. The logo's
+ * mark is a brand graphic in its own colours, so it is drawn as is.
  */
 const ELEMENTS = {
-	logo: { minContrast: 4.5, scrim: "bandLeft" },
+	wordmark: { minContrast: 4.5, scrim: "bandLeft" },
 	tag: { minContrast: 4.5, scrim: "bandRight" },
 	numeral: { minContrast: 3, scrim: "corner" },
 	title: { minContrast: 3, scrim: "corner" },
 	meta: { minContrast: 4.5, scrim: "corner" },
 } as const satisfies Record<string, { minContrast: number; scrim: keyof ScrimStrength }>;
 
-type TextElementName = keyof typeof ELEMENTS;
+type ElementName = keyof typeof ELEMENTS | "mark";
 
-/** One piece of white text, or the logo, as the coverage it will be filled through. */
-interface TextElement {
-	name: TextElementName;
+/** What an element is filled with: white, or one of the mark's gradients. */
+type Fill = Rgb | LinearGradient;
+
+/** One piece of text, or part of the logo, as the coverage it will be filled through. */
+interface CardElement {
+	name: ElementName;
 	mask: Mask;
-	minContrast: number;
+	fill: Fill;
 }
 
 /** A card drawn up to its text, with the text still to fill. */
 interface ShareCardBackdrop {
 	/** The art, scrim and pill: what the text's contrast is measured against. */
 	canvas: Canvas;
-	elements: TextElement[];
+	elements: CardElement[];
 }
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
@@ -250,37 +313,50 @@ function percentile95(values: Float32Array) {
 	return 1;
 }
 
+/** The first lattice column of the motif's region, for a text block whose right edge is at `textRight`. */
+function motifColumn(textRight: number) {
+	const column = Math.ceil((textRight + MOTIF.gap) / LATTICE);
+	return Math.min(COLUMNS - MOTIF.minColumns, Math.max(COLUMNS - MOTIF.maxColumns, column));
+}
+
+/** One of the motif's dots on the card, in pixels. */
+interface MotifDot {
+	x: number;
+	y: number;
+	radius: number;
+	color: Rgb;
+	alpha: number;
+}
+
 /**
- * Draw the post's cover art as the blog shows it in dark mode: the paper dot
- * in every cell across the card, then the motif, scaled to cover the card and
- * centred as the post's hero cover is.
+ * The post's motif, composed for the region right of a text block whose right
+ * edge is at `textRight`, with its dots on the card's lattice.
  */
-function drawArt(canvas: Canvas, card: ShareCard) {
-	const { columns, rows } = ART_GRIDS.hero;
-	const art = halftoneArt(card.slug, columns, rows);
-	const scale = Math.max(WIDTH / art.width, HEIGHT / art.height);
-	const offsetX = (art.width * scale - WIDTH) / 2;
-	const offsetY = (art.height * scale - HEIGHT) / 2;
-	const toX = (x: number) => x * scale - offsetX;
-	const toY = (y: number) => y * scale - offsetY;
+function motifDots(slug: string, textRight: number): MotifDot[] {
+	const first = motifColumn(textRight);
+	const art = halftoneArt(slug, COLUMNS - first, ROWS);
+	return art.dots.map((dot) => {
+		const column = Math.floor(dot.cx / ART_CELL);
+		const fade = Math.min(1, (column + 1) / (MOTIF.fadeColumns + 1));
+		return {
+			x: first * LATTICE + dot.cx * ART_SCALE,
+			y: LATTICE_TOP + dot.cy * ART_SCALE,
+			radius: (dot.diameter / 2) * ART_SCALE,
+			color: dot.accent ? ACCENT : INK,
+			alpha: (dot.accent ? 1 : INK_OPACITY) * fade,
+		};
+	});
+}
 
+/** Draw the post's cover art as the blog shows it in dark mode: the paper dot in every cell of the lattice, then the motif. */
+function drawArt(canvas: Canvas, card: ShareCard, textRight: number) {
 	for (let i = 0; i < canvas.pixels.length; i += 3) canvas.pixels.set(BACKGROUND, i);
-
-	// Cells are counted from the card's edges, not the art's, so the paper reaches every edge whatever the art's aspect.
-	const firstCell = (offset: number) => Math.floor(offset / scale / ART_CELL) - 1;
-	const lastCell = (offset: number, size: number) => Math.ceil((offset + size) / scale / ART_CELL) + 1;
-	for (let row = firstCell(offsetY); row <= lastCell(offsetY, HEIGHT); row++) {
-		for (let column = firstCell(offsetX); column <= lastCell(offsetX, WIDTH); column++) {
-			blendDisc(canvas, toX((column + 0.5) * ART_CELL), toY((row + 0.5) * ART_CELL), PAPER_RADIUS * scale, INK, PAPER_OPACITY);
+	for (let row = 0; row < ROWS; row++) {
+		for (let column = 0; column < COLUMNS; column++) {
+			blendDisc(canvas, (column + 0.5) * LATTICE, LATTICE_TOP + (row + 0.5) * LATTICE, PAPER_RADIUS * ART_SCALE, INK, PAPER_OPACITY);
 		}
 	}
-
-	const fade = (x: number) => clamp((x / WIDTH - MOTIF_FADE[0]) / (MOTIF_FADE[1] - MOTIF_FADE[0]));
-	for (const dot of art.dots) {
-		const x = toX(dot.cx);
-		const alpha = (dot.accent ? 1 : INK_OPACITY) * fade(x);
-		if (alpha > 0) blendDisc(canvas, x, toY(dot.cy), (dot.diameter / 2) * scale, dot.accent ? ACCENT : INK, alpha);
-	}
+	for (const dot of motifDots(card.slug, textRight)) blendDisc(canvas, dot.x, dot.y, dot.radius, dot.color, dot.alpha);
 }
 
 /** A pill: a rectangle with fully rounded ends. */
@@ -297,17 +373,31 @@ interface TextBounds {
 	right: number;
 }
 
-/** A text element's glyphs, or the logo, as path commands in pixels. */
+/** An element's glyphs or logo paths, as path commands in pixels, and its fill. */
 interface Outline {
-	name: TextElementName;
+	name: ElementName;
 	commands: PathCommand[];
+	fill: Fill;
 }
 
 /** Where everything on the card goes: the text and logo as outlines, the pill, and the text block's bounds. */
 function layOut(face: Face, card: ShareCard): { outlines: Outline[]; pill: Pill | null; block: TextBounds } {
-	const outlines: Outline[] = [];
 	const logoScale = LOGO_HEIGHT / LOGO_VIEWBOX_HEIGHT;
-	outlines.push({ name: "logo", commands: LOGO_PATHS.flatMap((d) => svgPath(d, PADDING, PADDING, logoScale)) });
+	const toLogo = (at: number) => PADDING + at * logoScale;
+	const outlines: Outline[] = [
+		{ name: "wordmark", commands: WORDMARK_PATHS.flatMap((d) => svgPath(d, PADDING, PADDING, logoScale)), fill: WHITE },
+		...MARK_PATHS.map(({ d, from, to, stops }) => ({
+			name: "mark" as const,
+			commands: svgPath(d, PADDING, PADDING, logoScale),
+			fill: {
+				x1: toLogo(from[0]),
+				y1: toLogo(from[1]),
+				x2: toLogo(to[0]),
+				y2: toLogo(to[1]),
+				stops: stops.map(([offset, hex]) => ({ offset, color: parseHex(hex) })),
+			},
+		})),
+	];
 
 	let pill: Pill | null = null;
 	if (card.tag) {
@@ -316,15 +406,15 @@ function layOut(face: Face, card: ShareCard): { outlines: Outline[]; pill: Pill 
 		const top = PADDING + LOGO_HEIGHT / 2 - height / 2;
 		const right = WIDTH - PADDING;
 		pill = { left: right - blockWidth(face, label) - 2 * PILL.paddingX, right, top, bottom: top + height };
-		outlines.push({ name: "tag", commands: blockOutline(face, label, pill.left + PILL.paddingX, top + PILL.paddingY) });
+		outlines.push({ name: "tag", commands: blockOutline(face, label, pill.left + PILL.paddingX, top + PILL.paddingY), fill: WHITE });
 	}
 
 	// The block is stacked up from the bottom padding, last line first.
 	let bottom = HEIGHT - PADDING;
 	let right = PADDING;
-	const place = (name: TextElementName, block: TextBlock, x: number, gapAbove: number) => {
+	const place = (name: ElementName, block: TextBlock, x: number, gapAbove: number) => {
 		const top = bottom - blockHeight(face, block);
-		outlines.push({ name, commands: blockOutline(face, block, x, top) });
+		outlines.push({ name, commands: blockOutline(face, block, x, top), fill: WHITE });
 		right = Math.max(right, x + blockWidth(face, block));
 		bottom = top - gapAbove;
 		return top;
@@ -422,17 +512,17 @@ function lightest(passes: (strength: number) => boolean) {
  */
 async function drawShareCardBackdrop(card: ShareCard): Promise<ShareCardBackdrop> {
 	const face = await loadInter();
-	const canvas = createCanvas(WIDTH, HEIGHT);
-	drawArt(canvas, card);
 	const { outlines, pill, block } = layOut(face, card);
-	const elements = outlines.map(({ name, commands }) => ({ name, mask: fillPath(commands), minContrast: ELEMENTS[name].minContrast }));
+	const canvas = createCanvas(WIDTH, HEIGHT);
+	drawArt(canvas, card, block.right);
+	const elements = outlines.map(({ name, commands, fill }) => ({ name, mask: fillPath(commands), fill }));
 
 	const paint = backdropPainter(pill, block);
-	const sampled = elements.map((element) => ({ element, pixels: coveredPixels(element.mask) }));
+	const measured = elements.flatMap(({ name, mask }) => (name === "mark" ? [] : [{ ...ELEMENTS[name], pixels: coveredPixels(mask) }]));
 	const reaches = (part: keyof ScrimStrength, strength: ScrimStrength) =>
-		sampled.every(
-			({ element, pixels }) =>
-				ELEMENTS[element.name].scrim !== part || contrastOver(canvas, pixels, paint, strength) >= element.minContrast * CONTRAST_HEADROOM,
+		measured.every(
+			({ scrim: behind, minContrast, pixels }) =>
+				behind !== part || contrastOver(canvas, pixels, paint, strength) >= minContrast * CONTRAST_HEADROOM,
 		);
 	const scrim: ScrimStrength = { bandLeft: 0, bandRight: 0, corner: 0 };
 	for (const part of ["bandLeft", "bandRight", "corner"] as const) {
@@ -449,6 +539,9 @@ async function drawShareCardBackdrop(card: ShareCard): Promise<ShareCardBackdrop
 export async function shareCardPng(card: ShareCard) {
 	const { canvas, elements } = await drawShareCardBackdrop(card);
 	for (const { mask } of elements) fillMask(canvas, blurMask(mask, SHADOW_BLUR), BACKGROUND, SHADOW_OPACITY);
-	for (const { mask } of elements) fillMask(canvas, mask, WHITE);
+	for (const { mask, fill } of elements) {
+		if ("stops" in fill) fillMaskGradient(canvas, mask, fill);
+		else fillMask(canvas, mask, fill);
+	}
 	return encodePng(canvas);
 }
