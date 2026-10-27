@@ -1,7 +1,7 @@
 /**
- * A small rasteriser for generated images: an RGB float canvas, gradients,
- * soft blobs, discs, filled paths, masks and blurs, and a PNG encoder. It
- * needs no rendering engine and no WebAssembly, so it runs in a Worker.
+ * A small rasteriser for generated images: an RGB float canvas, discs, filled
+ * paths, masks and blurs, and a PNG encoder. It needs no rendering engine and
+ * no WebAssembly, so it runs in a Worker.
  *
  * Colours are 0–1 floats in sRGB and blend in sRGB, as browsers do. They are
  * rounded to 8 bits once, when the image is encoded.
@@ -37,83 +37,8 @@ export interface Mask {
 	alpha: Float32Array;
 }
 
-export function createMask(x: number, y: number, width: number, height: number): Mask {
+function createMask(x: number, y: number, width: number, height: number): Mask {
 	return { x, y, width, height, alpha: new Float32Array(Math.max(0, width * height)) };
-}
-
-/** A gradient stop: `#rrggbb` at a position from 0 to 1. */
-export interface ColorStop {
-	offset: number;
-	color: string;
-}
-
-/**
- * Fill the canvas with a vertical gradient that runs from 0 at `top` to 1 at
- * `top + length`, interpolated in sRGB as SVG does.
- */
-export function fillVerticalGradient(canvas: Canvas, stops: readonly ColorStop[], top: number, length: number) {
-	const colors = stops.map((stop) => parseHex(stop.color));
-	const { width, height, pixels } = canvas;
-	for (let y = 0; y < height; y++) {
-		const t = (y + 0.5 - top) / length;
-		const end = stops.findIndex((stop) => stop.offset >= t);
-		let color: Rgb;
-		if (end === 0) color = colors[0];
-		else if (end === -1) color = colors[colors.length - 1];
-		else {
-			const mix = (t - stops[end - 1].offset) / (stops[end].offset - stops[end - 1].offset);
-			const a = colors[end - 1];
-			const b = colors[end];
-			color = [a[0] + (b[0] - a[0]) * mix, a[1] + (b[1] - a[1]) * mix, a[2] + (b[2] - a[2]) * mix];
-		}
-		for (let i = y * width * 3; i < (y + 1) * width * 3; i += 3) {
-			pixels[i] = color[0];
-			pixels[i + 1] = color[1];
-			pixels[i + 2] = color[2];
-		}
-	}
-}
-
-/**
- * Blend a soft round blob of `color` over the canvas. `falloff` gives its
- * opacity by distance from the centre, as `[distance / radius, opacity]`
- * pairs, linear between them.
- */
-export function blendBlob(
-	canvas: Canvas,
-	cx: number,
-	cy: number,
-	radius: number,
-	color: Rgb,
-	falloff: readonly (readonly [number, number])[],
-) {
-	const { width, height, pixels } = canvas;
-	const opacityAt = (distance: number) => {
-		for (let i = 1; i < falloff.length; i++) {
-			const to = falloff[i];
-			if (distance > to[0]) continue;
-			const from = falloff[i - 1];
-			return from[1] + ((to[1] - from[1]) * (distance - from[0])) / (to[0] - from[0]);
-		}
-		return 0;
-	};
-	const x0 = Math.max(0, Math.floor(cx - radius));
-	const x1 = Math.min(width - 1, Math.ceil(cx + radius));
-	const y0 = Math.max(0, Math.floor(cy - radius));
-	const y1 = Math.min(height - 1, Math.ceil(cy + radius));
-	for (let y = y0; y <= y1; y++) {
-		const dy = y + 0.5 - cy;
-		for (let x = x0; x <= x1; x++) {
-			const dx = x + 0.5 - cx;
-			const distance = Math.sqrt(dx * dx + dy * dy) / radius;
-			if (distance >= 1) continue;
-			const a = opacityAt(distance);
-			const i = (y * width + x) * 3;
-			pixels[i] += (color[0] - pixels[i]) * a;
-			pixels[i + 1] += (color[1] - pixels[i + 1]) * a;
-			pixels[i + 2] += (color[2] - pixels[i + 2]) * a;
-		}
-	}
 }
 
 /** Blend `color` at `alpha` over an anti-aliased disc. */
@@ -134,28 +59,6 @@ export function blendDisc(canvas: Canvas, cx: number, cy: number, radius: number
 			pixels[i] += (color[0] - pixels[i]) * a;
 			pixels[i + 1] += (color[1] - pixels[i + 1]) * a;
 			pixels[i + 2] += (color[2] - pixels[i + 2]) * a;
-		}
-	}
-}
-
-/**
- * Add a disc blurred by `sigma`, at `alpha`, to `mask`. A blurred disc is
- * close to a Gaussian with the blurred disc's peak and the combined spread of
- * the disc and the blur, which is near enough for a glow.
- */
-export function addBlurredDisc(mask: Mask, cx: number, cy: number, radius: number, sigma: number, alpha: number) {
-	const spread = sigma ** 2 + radius ** 2 / 4;
-	const peak = alpha * (1 - Math.exp(-(radius ** 2) / (2 * sigma ** 2)));
-	const reach = 3 * Math.sqrt(spread);
-	const x0 = Math.max(mask.x, Math.floor(cx - reach));
-	const x1 = Math.min(mask.x + mask.width - 1, Math.ceil(cx + reach));
-	const y0 = Math.max(mask.y, Math.floor(cy - reach));
-	const y1 = Math.min(mask.y + mask.height - 1, Math.ceil(cy + reach));
-	for (let y = y0; y <= y1; y++) {
-		const dy = y + 0.5 - cy;
-		for (let x = x0; x <= x1; x++) {
-			const dx = x + 0.5 - cx;
-			mask.alpha[(y - mask.y) * mask.width + x - mask.x] += peak * Math.exp(-(dx * dx + dy * dy) / (2 * spread));
 		}
 	}
 }
@@ -386,10 +289,6 @@ export function fillMask(canvas: Canvas, mask: Mask, color: Rgb, opacity = 1) {
 	}
 }
 
-/** The overlay blend of `noise` onto `below`, both 0–1. */
-export const overlay = (below: number, noise: number) =>
-	below < 0.5 ? 2 * below * noise : 1 - 2 * (1 - below) * (1 - noise);
-
 const CRC_TABLE = (() => {
 	const table = new Uint32Array(256);
 	for (let n = 0; n < 256; n++) {
@@ -425,8 +324,8 @@ async function deflate(data: Uint8Array<ArrayBuffer>) {
 
 /**
  * Encode the canvas as an 8-bit RGB PNG. Every row uses the Sub filter, which
- * stores each byte as its difference from the pixel to its left; on smooth
- * gradients that leaves small, repetitive values that deflate well.
+ * stores each byte as its difference from the pixel to its left; on flat colour
+ * and smooth gradients that leaves small, repetitive values that deflate well.
  */
 export async function encodePng({ width, height, pixels }: Canvas) {
 	const bytes = new Uint8Array(pixels.length);

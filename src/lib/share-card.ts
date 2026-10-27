@@ -1,35 +1,29 @@
 /**
- * A post's share card: its gradient and halftone motif with its title, tag
- * and meta line in white, as the 1200 × 630 PNG that og:image points to.
+ * A post's share card: its halftone cover art as the blog shows it in dark
+ * mode, with its title, tag and meta line in white, as the 1200 × 630 PNG that
+ * og:image points to.
  *
  * Release posts lead with the version number and other posts with the title,
  * at the bottom left, under the EmDash logo and the tag. The motif fades in
- * from the left, away from the text. Every palette is pale at the top, so a
- * scrim in the palette's darkest colour darkens a band at the top and the
- * corner behind the text, each only as far as this card needs for its text to
- * reach WCAG contrast.
+ * from the left, away from the text. Its grey and orange dots can still sit
+ * behind the text, so a scrim in the cover's background colour darkens a band
+ * at the top and the corner behind the text, each only as far as this card
+ * needs for its text to reach WCAG contrast.
  */
 import type { ContentEntry, InferCollectionData } from "emdash";
-import { ART_GRIDS, halftoneArt } from "./post-art";
-import { BLOB_FALLOFF, coverGradient, GRAIN_OPACITY, GRAIN_TILE, grainTile } from "./post-gradient";
+import { ART_CELL, ART_GRIDS, halftoneArt } from "./post-art";
 import { authorSeparator, formatPostDate, postAuthors, readingMinutes } from "./posts";
 import {
-	addBlurredDisc,
-	blendBlob,
 	blendDisc,
 	blurMask,
 	type Canvas,
 	createCanvas,
-	createMask,
 	encodePng,
 	fillMask,
 	fillPath,
-	fillVerticalGradient,
 	type Mask,
-	overlay,
 	type PathCommand,
 	parseHex,
-	type Rgb,
 	WHITE,
 } from "./raster";
 import { blockHeight, blockOutline, blockWidth, type Face, fitText, loadInter, type TextBlock, type TextStyle } from "./text";
@@ -37,8 +31,6 @@ import { blockHeight, blockOutline, blockWidth, type Face, fitText, loadInter, t
 /** What a share card says. Titles like "EmDash 1.3: …" get the release layout. */
 export type ShareCard = {
 	slug: string;
-	/** Tag slugs: they pick the palette family. */
-	tags: readonly string[];
 	/** The pill's label: the first tag's label, or no pill. */
 	tag: string | null;
 	/** The line under the title. */
@@ -57,7 +49,7 @@ const joinMeta = (parts: readonly (string | null | undefined)[]) => parts.filter
 /** The share card for a post loaded with getEmDashEntry, which hydrates its tags and bylines. */
 export function shareCardFor(post: SharedPost): ShareCard {
 	const terms = post.data.terms?.tag ?? [];
-	const card = { slug: post.id, tags: terms.map((term) => term.slug), tag: terms[0]?.label ?? null };
+	const card = { slug: post.id, tag: terms[0]?.label ?? null };
 	const date = formatPostDate(post.data.publishedAt)?.label;
 	const release = RELEASE_TITLE.exec(post.data.title);
 	if (release) {
@@ -147,9 +139,9 @@ const PILL = {
 	paddingY: 12,
 	/** Longer labels are cut short, which keeps the pill well clear of the logo. */
 	maxLabelWidth: 480,
-	fillOpacity: 0.45,
+	fillOpacity: 0.08,
 	ringWidth: 1,
-	ringOpacity: 0.35,
+	ringOpacity: 0.2,
 };
 
 /** The numeral's optical nudge to the left, so its first digit lines up with the text under it. */
@@ -163,14 +155,18 @@ const ARTICLE_TITLE_FIT = { maxWidth: 792, maxLines: 3, minSize: 50, balance: tr
 /** The motif fades in across this share of the width, from transparent to full, as `linear-gradient(90deg, transparent 30%, #000 72%)`. */
 const MOTIF_FADE = [0.3, 0.72] as const;
 
-/** Opacity of the white halftone dots. */
-const DOT_OPACITY = 0.36;
-/** Opacity of the white accent dots. */
-const ACCENT_OPACITY = 0.95;
-/** Standard deviation of the blur that spreads the accent into a white glow, in art units. */
-const GLOW_BLUR = 1.5;
-/** Opacity of the accent's glow. */
-const GLOW_OPACITY = 0.75;
+/*
+ * PostCover's dark-mode colours as the browser resolves them from Base.astro
+ * and theme.css: --art-bg mixes --color-bg #0a0a0a 40% into --color-surface
+ * #171717, and the paper and ink are --color-text at 8% and 50%.
+ */
+const BACKGROUND = parseHex("#121212");
+const INK = parseHex("#f5f5f5");
+const ACCENT = parseHex("#ff5e1f");
+const PAPER_OPACITY = 0.08;
+const INK_OPACITY = 0.5;
+/** Radius of the paper dot at the centre of every cell, in art units. */
+const PAPER_RADIUS = 0.75;
 
 const SHADOW_BLUR = 10;
 const SHADOW_OPACITY = 0.3;
@@ -223,10 +219,8 @@ interface TextElement {
 
 /** A card drawn up to its text, with the text still to fill. */
 interface ShareCardBackdrop {
-	/** The art, scrim, grain and pill: what the text's contrast is measured against. */
+	/** The art, scrim and pill: what the text's contrast is measured against. */
 	canvas: Canvas;
-	/** The palette's darkest colour, for the scrim and the text shadow. */
-	shade: Rgb;
 	elements: TextElement[];
 }
 
@@ -256,35 +250,37 @@ function percentile95(values: Float32Array) {
 	return 1;
 }
 
-/** Draw the post's gradient and motif, scaled to cover the card and centred, as the post's hero cover is. */
+/**
+ * Draw the post's cover art as the blog shows it in dark mode: the paper dot
+ * in every cell across the card, then the motif, scaled to cover the card and
+ * centred as the post's hero cover is.
+ */
 function drawArt(canvas: Canvas, card: ShareCard) {
 	const { columns, rows } = ART_GRIDS.hero;
 	const art = halftoneArt(card.slug, columns, rows);
-	const gradient = coverGradient(card.slug, card.tags, art.width, art.height);
 	const scale = Math.max(WIDTH / art.width, HEIGHT / art.height);
 	const offsetX = (art.width * scale - WIDTH) / 2;
 	const offsetY = (art.height * scale - HEIGHT) / 2;
 	const toX = (x: number) => x * scale - offsetX;
 	const toY = (y: number) => y * scale - offsetY;
 
-	fillVerticalGradient(canvas, gradient.stops, -offsetY, art.height * scale);
-	for (const blob of gradient.blobs) blendBlob(canvas, toX(blob.cx), toY(blob.cy), blob.r * scale, parseHex(blob.color), BLOB_FALLOFF);
+	for (let i = 0; i < canvas.pixels.length; i += 3) canvas.pixels.set(BACKGROUND, i);
+
+	// Cells are counted from the card's edges, not the art's, so the paper reaches every edge whatever the art's aspect.
+	const firstCell = (offset: number) => Math.floor(offset / scale / ART_CELL) - 1;
+	const lastCell = (offset: number, size: number) => Math.ceil((offset + size) / scale / ART_CELL) + 1;
+	for (let row = firstCell(offsetY); row <= lastCell(offsetY, HEIGHT); row++) {
+		for (let column = firstCell(offsetX); column <= lastCell(offsetX, WIDTH); column++) {
+			blendDisc(canvas, toX((column + 0.5) * ART_CELL), toY((row + 0.5) * ART_CELL), PAPER_RADIUS * scale, INK, PAPER_OPACITY);
+		}
+	}
 
 	const fade = (x: number) => clamp((x / WIDTH - MOTIF_FADE[0]) / (MOTIF_FADE[1] - MOTIF_FADE[0]));
-	const glow = createMask(0, 0, WIDTH, HEIGHT);
 	for (const dot of art.dots) {
 		const x = toX(dot.cx);
-		if (dot.accent) addBlurredDisc(glow, x, toY(dot.cy), (dot.diameter / 2) * scale, GLOW_BLUR * scale, ACCENT_OPACITY * fade(x));
+		const alpha = (dot.accent ? 1 : INK_OPACITY) * fade(x);
+		if (alpha > 0) blendDisc(canvas, x, toY(dot.cy), (dot.diameter / 2) * scale, dot.accent ? ACCENT : INK, alpha);
 	}
-	fillMask(canvas, glow, WHITE, GLOW_OPACITY);
-	for (const dot of art.dots) {
-		const x = toX(dot.cx);
-		const alpha = (dot.accent ? ACCENT_OPACITY : DOT_OPACITY) * fade(x);
-		if (alpha > 0) blendDisc(canvas, x, toY(dot.cy), (dot.diameter / 2) * scale, WHITE, alpha);
-	}
-
-	// The base runs light to dark, so its last stop is the palette's darkest colour.
-	return parseHex(gradient.stops[gradient.stops.length - 1].color);
 }
 
 /** A pill: a rectangle with fully rounded ends. */
@@ -344,11 +340,10 @@ function layOut(face: Face, card: ShareCard): { outlines: Outline[]; pill: Pill 
 	return { outlines, pill, block: { top, right } };
 }
 
-/** Paints everything between the art and the text over one pixel: the scrim, the grain, then the pill. */
+/** Paints everything between the art and the text over one pixel: the scrim, then the pill. */
 type BackdropPainter = (pixels: Float32Array, i: number, x: number, y: number, strength: ScrimStrength) => void;
 
-function backdropPainter(shade: Rgb, pill: Pill | null, block: TextBounds): BackdropPainter {
-	const tile = grainTile();
+function backdropPainter(pill: Pill | null, block: TextBounds): BackdropPainter {
 	const { band, corner } = SCRIM;
 	const scrimAlpha = (x: number, y: number, strength: ScrimStrength) => {
 		const toRight = smoothstep(band.leftTo, band.rightFrom, x);
@@ -369,15 +364,13 @@ function backdropPainter(shade: Rgb, pill: Pill | null, block: TextBounds): Back
 	};
 	return (pixels, i, x, y, strength) => {
 		const scrim = scrimAlpha(x + 0.5, y + 0.5, strength);
-		const noise = tile[(y % GRAIN_TILE) * GRAIN_TILE + (x % GRAIN_TILE)] / 255;
 		const edge = pillEdge(x + 0.5, y + 0.5);
 		const fill = clamp(0.5 - edge) * PILL.fillOpacity;
 		const ring = (clamp(0.5 - edge) - clamp(0.5 - edge - PILL.ringWidth)) * PILL.ringOpacity;
 		for (let c = i; c < i + 3; c++) {
-			let value = pixels[c] + (shade[c - i] - pixels[c]) * scrim;
-			value = clamp(value + GRAIN_OPACITY * (overlay(value, noise) - value));
-			value += (shade[c - i] - value) * fill;
-			pixels[c] = value + (1 - value) * ring;
+			let value = pixels[c] + (BACKGROUND[c - i] - pixels[c]) * scrim;
+			value += (INK[c - i] - value) * fill;
+			pixels[c] = value + (INK[c - i] - value) * ring;
 		}
 	};
 }
@@ -430,11 +423,11 @@ function lightest(passes: (strength: number) => boolean) {
 async function drawShareCardBackdrop(card: ShareCard): Promise<ShareCardBackdrop> {
 	const face = await loadInter();
 	const canvas = createCanvas(WIDTH, HEIGHT);
-	const shade = drawArt(canvas, card);
+	drawArt(canvas, card);
 	const { outlines, pill, block } = layOut(face, card);
 	const elements = outlines.map(({ name, commands }) => ({ name, mask: fillPath(commands), minContrast: ELEMENTS[name].minContrast }));
 
-	const paint = backdropPainter(shade, pill, block);
+	const paint = backdropPainter(pill, block);
 	const sampled = elements.map((element) => ({ element, pixels: coveredPixels(element.mask) }));
 	const reaches = (part: keyof ScrimStrength, strength: ScrimStrength) =>
 		sampled.every(
@@ -449,13 +442,13 @@ async function drawShareCardBackdrop(card: ShareCard): Promise<ShareCardBackdrop
 	for (let y = 0; y < HEIGHT; y++) {
 		for (let x = 0; x < WIDTH; x++) paint(canvas.pixels, (y * WIDTH + x) * 3, x, y, scrim);
 	}
-	return { canvas, shade, elements };
+	return { canvas, elements };
 }
 
 /** Render a share card as a 1200 × 630 PNG. */
 export async function shareCardPng(card: ShareCard) {
-	const { canvas, shade, elements } = await drawShareCardBackdrop(card);
-	for (const { mask } of elements) fillMask(canvas, blurMask(mask, SHADOW_BLUR), shade, SHADOW_OPACITY);
+	const { canvas, elements } = await drawShareCardBackdrop(card);
+	for (const { mask } of elements) fillMask(canvas, blurMask(mask, SHADOW_BLUR), BACKGROUND, SHADOW_OPACITY);
 	for (const { mask } of elements) fillMask(canvas, mask, WHITE);
 	return encodePng(canvas);
 }

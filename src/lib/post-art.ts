@@ -98,7 +98,7 @@ export interface HalftoneArt {
 }
 
 /** FNV-1a: a small, stable string hash. */
-export function hash(input: string) {
+function hash(input: string) {
 	let h = 0x811c9dc5;
 	for (let i = 0; i < input.length; i++) {
 		h ^= input.charCodeAt(i);
@@ -108,7 +108,7 @@ export function hash(input: string) {
 }
 
 /** Mulberry32: a seeded generator returning floats in [0, 1). */
-export function random(seed: number) {
+function random(seed: number) {
 	let state = seed;
 	return () => {
 		state = (state + 0x6d2b79f5) | 0;
