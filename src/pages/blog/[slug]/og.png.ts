@@ -1,10 +1,11 @@
 /**
- * A post's share image: its halftone cover art as a PNG. The post page
- * points og:image here when the post has no featured image.
+ * A post's share image: its share card, with the post's title on its
+ * generated art, as a PNG. The post page points og:image here when the post
+ * has no featured image.
  */
 import type { APIRoute } from "astro";
 import { decodeSlug, getEmDashEntry } from "emdash";
-import { postArtPng } from "../../../lib/post-art-png";
+import { shareCardFor, shareCardPng } from "../../../lib/share-card";
 
 export const GET: APIRoute = async ({ params, cache }) => {
 	let slug: string | undefined;
@@ -28,8 +29,7 @@ export const GET: APIRoute = async ({ params, cache }) => {
 
 	if (cache?.enabled) cache.set(cacheHint);
 
-	// Seed with the entry's slug, as the page's cover does, so the two always match.
-	const png = await postArtPng(post.id);
+	const png = await shareCardPng(shareCardFor(post));
 	return new Response(png, {
 		headers: {
 			"Content-Type": "image/png",

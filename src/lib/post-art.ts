@@ -18,7 +18,7 @@
  * Bump when the art changes. Share image URLs include it, so social sites
  * fetch the new image instead of showing one they cached.
  */
-export const ART_VERSION = 2;
+export const ART_VERSION = 3;
 
 /** Grid pitch in SVG user units. */
 export const ART_CELL = 10;
@@ -98,7 +98,7 @@ export interface HalftoneArt {
 }
 
 /** FNV-1a: a small, stable string hash. */
-function hash(input: string) {
+export function hash(input: string) {
 	let h = 0x811c9dc5;
 	for (let i = 0; i < input.length; i++) {
 		h ^= input.charCodeAt(i);
@@ -108,7 +108,7 @@ function hash(input: string) {
 }
 
 /** Mulberry32: a seeded generator returning floats in [0, 1). */
-function random(seed: number) {
+export function random(seed: number) {
 	let state = seed;
 	return () => {
 		state = (state + 0x6d2b79f5) | 0;
