@@ -1,6 +1,7 @@
 ---
 import { decodeSlug, getEmDashCollection, getEmDashEntry } from "emdash";
 import { PortableText } from "emdash/ui";
+import PostBlock from "../../components/blog/PostBlock.astro";
 import PostByline from "../../components/blog/PostByline.astro";
 import PostCover from "../../components/blog/PostCover.astro";
 import PostGrid from "../../components/blog/PostGrid.astro";
@@ -128,7 +129,7 @@ const articleMeta = {
 		</div>
 
 		<div class="post-prose">
-			<PortableText value={post.data.content} />
+			<PortableText value={post.data.content} components={{ block: PostBlock }} />
 		</div>
 	</article>
 
