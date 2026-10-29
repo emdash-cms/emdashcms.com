@@ -4,15 +4,15 @@
  * og:image points to.
  *
  * Release posts lead with the version number and other posts with the title,
- * at the bottom left, under the EmDash logo and the tag. The motif is composed
- * for the region right of the text, on the same dot lattice as the paper, so
- * it fills the right of the card and keeps clear of the text. A very long
- * title or the pill can still sit over its dots, so a scrim in the cover's
- * background colour darkens a band at the top and the corner behind the text,
- * each only as far as this card needs for its text to reach WCAG contrast.
+ * at the bottom left, under the EmDash logo and the tag. The motif fades in
+ * from the left and sits a little right of centre, away from the text. Its
+ * grey and orange dots can still sit behind the text, so a scrim in the
+ * cover's background colour darkens a band at the top and the corner behind
+ * the text, each only as far as this card needs for its text to reach WCAG
+ * contrast.
  */
 import type { ContentEntry, InferCollectionData } from "emdash";
-import { ART_CELL, halftoneArt } from "./post-art";
+import { ART_CELL, ART_GRIDS, halftoneArt } from "./post-art";
 import { authorSeparator, formatPostDate, postAuthors, readingMinutes } from "./posts";
 import {
 	blendDisc,
@@ -211,20 +211,18 @@ const INK_OPACITY = 0.5;
 /** Radius of the paper dot at the centre of every cell, in art units. */
 const PAPER_RADIUS = 0.75;
 
-/** Pixels per art unit. The card's dot lattice is the art's cells at this scale: 60 columns, and 31 rows centred down the card. */
-const ART_SCALE = 2;
-const LATTICE = ART_CELL * ART_SCALE;
-const COLUMNS = WIDTH / LATTICE;
-const ROWS = Math.floor(HEIGHT / LATTICE);
-const LATTICE_TOP = (HEIGHT - ROWS * LATTICE) / 2;
+/**
+ * The motif fades in across this share of the width, from transparent to
+ * full, as `linear-gradient(90deg, transparent 30%, #000 72%)`.
+ */
+const MOTIF_FADE = [0.3, 0.72] as const;
 
 /**
- * The motif's region runs the full height from the first lattice column at
- * least `gap` pixels right of the text block to the right edge, at least
- * `minColumns` and at most `maxColumns` wide. It fades in over its first
- * `fadeColumns`, so its left edge isn't a hard line.
+ * How many art cells the motif, and its fade, sit right of the hero cover's
+ * centred crop, so it keeps clear of the text. A whole number of cells keeps
+ * its dots on the paper's lattice.
  */
-const MOTIF = { gap: 40, minColumns: 18, maxColumns: 33, fadeColumns: 3 };
+const MOTIF_SHIFT_CELLS = 6;
 
 const SHADOW_BLUR = 10;
 const SHADOW_OPACITY = 0.3;
@@ -313,50 +311,40 @@ function percentile95(values: Float32Array) {
 	return 1;
 }
 
-/** The first lattice column of the motif's region, for a text block whose right edge is at `textRight`. */
-function motifColumn(textRight: number) {
-	const column = Math.ceil((textRight + MOTIF.gap) / LATTICE);
-	return Math.min(COLUMNS - MOTIF.minColumns, Math.max(COLUMNS - MOTIF.maxColumns, column));
-}
-
-/** One of the motif's dots on the card, in pixels. */
-interface MotifDot {
-	x: number;
-	y: number;
-	radius: number;
-	color: Rgb;
-	alpha: number;
-}
-
 /**
- * The post's motif, composed for the region right of a text block whose right
- * edge is at `textRight`, with its dots on the card's lattice.
+ * Draw the post's cover art as the blog shows it in dark mode: the paper dot
+ * in every cell across the card, then the motif, scaled to cover the card,
+ * centred as the post's hero cover is and moved `MOTIF_SHIFT_CELLS` right.
  */
-function motifDots(slug: string, textRight: number): MotifDot[] {
-	const first = motifColumn(textRight);
-	const art = halftoneArt(slug, COLUMNS - first, ROWS);
-	return art.dots.map((dot) => {
-		const column = Math.floor(dot.cx / ART_CELL);
-		const fade = Math.min(1, (column + 1) / (MOTIF.fadeColumns + 1));
-		return {
-			x: first * LATTICE + dot.cx * ART_SCALE,
-			y: LATTICE_TOP + dot.cy * ART_SCALE,
-			radius: (dot.diameter / 2) * ART_SCALE,
-			color: dot.accent ? ACCENT : INK,
-			alpha: (dot.accent ? 1 : INK_OPACITY) * fade,
-		};
-	});
-}
+function drawArt(canvas: Canvas, card: ShareCard) {
+	const { columns, rows } = ART_GRIDS.hero;
+	const art = halftoneArt(card.slug, columns, rows);
+	const scale = Math.max(WIDTH / art.width, HEIGHT / art.height);
+	const offsetX = (art.width * scale - WIDTH) / 2;
+	const offsetY = (art.height * scale - HEIGHT) / 2;
+	const toX = (x: number) => x * scale - offsetX;
+	const toY = (y: number) => y * scale - offsetY;
 
-/** Draw the post's cover art as the blog shows it in dark mode: the paper dot in every cell of the lattice, then the motif. */
-function drawArt(canvas: Canvas, card: ShareCard, textRight: number) {
 	for (let i = 0; i < canvas.pixels.length; i += 3) canvas.pixels.set(BACKGROUND, i);
-	for (let row = 0; row < ROWS; row++) {
-		for (let column = 0; column < COLUMNS; column++) {
-			blendDisc(canvas, (column + 0.5) * LATTICE, LATTICE_TOP + (row + 0.5) * LATTICE, PAPER_RADIUS * ART_SCALE, INK, PAPER_OPACITY);
+
+	// Cells are counted from the card's edges, not the art's, so the paper reaches every edge whatever the art's aspect.
+	const firstCell = (offset: number) => Math.floor(offset / scale / ART_CELL) - 1;
+	const lastCell = (offset: number, size: number) => Math.ceil((offset + size) / scale / ART_CELL) + 1;
+	for (let row = firstCell(offsetY); row <= lastCell(offsetY, HEIGHT); row++) {
+		for (let column = firstCell(offsetX); column <= lastCell(offsetX, WIDTH); column++) {
+			blendDisc(canvas, toX((column + 0.5) * ART_CELL), toY((row + 0.5) * ART_CELL), PAPER_RADIUS * scale, INK, PAPER_OPACITY);
 		}
 	}
-	for (const dot of motifDots(card.slug, textRight)) blendDisc(canvas, dot.x, dot.y, dot.radius, dot.color, dot.alpha);
+
+	const shift = MOTIF_SHIFT_CELLS * ART_CELL * scale;
+	const fade = (x: number) => clamp(((x - shift) / WIDTH - MOTIF_FADE[0]) / (MOTIF_FADE[1] - MOTIF_FADE[0]));
+	for (const dot of art.dots) {
+		const x = toX(dot.cx) + shift;
+		const alpha = (dot.accent ? 1 : INK_OPACITY) * fade(x);
+		if (alpha > 0 && x - dot.diameter * scale < WIDTH) {
+			blendDisc(canvas, x, toY(dot.cy), (dot.diameter / 2) * scale, dot.accent ? ACCENT : INK, alpha);
+		}
+	}
 }
 
 /** A pill: a rectangle with fully rounded ends. */
@@ -514,7 +502,7 @@ async function drawShareCardBackdrop(card: ShareCard): Promise<ShareCardBackdrop
 	const face = await loadInter();
 	const { outlines, pill, block } = layOut(face, card);
 	const canvas = createCanvas(WIDTH, HEIGHT);
-	drawArt(canvas, card, block.right);
+	drawArt(canvas, card);
 	const elements = outlines.map(({ name, commands, fill }) => ({ name, mask: fillPath(commands), fill }));
 
 	const paint = backdropPainter(pill, block);
