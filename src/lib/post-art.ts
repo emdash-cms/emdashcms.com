@@ -18,7 +18,7 @@
  * Bump when the art changes. Share image URLs include it, so social sites
  * fetch the new image instead of showing one they cached.
  */
-export const ART_VERSION = 2;
+export const ART_VERSION = 3;
 
 /** Grid pitch in SVG user units. */
 export const ART_CELL = 10;

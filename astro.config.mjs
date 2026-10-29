@@ -24,7 +24,7 @@ export default defineConfig({
 				// Pre-bundle so it isn't discovered mid-render, which would trigger
 				// a Vite dep re-optimization and break in-flight worker imports
 				// under the Cloudflare dev runner (workerd).
-				include: ["astro-iconset/components"],
+				include: ["astro-iconset/components", "opentype.js"],
 			},
 		},
 	},
