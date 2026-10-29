@@ -167,8 +167,13 @@ function svgPath(d: string, x: number, y: number, scale: number): PathCommand[] 
 				commands.push({ type: "C", x1, y1, x2, y2, x: penX, y: penY });
 				break;
 			}
-			default:
+			case "Z":
 				commands.push({ type: "Z" });
+				// A close takes no coordinates, so a number after it is malformed.
+				command = "";
+				break;
+			default:
+				throw new Error(`Unsupported path data at "${tokens[i]}"`);
 		}
 	}
 	return commands;
@@ -336,14 +341,13 @@ function drawArt(canvas: Canvas, card: ShareCard) {
 		}
 	}
 
+	// The fade is measured before the shift, so it moves right with the motif.
 	const shift = MOTIF_SHIFT_CELLS * ART_CELL * scale;
-	const fade = (x: number) => clamp(((x - shift) / WIDTH - MOTIF_FADE[0]) / (MOTIF_FADE[1] - MOTIF_FADE[0]));
+	const fade = (x: number) => clamp((x / WIDTH - MOTIF_FADE[0]) / (MOTIF_FADE[1] - MOTIF_FADE[0]));
 	for (const dot of art.dots) {
-		const x = toX(dot.cx) + shift;
+		const x = toX(dot.cx);
 		const alpha = (dot.accent ? 1 : INK_OPACITY) * fade(x);
-		if (alpha > 0 && x - dot.diameter * scale < WIDTH) {
-			blendDisc(canvas, x, toY(dot.cy), (dot.diameter / 2) * scale, dot.accent ? ACCENT : INK, alpha);
-		}
+		if (alpha > 0) blendDisc(canvas, x + shift, toY(dot.cy), (dot.diameter / 2) * scale, dot.accent ? ACCENT : INK, alpha);
 	}
 }
 

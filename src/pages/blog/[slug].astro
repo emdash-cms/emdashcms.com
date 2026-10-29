@@ -52,11 +52,13 @@ const coverStorageKey = typeof cover?.meta?.storageKey === "string" ? cover.meta
 const coverSrc = cover?.src ?? (coverStorageKey ? `/_emdash/api/media/file/${coverStorageKey}` : undefined);
 // Resolve against the canonical origin, like the canonical link, not the host that served the request.
 const coverOrigin = Astro.site ?? Astro.url;
-// Without a featured image, share the generated cover art, drawn as a PNG by ./[slug]/og.png.ts.
+// Without a featured image, share the post's share card, drawn as a PNG by ./[slug]/og.png.ts.
+// The card shows the title, tag and date, so its URL changes whenever the post is edited.
 const ogImage =
 	coverSrc && URL.canParse(coverSrc, coverOrigin)
 		? new URL(coverSrc, coverOrigin).href
-		: new URL(`/blog/${encodeURIComponent(post.id)}/og.png?v=${ART_VERSION}`, coverOrigin).href;
+		: new URL(`/blog/${encodeURIComponent(post.id)}/og.png?v=${ART_VERSION}-${post.data.updatedAt.getTime().toString(36)}`, coverOrigin)
+				.href;
 
 const articleMeta = {
 	publishedTime: post.data.publishedAt?.toISOString() ?? null,

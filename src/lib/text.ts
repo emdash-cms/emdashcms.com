@@ -52,7 +52,11 @@ export function loadInter() {
 			ascender: font.ascender / font.unitsPerEm,
 			descender: font.descender / font.unitsPerEm,
 		};
-	})();
+	})().catch((error) => {
+		// Let the next request try again rather than fail with the same error.
+		inter = undefined;
+		throw error;
+	});
 	return inter;
 }
 
