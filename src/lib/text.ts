@@ -3,15 +3,21 @@
  * and tracking, wrapping and balancing lines, fitting a block to its box, and
  * turning lines into glyph outlines for ./raster.ts to fill.
  */
-import interWoff from "@fontsource/inter/files/inter-latin-500-normal.woff?inline";
 import { type Font, type Glyph, parse } from "opentype.js";
 import { type Kerning, readKerning } from "./kerning";
 import type { PathCommand } from "./raster";
 
-/** A parsed font with its pair kerning and vertical metrics. */
-export interface Face {
+/** One of a face's font files, with its pair kerning. */
+interface FontFile {
 	font: Font;
 	kerning: Kerning;
+}
+
+/** A parsed face, in one or more files, with its vertical metrics. */
+export interface Face {
+	/** Each character is drawn from the first file that has it. Inter ships its character sets as separate files. */
+	files: FontFile[];
+	unitsPerEm: number;
 	/** The hhea ascender and descender as shares of the em. The descender is negative. */
 	ascender: number;
 	descender: number;
@@ -41,17 +47,26 @@ const SHRINK_STEPS = 4;
 
 let inter: Promise<Face> | undefined;
 
-/** Inter 500, Latin subset, parsed on first use. */
+/** A font file from a base64 data URL module, parsed with its kerning. */
+async function loadFile(module: Promise<{ default: string }>): Promise<FontFile> {
+	const { default: dataUrl } = await module;
+	const bytes = Uint8Array.from(atob(dataUrl.slice(dataUrl.indexOf(",") + 1)), (char) => char.charCodeAt(0));
+	return { font: parse(bytes.buffer), kerning: await readKerning(bytes) };
+}
+
+/** Inter 500 in its Latin, Latin Extended and Vietnamese sets, parsed on first use. */
 export function loadInter() {
 	inter ??= (async () => {
-		const bytes = Uint8Array.from(atob(interWoff.slice(interWoff.indexOf(",") + 1)), (char) => char.charCodeAt(0));
-		const font = parse(bytes.buffer);
-		return {
-			font,
-			kerning: await readKerning(bytes),
-			ascender: font.ascender / font.unitsPerEm,
-			descender: font.descender / font.unitsPerEm,
-		};
+		// Imported on demand, so each file is its own chunk instead of swelling the route's.
+		const files = await Promise.all(
+			[
+				import("@fontsource/inter/files/inter-latin-500-normal.woff?inline"),
+				import("@fontsource/inter/files/inter-latin-ext-500-normal.woff?inline"),
+				import("@fontsource/inter/files/inter-vietnamese-500-normal.woff?inline"),
+			].map(loadFile),
+		);
+		const { unitsPerEm, ascender, descender } = files[0].font;
+		return { files, unitsPerEm, ascender: ascender / unitsPerEm, descender: descender / unitsPerEm };
 	})().catch((error) => {
 		// Let the next request try again rather than fail with the same error.
 		inter = undefined;
@@ -65,19 +80,21 @@ export function loadInter() {
  * run's width, with tracking after every glyph as CSS adds it.
  */
 function shape(face: Face, text: string, style: TextStyle) {
-	const scale = style.size / face.font.unitsPerEm;
+	const scale = style.size / face.unitsPerEm;
 	const glyphs: { glyph: Glyph; x: number }[] = [];
 	let x = 0;
-	let previous = 0;
+	let previous: { file: FontFile; index: number } | undefined;
 	for (const char of text) {
-		const index = face.font.charToGlyphIndex(char);
-		// Glyph 0 is the font's box for characters it lacks; leaving them out reads better.
-		if (index === 0) continue;
-		const glyph = face.font.glyphs.get(index);
-		if (previous) x += face.kerning(previous, index) * scale;
+		// Glyph 0 is a file's box for characters it lacks; when no file has the character, leaving it out reads better.
+		const file = face.files.find(({ font }) => font.charToGlyphIndex(char) !== 0);
+		if (!file) continue;
+		const index = file.font.charToGlyphIndex(char);
+		const glyph = file.font.glyphs.get(index);
+		// Kerning pairs only exist within one file.
+		if (previous?.file === file) x += file.kerning(previous.index, index) * scale;
 		glyphs.push({ glyph, x });
 		x += (glyph.advanceWidth ?? 0) * scale + style.tracking * style.size;
-		previous = index;
+		previous = { file, index };
 	}
 	return { glyphs, width: x };
 }
@@ -188,7 +205,7 @@ export function blockWidth(face: Face, block: TextBlock) {
 
 /** The glyph outlines of a block whose first line box has its top left at (x, top), in pixels. */
 export function blockOutline(face: Face, block: TextBlock, x: number, top: number): PathCommand[] {
-	const scale = block.style.size / face.font.unitsPerEm;
+	const scale = block.style.size / face.unitsPerEm;
 	const step = lineHeight(face, block.style);
 	const commands: PathCommand[] = [];
 	block.lines.forEach((line, index) => {
