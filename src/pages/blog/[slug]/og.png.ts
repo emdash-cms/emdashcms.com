@@ -1,7 +1,6 @@
 /**
  * A post's share image: its share card, with the post's title on its
- * generated art, as a PNG. The post page points og:image here when the post
- * has no featured image.
+ * generated art, as a PNG. Every post page points og:image here.
  */
 import type { APIRoute } from "astro";
 import { decodeSlug, getEmDashEntry } from "emdash";

@@ -48,17 +48,13 @@ const minutes = readingMinutes(post.data.content);
 const authors = postAuthors(post.data.bylines);
 const tags = post.data.terms?.tag ?? [];
 const cover = post.data.featured_image;
-const coverStorageKey = typeof cover?.meta?.storageKey === "string" ? cover.meta.storageKey : undefined;
-const coverSrc = cover?.src ?? (coverStorageKey ? `/_emdash/api/media/file/${coverStorageKey}` : undefined);
-// Resolve against the canonical origin, like the canonical link, not the host that served the request.
-const coverOrigin = Astro.site ?? Astro.url;
-// Without a featured image, share the post's share card, drawn as a PNG by ./[slug]/og.png.ts.
-// The card shows the title, tag and date, so its URL changes whenever the post is edited.
-const ogImage =
-	coverSrc && URL.canParse(coverSrc, coverOrigin)
-		? new URL(coverSrc, coverOrigin).href
-		: new URL(`/blog/${encodeURIComponent(post.id)}/og.png?v=${ART_VERSION}-${post.data.updatedAt.getTime().toString(36)}`, coverOrigin)
-				.href;
+// Every post shares its share card, drawn as a PNG by ./[slug]/og.png.ts, even when it has a featured image.
+// The card shows the title, tag and date, so its URL changes whenever the post is edited. It resolves
+// against the canonical origin, like the canonical link, not the host that served the request.
+const ogImage = new URL(
+	`/blog/${encodeURIComponent(post.id)}/og.png?v=${ART_VERSION}-${post.data.updatedAt.getTime().toString(36)}`,
+	Astro.site ?? Astro.url,
+).href;
 
 const articleMeta = {
 	publishedTime: post.data.publishedAt?.toISOString() ?? null,
