@@ -1,0 +1,33 @@
+---
+/**
+ * EmDash's block renderer, with an id on each h2 to h4 so a post can link to
+ * its own sections, as in `[Upgrade notes](#upgrade-notes)`. Ids follow
+ * GitHub's heading anchors: lowercase, punctuation dropped, spaces as hyphens.
+ */
+import { emdashComponents, type PortableTextBlock } from "emdash/ui";
+
+interface Props {
+	node: PortableTextBlock;
+	index: number;
+	isInline: boolean;
+}
+
+const EmDashBlock = emdashComponents.block;
+const { node } = Astro.props;
+
+const text = /^h[2-4]$/.test(node.style ?? "")
+	? node.children
+			.map((child: { text?: unknown }) => (typeof child.text === "string" ? child.text : ""))
+			.join("")
+			.trim()
+	: "";
+const id =
+	text
+		.toLowerCase()
+		.replace(/[^\p{L}\p{M}\p{N}\s_-]/gu, "")
+		.replace(/ /g, "-") || undefined;
+// EmDash's Block passes extra props through to the element but doesn't type them.
+const blockProps = { ...Astro.props, id };
+---
+
+<EmDashBlock {...blockProps}><slot /></EmDashBlock>
