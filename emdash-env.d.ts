@@ -36,9 +36,31 @@ export interface Post {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
+export interface Showcase {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  url: string;
+  screenshot?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  description?: string;
+  category?: "Blog" | "Business" | "Commerce" | "Community" | "Docs" | "Portfolio" | "Product" | "Publication";
+  featured?: boolean;
+  quote?: string;
+  quote_author?: string;
+  quote_role?: string;
+  story_url?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
 declare module "emdash" {
   interface EmDashCollections {
     pages: Page;
     posts: Post;
+    showcase: Showcase;
   }
 }

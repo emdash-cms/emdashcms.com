@@ -85,6 +85,76 @@
 					"type": "image"
 				}
 			]
+		},
+		{
+			"slug": "showcase",
+			"label": "Showcase",
+			"labelSingular": "Showcase site",
+			"description": "Production sites built with EmDash, listed at /showcase.",
+			"routable": false,
+			"supports": ["drafts", "revisions"],
+			"titleField": "title",
+			"admin": { "listColumns": ["url", "category", "featured"] },
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Site name",
+					"type": "string",
+					"required": true
+				},
+				{
+					"slug": "url",
+					"label": "Live URL",
+					"type": "url",
+					"required": true,
+					"translatable": false
+				},
+				{
+					"slug": "screenshot",
+					"label": "Screenshot (16:10, 1440 x 900 or larger)",
+					"type": "image",
+					"options": { "darkVariant": true }
+				},
+				{
+					"slug": "description",
+					"label": "Description",
+					"type": "text",
+					"validation": { "maxLength": 160 }
+				},
+				{
+					"slug": "category",
+					"label": "Category",
+					"type": "select",
+					"translatable": false,
+					"validation": {
+						"options": ["Blog", "Business", "Commerce", "Community", "Docs", "Portfolio", "Product", "Publication"]
+					}
+				},
+				{
+					"slug": "featured",
+					"label": "Featured",
+					"type": "boolean",
+					"defaultValue": false,
+					"translatable": false
+				},
+				{
+					"slug": "quote",
+					"label": "Builder quote",
+					"type": "text",
+					"validation": { "maxLength": 280 }
+				},
+				{
+					"slug": "quote_author",
+					"label": "Quote author",
+					"type": "string"
+				},
+				{
+					"slug": "quote_role",
+					"label": "Author role",
+					"type": "string"
+				},
+				{ "slug": "story_url", "label": "Case study URL", "type": "url", "translatable": false }
+			]
 		}
 	],
 
@@ -134,7 +204,8 @@
 			"label": "Footer: Community",
 			"items": [
 				{ "type": "custom", "label": "Discord", "url": "https://discord.gg/YY9vBaQRYt", "target": "_blank" },
-				{ "type": "custom", "label": "GitHub", "url": "https://github.com/emdash-cms/emdash", "target": "_blank" }
+				{ "type": "custom", "label": "GitHub", "url": "https://github.com/emdash-cms/emdash", "target": "_blank" },
+				{ "type": "custom", "label": "Showcase", "url": "/showcase" }
 			]
 		},
 		{
