@@ -1,0 +1,85 @@
+---
+/**
+ * Each cell draws only its end and bottom rules, so neighbours share one
+ * dashed line. The list runs 1px past its box and clips its outer edge, so
+ * the outer cells' rules never double the frame line or the band's bottom
+ * rule with dashes out of step. The clip is 2px because Chrome
+ * rounds a clip on a fractional edge outward and would leak a sliver of rule.
+ *
+ * The featured grid runs six tracks on desktop so a full-width last cell can
+ * split on the same line as the three-column index below it.
+ */
+interface Props {
+	variant: "featured" | "index";
+	wideLast?: boolean;
+}
+
+const { variant, wideLast = false } = Astro.props;
+---
+
+<ul class:list={["showcase-grid", `showcase-grid--${variant}`, { "showcase-grid--wide-last": wideLast }]} role="list">
+	<slot />
+</ul>
+
+<style>
+	.showcase-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		margin-block-end: -1px;
+		margin-inline-end: -1px;
+		list-style: none;
+		clip-path: inset(0 2px 2px 0);
+	}
+
+	:global([dir="rtl"]) .showcase-grid {
+		clip-path: inset(0 0 2px 2px);
+	}
+
+	.showcase-grid > :global(li) {
+		min-width: 0;
+		background:
+			var(--showcase-dash-y) right top / 1px 100% no-repeat,
+			var(--showcase-dash-x) left bottom / 100% 1px no-repeat;
+	}
+
+	:global([dir="rtl"]) .showcase-grid > :global(li) {
+		background-position:
+			left top,
+			right bottom;
+	}
+
+	.showcase-grid > :global(.showcase-grid-full) {
+		grid-column: 1 / -1;
+	}
+
+	@media (min-width: 640px) {
+		.showcase-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.showcase-grid--wide-last > :global(li:last-child) {
+			grid-column: 1 / -1;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.showcase-grid--index {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+
+		.showcase-grid--featured {
+			grid-template-columns: repeat(6, minmax(0, 1fr));
+		}
+
+		.showcase-grid--featured > :global(li) {
+			grid-column: span 3;
+		}
+
+		.showcase-grid--featured.showcase-grid--wide-last > :global(li:last-child),
+		.showcase-grid--featured > :global(.showcase-grid-full) {
+			display: grid;
+			grid-column: 1 / -1;
+			grid-template-columns: subgrid;
+		}
+	}
+</style>

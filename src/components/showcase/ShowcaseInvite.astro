@@ -1,0 +1,128 @@
+---
+import ShowcaseButton from "./ShowcaseButton.astro";
+import ShowcaseGhost from "./ShowcaseGhost.astro";
+import ShowcaseGrid from "./ShowcaseGrid.astro";
+
+interface Props {
+	title: string;
+	copy: string;
+}
+
+const { title, copy } = Astro.props;
+---
+
+<section class="showcase-invite" aria-labelledby="showcase-invite-title">
+	<div class="showcase-invite-ghosts" aria-hidden="true">
+		<ShowcaseGrid variant="index">
+			{
+				[0, 1, 2].map(() => (
+					<li class="showcase-invite-ghost">
+						<ShowcaseGhost />
+						<div class="showcase-invite-lines">
+							<div class="showcase-invite-line" />
+							<div class="showcase-invite-line" />
+						</div>
+					</li>
+				))
+			}
+		</ShowcaseGrid>
+	</div>
+	<div class="showcase-invite-panel">
+		<h2 id="showcase-invite-title" class="showcase-invite-title">{title}</h2>
+		<p class="showcase-invite-copy">{copy}</p>
+		<ShowcaseButton label="Share your site" />
+	</div>
+</section>
+
+<style>
+	.showcase-invite {
+		position: relative;
+		padding-bottom: 4.5rem;
+	}
+
+	/* The ghost grid clips its own bottom rule, so this closes the row instead. */
+	.showcase-invite-ghosts {
+		padding-bottom: 1px;
+		background: var(--showcase-dash-x) left bottom / 100% 1px no-repeat;
+		pointer-events: none;
+	}
+
+	.showcase-invite-ghost {
+		padding: var(--showcase-well-inset) var(--showcase-well-inset) 0;
+	}
+
+	.showcase-invite-ghost:nth-child(n + 2) {
+		display: none;
+	}
+
+	.showcase-invite-lines {
+		display: flex;
+		flex-direction: column;
+		gap: 0.625rem;
+		padding: 1.25rem calc(var(--showcase-inset) - var(--showcase-well-inset)) 1.75rem;
+	}
+
+	.showcase-invite-line {
+		width: 46%;
+		height: 0.5rem;
+		background: var(--showcase-ghost-bar);
+		border-radius: var(--radius-full);
+	}
+
+	.showcase-invite-line + .showcase-invite-line {
+		width: 30%;
+	}
+
+	.showcase-invite-panel {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 2rem var(--showcase-inset) 2.5rem;
+		text-align: center;
+	}
+
+	.showcase-invite-title {
+		color: var(--color-text);
+		font-size: var(--font-size-2xl);
+		font-weight: 700;
+		line-height: 1.2;
+		letter-spacing: -0.03em;
+		text-wrap: balance;
+	}
+
+	.showcase-invite-copy {
+		max-width: 26rem;
+		margin-bottom: 0.5rem;
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+		line-height: 1.6;
+		text-wrap: pretty;
+	}
+
+	@media (max-width: 639.98px) {
+		.showcase-invite {
+			padding-bottom: 0.5rem;
+		}
+	}
+
+	@media (min-width: 640px) {
+		.showcase-invite-ghost:nth-child(2) {
+			display: block;
+		}
+
+		/* The wash of canvas keeps the text legible over the ghost wells. */
+		.showcase-invite-panel {
+			position: absolute;
+			inset: 0 0 4.5rem;
+			justify-content: center;
+			padding: 1.5rem;
+			background: radial-gradient(closest-side, var(--showcase-canvas) 60%, transparent);
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.showcase-invite-ghost:nth-child(3) {
+			display: block;
+		}
+	}
+</style>

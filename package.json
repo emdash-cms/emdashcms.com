@@ -15,6 +15,7 @@
     "@astrojs/cloudflare": "14.3.1",
     "@astrojs/react": "^6.0.5",
     "@emdash-cms/cloudflare": "^0.38.0",
+    "@emdash-cms/plugin-forms": "^0.2.12",
     "@fontsource/inter": "^5.3.0",
     "@iconify-json/ph": "^1.2.2",
     "astro": "7.3.2",

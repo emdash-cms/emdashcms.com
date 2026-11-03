@@ -1,0 +1,121 @@
+---
+import arrowRightSvg from "../../icons/arrow-right.svg?raw";
+import { SHOWCASE_SUBMIT_URL } from "../../lib/showcase";
+import ShowcaseGhost from "./ShowcaseGhost.astro";
+---
+
+<a href={SHOWCASE_SUBMIT_URL} class="showcase-slot">
+	<ShowcaseGhost />
+	<span class="showcase-slot-caption">
+		<span class="showcase-slot-title-row">
+			<span class="showcase-slot-title">Your site here</span>
+			<span class="showcase-slot-arrow" aria-hidden="true" set:html={arrowRightSvg} />
+		</span>
+		<span class="showcase-slot-meta">Submit it for the showcase</span>
+	</span>
+</a>
+
+<style>
+	.showcase-slot {
+		--nudge-x: 2px;
+
+		display: block;
+		height: 100%;
+		padding: var(--showcase-well-inset) var(--showcase-well-inset) 0;
+	}
+
+	:global([dir="rtl"]) .showcase-slot {
+		--nudge-x: -2px;
+	}
+
+	.showcase-slot-caption {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 1rem calc(var(--showcase-inset) - var(--showcase-well-inset)) 1.375rem;
+	}
+
+	.showcase-slot-title-row {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.75rem;
+	}
+
+	.showcase-slot-title {
+		min-width: 0;
+		flex: 1;
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+		font-size: 0.9375rem;
+		font-weight: 600;
+		line-height: 1.4;
+		letter-spacing: -0.012em;
+		transition: color var(--transition-base);
+	}
+
+	.showcase-slot-arrow {
+		display: block;
+		flex: none;
+		width: 0.875rem;
+		height: 0.875rem;
+		margin-top: 0.1875rem;
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		transition:
+			color var(--transition-base),
+			transform var(--transition-base);
+	}
+
+	.showcase-slot-arrow :global(svg) {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	:global([dir="rtl"]) .showcase-slot-arrow :global(svg) {
+		transform: scaleX(-1);
+	}
+
+	.showcase-slot-meta {
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		line-height: 1.6;
+	}
+
+	.showcase-slot:hover .showcase-slot-title,
+	.showcase-slot:focus-visible .showcase-slot-title {
+		color: var(--color-text);
+	}
+
+	.showcase-slot:hover .showcase-slot-arrow,
+	.showcase-slot:focus-visible .showcase-slot-arrow {
+		color: var(--color-text);
+		transform: translateX(var(--nudge-x));
+	}
+
+	.showcase-slot:hover :global(.showcase-ghost) {
+		border-color: color-mix(in srgb, var(--color-text) 30%, var(--showcase-canvas));
+	}
+
+	/* Draw the focus ring around the well rather than the whole cell. */
+	.showcase-slot:focus-visible {
+		box-shadow: none;
+	}
+
+	.showcase-slot:focus-visible :global(.showcase-ghost) {
+		box-shadow:
+			0 0 0 2px var(--showcase-canvas),
+			0 0 0 4px var(--color-focus);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.showcase-slot-title,
+		.showcase-slot-arrow {
+			transition: none;
+		}
+
+		.showcase-slot:hover .showcase-slot-arrow,
+		.showcase-slot:focus-visible .showcase-slot-arrow {
+			transform: none;
+		}
+	}
+</style>

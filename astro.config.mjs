@@ -2,6 +2,7 @@ import cloudflare from "@astrojs/cloudflare";
 import { cacheCloudflare } from "@astrojs/cloudflare/cache";
 import react from "@astrojs/react";
 import { access, d1, r2 } from "@emdash-cms/cloudflare";
+import { formsPlugin } from "@emdash-cms/plugin-forms";
 import icon from "astro-iconset";
 import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
@@ -37,6 +38,7 @@ export default defineConfig({
 			include: {
 				ph: [
 					"app-window",
+					"browsers",
 					"chart-bar",
 					"check-circle",
 					"clock",
@@ -72,6 +74,7 @@ export default defineConfig({
 				defaultRole: 30, // Author; first user auto-promoted to Admin
 			}),
 			plugins: [
+				formsPlugin(),
 				{
 					id: "marketing-blocks",
 					version: "0.1.0",

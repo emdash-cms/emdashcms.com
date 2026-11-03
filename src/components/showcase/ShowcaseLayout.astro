@@ -1,0 +1,187 @@
+---
+/** A band in the slot that should close with a full-bleed rule carries `.showcase-ruled`. */
+import Base from "../../layouts/Base.astro";
+
+interface Props {
+	title: string;
+	description: string;
+	/** The id of the page's h1. */
+	labelledBy: string;
+}
+
+const { title, description, labelledBy } = Astro.props;
+---
+
+<Base title={title} description={description}>
+	<section class="showcase" aria-labelledby={labelledBy}>
+		<div class="showcase-frame">
+			<div class="showcase-frame-inner">
+				<div class="showcase-ruled showcase-masthead" aria-hidden="true"></div>
+				<slot />
+			</div>
+		</div>
+	</section>
+</Base>
+
+<style>
+	/*
+	 * Rule and hatch colours are opaque mixes with the canvas, so where two
+	 * rules land on the same pixel the overlap never reads darker.
+	 */
+	.showcase {
+		--showcase-canvas: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+		--showcase-rule: color-mix(in srgb, var(--color-text) 13%, var(--showcase-canvas));
+		--showcase-dot: color-mix(in srgb, var(--color-text) 4%, var(--showcase-canvas));
+		--showcase-hatch: color-mix(in srgb, var(--color-text) 7%, var(--showcase-canvas));
+		--showcase-ghost-edge: color-mix(in srgb, var(--color-text) 16%, var(--showcase-canvas));
+		--showcase-ghost-bar: color-mix(in srgb, var(--color-text) 8%, var(--showcase-canvas));
+		/* Rules are 1px gradients rather than dashed borders, which can't set the dash length. */
+		--showcase-dash: 16px;
+		--showcase-dash-period: 32px;
+		--showcase-dash-x: repeating-linear-gradient(
+			to right,
+			var(--showcase-rule) 0 var(--showcase-dash),
+			transparent 0 var(--showcase-dash-period)
+		);
+		--showcase-dash-y: repeating-linear-gradient(
+			to bottom,
+			var(--showcase-rule) 0 var(--showcase-dash),
+			transparent 0 var(--showcase-dash-period)
+		);
+		--showcase-margin: 12px;
+		--showcase-inset: 1.25rem;
+		--showcase-well-inset: 1rem;
+		/* The band behind the fixed site header, as far below its logo as the logo sits below the top. */
+		--showcase-masthead: 4.375rem;
+
+		position: relative;
+		display: flex;
+		min-height: calc(100vh - 200px);
+		flex-direction: column;
+		padding-inline: var(--showcase-margin);
+		overflow-x: clip;
+		background: var(--showcase-canvas);
+	}
+
+	:global(:root.dark) .showcase {
+		--showcase-rule: color-mix(in srgb, var(--color-text) 15%, var(--showcase-canvas));
+		--showcase-dot: color-mix(in srgb, var(--color-text) 3.5%, var(--showcase-canvas));
+		--showcase-hatch: color-mix(in srgb, var(--color-text) 7.5%, var(--showcase-canvas));
+		--showcase-ghost-edge: color-mix(in srgb, var(--color-text) 20%, var(--showcase-canvas));
+		--showcase-ghost-bar: color-mix(in srgb, var(--color-text) 10%, var(--showcase-canvas));
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .showcase {
+			--showcase-rule: color-mix(in srgb, var(--color-text) 15%, var(--showcase-canvas));
+			--showcase-dot: color-mix(in srgb, var(--color-text) 3.5%, var(--showcase-canvas));
+			--showcase-hatch: color-mix(in srgb, var(--color-text) 7.5%, var(--showcase-canvas));
+			--showcase-ghost-edge: color-mix(in srgb, var(--color-text) 20%, var(--showcase-canvas));
+			--showcase-ghost-bar: color-mix(in srgb, var(--color-text) 10%, var(--showcase-canvas));
+		}
+	}
+
+	/*
+	 * As wide as the header's container plus one text inset per side, so the
+	 * frame lines clear the logo and the page text lines up with it. The
+	 * footer's top border closes the lines.
+	 */
+	.showcase-frame {
+		position: relative;
+		display: flex;
+		width: 100%;
+		max-width: calc(var(--wide-width) - 2 * var(--spacing-lg) + 2 * var(--showcase-inset) + 2px);
+		flex: 1;
+		flex-direction: column;
+		margin-inline: auto;
+		padding-inline: 1px;
+		background:
+			var(--showcase-dash-y) left top var(--showcase-masthead) / 1px 100% no-repeat,
+			var(--showcase-dash-y) right top var(--showcase-masthead) / 1px 100% no-repeat,
+			var(--showcase-canvas);
+	}
+
+	.showcase-frame-inner {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+	}
+
+	/*
+	 * A band's bottom rule runs past the frame to both viewport edges (.showcase
+	 * clips it), with a connector square where it crosses each frame line. The
+	 * gradient's stops start 100vw in, at the band's own edge, so the dashes
+	 * keep one phase against the frame at any viewport width.
+	 */
+	.showcase :global(.showcase-ruled) {
+		position: relative;
+		border-bottom: 1px solid;
+		border-image: repeating-linear-gradient(
+				to right,
+				var(--showcase-rule) 100vw calc(100vw + var(--showcase-dash)),
+				transparent 0 calc(100vw + var(--showcase-dash-period))
+			)
+			0 0 1 0 / 0 0 1px 0 / 0 100vw;
+	}
+
+	.showcase :global(.showcase-ruled)::before,
+	.showcase :global(.showcase-ruled)::after {
+		content: "";
+		position: absolute;
+		z-index: 1;
+		bottom: -6px;
+		width: 11px;
+		height: 11px;
+		background: var(--showcase-canvas);
+		border: 1px solid var(--showcase-rule);
+		border-radius: 2px;
+		pointer-events: none;
+	}
+
+	.showcase :global(.showcase-ruled)::before {
+		inset-inline-start: -6px;
+	}
+
+	.showcase :global(.showcase-ruled)::after {
+		inset-inline-end: -6px;
+	}
+
+	/* The frame lines begin at this rule, so it gets no connectors. */
+	.showcase-masthead {
+		height: var(--showcase-masthead);
+	}
+
+	.showcase .showcase-masthead::before,
+	.showcase .showcase-masthead::after {
+		content: none;
+	}
+
+	@media (min-width: 960px) {
+		.showcase {
+			--showcase-masthead: 5.125rem;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.showcase {
+			--showcase-margin: 24px;
+		}
+	}
+
+	@media (min-width: 1280px) {
+		.showcase::before {
+			content: "";
+			position: absolute;
+			inset: var(--showcase-masthead) 0 0;
+			background: radial-gradient(var(--showcase-dot) 1px, transparent 1px) center top / 10px 10px;
+			pointer-events: none;
+		}
+	}
+
+	@media (max-width: 639.98px) {
+		.showcase {
+			--showcase-inset: 1rem;
+			--showcase-well-inset: 0.75rem;
+		}
+	}
+</style>

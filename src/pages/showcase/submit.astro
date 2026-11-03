@@ -1,0 +1,515 @@
+---
+/**
+ * The form comes from the forms plugin: build it in the admin with the slug
+ * "showcase". The preview reads its fields by name. They match the showcase
+ * collection's, except that screenshot_dark is the screenshot's dark variant,
+ * so a maintainer can copy an accepted submission across by hand.
+ */
+import { Form } from "@emdash-cms/plugin-forms/ui";
+import ShowcaseCard from "../../components/showcase/ShowcaseCard.astro";
+import ShowcaseHeader from "../../components/showcase/ShowcaseHeader.astro";
+import ShowcaseLayout from "../../components/showcase/ShowcaseLayout.astro";
+import type { ShowcaseSite } from "../../lib/showcase";
+
+const previewSite: ShowcaseSite = {
+	id: "preview",
+	title: "Your site",
+	href: "https://yoursite.com",
+	host: "yoursite.com",
+	screenshot: null,
+	description: null,
+	category: null,
+	featured: false,
+	quote: null,
+	quoteAuthor: null,
+	quoteRole: null,
+	storyUrl: null,
+};
+---
+
+<ShowcaseLayout
+	title="Submit your site"
+	description="Built something with EmDash? Submit it for the showcase."
+	labelledBy="showcase-submit-title"
+>
+	<ShowcaseHeader
+		titleId="showcase-submit-title"
+		eyebrowHref="/showcase"
+		lead="Built something with EmDash?"
+		title="Add it to the showcase."
+		intro="Tell us about your site and send a screenshot. A maintainer reviews every submission by hand."
+	/>
+
+	<div class="showcase-ruled showcase-submit">
+		<div class="showcase-submit-main">
+			<div class="showcase-submit-form"><Form id="showcase" /></div>
+			<p class="showcase-submit-closed">Submissions open soon. Check back in a few days.</p>
+		</div>
+		<aside class="showcase-submit-aside" aria-labelledby="showcase-submit-next">
+			<div class="showcase-submit-aside-inner">
+				<p class="showcase-submit-label" aria-hidden="true">Preview</p>
+				<div class="showcase-submit-preview" data-submit-preview aria-hidden="true">
+					<ShowcaseCard site={previewSite} size="index" preview />
+				</div>
+				<h2 id="showcase-submit-next" class="showcase-submit-heading">What happens next</h2>
+				<ol class="showcase-submit-steps">
+					<li>We check that the site runs on EmDash and loads well.</li>
+					<li>We may trim the description or retake the screenshot, so every card matches.</li>
+					<li>Approved sites go live in the showcase. We email you if anything is missing.</li>
+				</ol>
+			</div>
+		</aside>
+	</div>
+</ShowcaseLayout>
+
+<script>
+	import { displayHost } from "../../lib/showcase";
+
+	const form = document.querySelector<HTMLFormElement>(".showcase-submit-form [data-ec-form]");
+	const card = document.querySelector<HTMLElement>("[data-submit-preview] .showcase-card");
+
+	if (form && card) {
+		const title = card.querySelector<HTMLElement>(".showcase-card-link")!;
+		const meta = card.querySelector<HTMLElement>(".showcase-card-meta")!;
+		const frame = card.querySelector<HTMLElement>(".showcase-card-window")!;
+		const fallbackArt = frame.innerHTML;
+		const defaultTitle = title.textContent ?? "";
+		const defaultHost = card.querySelector(".showcase-card-host")?.textContent ?? "";
+		const root = document.documentElement;
+		let shown: File | null = null;
+		let objectUrl: string | null = null;
+
+		const input = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
+		const file = (name: string) => (input(name) as HTMLInputElement | null)?.files?.[0] ?? null;
+
+		function screenshot(): File | null {
+			const light = file("screenshot");
+			const dark = file("screenshot_dark");
+			const prefersDark =
+				root.classList.contains("dark") ||
+				(!root.classList.contains("light") && matchMedia("(prefers-color-scheme: dark)").matches);
+			const picked = prefersDark ? (dark ?? light) : (light ?? dark);
+			return picked?.type.startsWith("image/") ? picked : null;
+		}
+
+		function showScreenshot(next: File | null) {
+			if (next === shown) return;
+			shown = next;
+			if (objectUrl) URL.revokeObjectURL(objectUrl);
+			objectUrl = null;
+			if (!next) {
+				frame.innerHTML = fallbackArt;
+				return;
+			}
+			objectUrl = URL.createObjectURL(next);
+			const image = new Image();
+			image.className = "showcase-card-image";
+			image.alt = "";
+			image.src = objectUrl;
+			frame.replaceChildren(image);
+		}
+
+		function update() {
+			const url = input("url")?.value.trim();
+			const host = url ? displayHost(url.includes("://") ? url : `https://${url}`) : defaultHost;
+			const category = input("category")?.value;
+			title.textContent = input("title")?.value.trim() || defaultTitle;
+			meta.textContent = category ? `${host} · ${category}` : host;
+			showScreenshot(screenshot());
+			const pill = frame.querySelector(".showcase-card-host-pill");
+			if (pill) pill.textContent = host;
+		}
+
+		form.addEventListener("input", update);
+		form.addEventListener("change", update);
+		form.addEventListener("reset", () => requestAnimationFrame(update));
+		requestAnimationFrame(update);
+
+		/* Sending collapses the form, which can leave its confirmation above the viewport. */
+		const status = form.querySelector<HTMLElement>("[data-form-status]");
+		if (status) {
+			new MutationObserver(() => {
+				if (!status.classList.contains("ec-form-status--success")) return;
+				const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+				status.tabIndex = -1;
+				status.focus({ preventScroll: true });
+				status.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
+			}).observe(status, { attributes: true, attributeFilter: ["class"] });
+		}
+	}
+</script>
+
+<style>
+	.showcase-submit {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.showcase-submit-main {
+		padding: 2rem var(--showcase-inset) 2.5rem;
+	}
+
+	.showcase-submit-aside {
+		padding: 2rem var(--showcase-inset) 2.5rem;
+		background: var(--showcase-dash-x) left top / 100% 1px no-repeat;
+	}
+
+	/* The plugin renders nothing for a missing form, which empties this wrapper. */
+	.showcase-submit-closed {
+		display: none;
+		max-width: 34rem;
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+		font-size: var(--font-size-lg);
+		line-height: 1.6;
+	}
+
+	.showcase-submit-form:empty {
+		display: none;
+	}
+
+	.showcase-submit-form:empty + .showcase-submit-closed {
+		display: block;
+	}
+
+	.showcase-submit-label {
+		margin-bottom: 0.75rem;
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		line-height: 1.5;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	/* The card brings its own well inset, which the column already provides. */
+	.showcase-submit-preview {
+		margin-inline: calc(-1 * var(--showcase-well-inset));
+	}
+
+	.showcase-submit-preview :global(.showcase-card) {
+		--card-inset: var(--showcase-well-inset);
+		padding-top: 0;
+	}
+
+	.showcase-submit-heading {
+		margin-top: 1.5rem;
+		padding-top: 1.5rem;
+		color: var(--color-text);
+		font-size: var(--font-size-base);
+		font-weight: 600;
+		line-height: 1.4;
+		background: var(--showcase-dash-x) left top / 100% 1px no-repeat;
+	}
+
+	.showcase-submit-steps {
+		display: flex;
+		flex-direction: column;
+		gap: 0.625rem;
+		margin-top: 0.875rem;
+		padding: 0;
+		color: color-mix(in srgb, var(--color-text) 72%, transparent);
+		font-size: 0.9375rem;
+		line-height: 1.55;
+		list-style: none;
+		counter-reset: step;
+	}
+
+	.showcase-submit-steps li {
+		display: grid;
+		grid-template-columns: 1.5rem minmax(0, 1fr);
+		counter-increment: step;
+	}
+
+	.showcase-submit-steps li::before {
+		content: counter(step, decimal-leading-zero);
+		color: color-mix(in srgb, var(--color-text) 50%, transparent);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		line-height: 1.55rem;
+	}
+
+	.showcase-submit-form :global(.ec-form) {
+		display: flex;
+		flex-direction: column;
+		gap: 1.75rem;
+	}
+
+	.showcase-submit-form :global(.ec-form-page) {
+		display: flex;
+		min-width: 0;
+		flex-wrap: wrap;
+		gap: 1.375rem 1rem;
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+
+	.showcase-submit-form :global(.ec-form-field) {
+		display: flex;
+		min-width: 0;
+		flex: 1 1 100%;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	/*
+	 * The plugin hides pages and conditional fields with the hidden attribute,
+	 * which the display rules above would undo.
+	 */
+	.showcase-submit-form :global(.ec-form-page[hidden]),
+	.showcase-submit-form :global(.ec-form-field[hidden]),
+	.showcase-submit-form :global(.ec-form-nav [hidden]) {
+		display: none;
+	}
+
+	.showcase-submit-form :global(.ec-form-label) {
+		color: var(--color-text);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		line-height: 1.4;
+	}
+
+	.showcase-submit-form :global(.ec-form-required) {
+		margin-inline-start: 0.25rem;
+		color: var(--color-primary);
+	}
+
+	.showcase-submit-form :global(.ec-form-input) {
+		width: 100%;
+		min-height: 2.625rem;
+		padding: 0.5625rem 0.75rem;
+		color: var(--color-text);
+		font: inherit;
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--button-radius);
+		box-shadow: var(--shadow-sm);
+		transition:
+			border-color var(--transition-fast),
+			box-shadow var(--transition-fast);
+	}
+
+	.showcase-submit-form :global(.ec-form-input::placeholder) {
+		color: color-mix(in srgb, var(--color-text) 40%, transparent);
+	}
+
+	.showcase-submit-form :global(.ec-form-input:hover) {
+		border-color: color-mix(in srgb, var(--color-text) 22%, var(--color-surface));
+	}
+
+	.showcase-submit-form :global(.ec-form-input:focus-visible) {
+		border-color: var(--color-focus);
+		outline: none;
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus) 25%, transparent);
+	}
+
+	.showcase-submit-form :global(textarea.ec-form-input) {
+		min-height: 6rem;
+		resize: vertical;
+	}
+
+	.showcase-submit-form :global(input[type="file"].ec-form-input) {
+		padding: 0.3125rem;
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-size: var(--font-size-sm);
+		cursor: pointer;
+	}
+
+	.showcase-submit-form :global(input[type="file"].ec-form-input::file-selector-button) {
+		margin-inline-end: 0.75rem;
+		padding: 0.375rem 0.75rem;
+		color: var(--color-text);
+		font: inherit;
+		font-weight: 500;
+		background: var(--button-secondary-bg);
+		border: 0;
+		border-radius: calc(var(--button-radius) - 4px);
+		cursor: pointer;
+		transition: background var(--transition-fast);
+	}
+
+	.showcase-submit-form :global(input[type="file"].ec-form-input:hover::file-selector-button) {
+		background: var(--button-secondary-bg-hover);
+	}
+
+	.showcase-submit-form :global(.ec-form-help) {
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-size: 0.8125rem;
+		line-height: 1.5;
+	}
+
+	.showcase-submit-form :global(.ec-form-error) {
+		color: #c2410c;
+		font-size: 0.8125rem;
+		line-height: 1.5;
+	}
+
+	.showcase-submit-form :global(.ec-form-error:empty) {
+		display: none;
+	}
+
+	.showcase-submit-form :global(.ec-form-field--hidden) {
+		display: none;
+	}
+
+	.showcase-submit-form :global(.ec-form-radio-group),
+	.showcase-submit-form :global(.ec-form-checkbox-group) {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+
+	.showcase-submit-form :global(.ec-form-radio-label),
+	.showcase-submit-form :global(.ec-form-checkbox-label) {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.625rem;
+		color: var(--color-text);
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		cursor: pointer;
+	}
+
+	.showcase-submit-form :global(.ec-form-radio-label input),
+	.showcase-submit-form :global(.ec-form-checkbox-label input) {
+		flex: none;
+		width: 1rem;
+		height: 1rem;
+		margin-top: 0.1875rem;
+		accent-color: var(--color-primary);
+	}
+
+	.showcase-submit-form :global(.ec-form-nav) {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.showcase-submit-form :global(.ec-form-submit) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 2.625rem;
+		padding: 0.625rem 1.125rem;
+		color: var(--button-primary-fg);
+		font: inherit;
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		line-height: 1.35;
+		background: var(--button-primary-bg);
+		border: 0;
+		border-radius: var(--button-radius);
+		cursor: pointer;
+		transition: background var(--transition-fast);
+	}
+
+	.showcase-submit-form :global(.ec-form-submit:hover) {
+		background: var(--button-primary-bg-hover);
+	}
+
+	.showcase-submit-form :global(.ec-form-submit:disabled) {
+		cursor: progress;
+		opacity: 0.7;
+	}
+
+	.showcase-submit-form :global(.ec-form-status:focus) {
+		outline: none;
+	}
+
+	.showcase-submit-form :global(.ec-form-status:empty) {
+		display: none;
+	}
+
+	.showcase-submit-form :global(.ec-form-status--error) {
+		color: #c2410c;
+		font-size: var(--font-size-sm);
+	}
+
+	.showcase-submit-form :global(.ec-form:has(.ec-form-status--success) > :not(.ec-form-status)) {
+		display: none;
+	}
+
+	.showcase-submit-form :global(.ec-form-status--success) {
+		display: flex;
+		max-width: 36rem;
+		align-items: flex-start;
+		gap: 0.875rem;
+		padding: 1.25rem 1.375rem;
+		color: var(--color-text);
+		font-size: var(--font-size-base);
+		line-height: 1.6;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 14px;
+		box-shadow: 0 0 0 4px var(--border-faint);
+	}
+
+	.showcase-submit-form :global(.ec-form-status--success)::before {
+		content: "";
+		flex: none;
+		width: 1.5rem;
+		height: 1.5rem;
+		margin-top: 0.0625rem;
+		background:
+			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 12.5 3 3 7-7'/%3E%3C/svg%3E")
+				center / 1rem no-repeat,
+			var(--color-primary);
+		border-radius: var(--radius-full);
+	}
+
+	:global(:root.dark) .showcase-submit-form :global(.ec-form-error),
+	:global(:root.dark) .showcase-submit-form :global(.ec-form-status--error) {
+		color: #fb923c;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .showcase-submit-form :global(.ec-form-error),
+		:global(:root:not(.light)) .showcase-submit-form :global(.ec-form-status--error) {
+			color: #fb923c;
+		}
+	}
+
+	@media (min-width: 640px) {
+		.showcase-submit-form :global(.ec-form-field--half) {
+			flex-basis: calc(50% - 0.5rem);
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.showcase-submit {
+			grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		}
+
+		.showcase-submit-main {
+			padding: 2.5rem var(--showcase-inset) 3.5rem;
+			background: var(--showcase-dash-y) right top / 1px 100% no-repeat;
+		}
+
+		:global([dir="rtl"]) .showcase-submit-main {
+			background-position: left top;
+		}
+
+		.showcase-submit-aside {
+			padding-top: 2.5rem;
+			background: none;
+		}
+
+		.showcase-submit-aside-inner {
+			position: sticky;
+			top: 6rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.showcase-submit-form :global(.ec-form-input),
+		.showcase-submit-form :global(.ec-form-submit) {
+			transition: none;
+		}
+	}
+</style>
