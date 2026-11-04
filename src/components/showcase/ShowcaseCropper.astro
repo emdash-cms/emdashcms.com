@@ -1,0 +1,537 @@
+---
+/** Offers to crop a screenshot picked in the submission form to the cards' 16:10 shape. */
+---
+
+<dialog class="crop-dialog" aria-labelledby="crop-title" aria-describedby="crop-hint" data-cropper>
+	<h2 id="crop-title" class="crop-title">Crop your screenshot</h2>
+	<p id="crop-hint" class="crop-hint">Showcase cards are 16:10. Drag to move the image, zoom to fit what matters.</p>
+	<div
+		class="crop-frame"
+		tabindex="0"
+		role="group"
+		aria-label="Crop area"
+		aria-describedby="crop-keys"
+		data-crop-frame
+	>
+		<img class="crop-image" alt="" draggable="false" data-crop-image />
+	</div>
+	<p id="crop-keys" class="crop-sr-only">Arrow keys move the image. Plus and minus zoom.</p>
+	<div class="crop-foot">
+		<div class="crop-zoom">
+			<label class="crop-zoom-label" for="crop-zoom">Zoom</label>
+			<input id="crop-zoom" class="crop-zoom-range" type="range" min="100" max="400" step="1" value="100" data-crop-zoom />
+			<output class="crop-zoom-value" for="crop-zoom" data-crop-zoom-value>100%</output>
+		</div>
+		<div class="crop-actions">
+			<button type="button" class="crop-button" data-crop-skip>Use full image</button>
+			<button type="button" class="crop-button crop-button--primary" autofocus data-crop-apply>Crop</button>
+		</div>
+	</div>
+</dialog>
+
+<script>
+	import {
+		CROP_ASPECT,
+		clampView,
+		coverScale,
+		initialView,
+		isCropAspect,
+		outputSize,
+		sourceRect,
+		type CropView,
+		type Size,
+	} from "../../lib/crop";
+
+	interface Session {
+		input: HTMLInputElement;
+		file: File;
+		source: HTMLImageElement;
+		url: string;
+		image: Size;
+	}
+
+	const dialog = document.querySelector<HTMLDialogElement>("[data-cropper]");
+	const container = document.querySelector<HTMLElement>(".showcase-submit-form");
+
+	if (dialog && container) {
+		const frame = dialog.querySelector<HTMLElement>("[data-crop-frame]")!;
+		const picture = dialog.querySelector<HTMLImageElement>("[data-crop-image]")!;
+		const zoomInput = dialog.querySelector<HTMLInputElement>("[data-crop-zoom]")!;
+		const zoomValue = dialog.querySelector<HTMLOutputElement>("[data-crop-zoom-value]")!;
+		const applyButton = dialog.querySelector<HTMLButtonElement>("[data-crop-apply]")!;
+		const skipButton = dialog.querySelector<HTMLButtonElement>("[data-crop-skip]")!;
+
+		/* Files this script put into an input, whose change event must not offer a crop again. */
+		const produced = new WeakSet<File>();
+		const pointers = new Map<number, { x: number; y: number }>();
+		let session: Session | null = null;
+		let view: CropView = { zoom: 1, centerX: 0, centerY: 0 };
+		let latestPick = 0;
+
+		/* The crop math only depends on the frame's shape, so a not-yet-laid-out frame can stand in at 16:10. */
+		function frameSize(): Size {
+			const { clientWidth: width, clientHeight: height } = frame;
+			return width > 0 && height > 0 ? { width, height } : { width: CROP_ASPECT, height: 1 };
+		}
+
+		function setView(next: CropView) {
+			if (!session) return;
+			const size = frameSize();
+			view = clampView(next, session.image, size);
+			const scale = coverScale(session.image, size) * view.zoom;
+			const x = size.width / 2 - view.centerX * scale;
+			const y = size.height / 2 - view.centerY * scale;
+			picture.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+			const percent = Math.round(view.zoom * 100);
+			zoomInput.value = String(percent);
+			zoomValue.textContent = `${percent}%`;
+		}
+
+		function panBy(dx: number, dy: number) {
+			if (!session) return;
+			const scale = coverScale(session.image, frameSize()) * view.zoom;
+			setView({ ...view, centerX: view.centerX - dx / scale, centerY: view.centerY - dy / scale });
+		}
+
+		function zoomTo(zoom: number) {
+			setView({ ...view, zoom });
+		}
+
+		function end() {
+			const ended = session;
+			if (!ended) return;
+			session = null;
+			pointers.clear();
+			URL.revokeObjectURL(ended.url);
+			picture.removeAttribute("src");
+			if (dialog!.open) dialog!.close();
+			ended.input.focus();
+		}
+
+		async function offer(input: HTMLInputElement, file: File, pick: number) {
+			const url = URL.createObjectURL(file);
+			const source = new Image();
+			source.src = url;
+			try {
+				await source.decode();
+			} catch {
+				URL.revokeObjectURL(url);
+				return;
+			}
+			const image = { width: source.naturalWidth, height: source.naturalHeight };
+			if (pick !== latestPick || !image.width || !image.height || isCropAspect(image)) {
+				URL.revokeObjectURL(url);
+				return;
+			}
+			end();
+			session = { input, file, source, url, image };
+			picture.src = url;
+			picture.style.width = `${image.width}px`;
+			picture.style.height = `${image.height}px`;
+			applyButton.disabled = false;
+			dialog!.showModal();
+			setView(initialView(image, frameSize()));
+		}
+
+		function encode(canvas: HTMLCanvasElement, type: string): Promise<Blob> {
+			return new Promise((resolve, reject) => {
+				canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error(`Could not encode ${type}`))), type, 0.9);
+			});
+		}
+
+		async function render({ file, source, image }: Session): Promise<File> {
+			const rect = sourceRect(view, image, frameSize());
+			const size = outputSize(rect);
+			const canvas = document.createElement("canvas");
+			canvas.width = size.width;
+			canvas.height = size.height;
+			const context = canvas.getContext("2d");
+			if (!context) throw new Error("Canvas 2D is unavailable");
+			context.imageSmoothingQuality = "high";
+			context.drawImage(source, rect.x, rect.y, rect.width, rect.height, 0, 0, size.width, size.height);
+			let blob = await encode(canvas, "image/webp");
+			if (blob.type !== "image/webp") blob = await encode(canvas, "image/jpeg");
+			const extension = blob.type === "image/webp" ? "webp" : "jpg";
+			const base = file.name.replace(/\.[^.]*$/, "") || "screenshot";
+			return new File([blob], `${base}.${extension}`, { type: blob.type, lastModified: Date.now() });
+		}
+
+		container.addEventListener("change", (event) => {
+			const input = event.target;
+			if (!(input instanceof HTMLInputElement) || input.type !== "file") return;
+			const file = input.files?.[0];
+			if (file && produced.has(file)) return;
+			latestPick += 1;
+			if (file?.type.startsWith("image/")) void offer(input, file, latestPick);
+		});
+
+		applyButton.addEventListener("click", async () => {
+			const current = session;
+			if (!current) return;
+			applyButton.disabled = true;
+			let cropped: File;
+			try {
+				cropped = await render(current);
+			} catch {
+				end();
+				return;
+			}
+			if (session !== current) return;
+			const transfer = new DataTransfer();
+			transfer.items.add(cropped);
+			current.input.files = transfer.files;
+			produced.add(cropped);
+			const stored = current.input.files?.[0];
+			if (stored) produced.add(stored);
+			end();
+			current.input.dispatchEvent(new Event("change", { bubbles: true }));
+		});
+
+		skipButton.addEventListener("click", end);
+		/* Escape closes the dialog natively; a dialog reopened for a newer pick is still open by then. */
+		dialog.addEventListener("close", () => {
+			if (!dialog.open) end();
+		});
+
+		zoomInput.addEventListener("input", () => zoomTo(Number(zoomInput.value) / 100));
+
+		frame.addEventListener("pointerdown", (event) => {
+			if (!session || (event.pointerType === "mouse" && event.button !== 0)) return;
+			frame.setPointerCapture(event.pointerId);
+			pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+		});
+
+		frame.addEventListener("pointermove", (event) => {
+			const last = pointers.get(event.pointerId);
+			if (!last) return;
+			const point = { x: event.clientX, y: event.clientY };
+			pointers.set(event.pointerId, point);
+			if (pointers.size === 1) {
+				panBy(point.x - last.x, point.y - last.y);
+				return;
+			}
+			const other = [...pointers].find(([id]) => id !== event.pointerId)?.[1];
+			const before = other && Math.hypot(last.x - other.x, last.y - other.y);
+			if (!other || !before) return;
+			zoomTo(view.zoom * (Math.hypot(point.x - other.x, point.y - other.y) / before));
+			panBy((point.x - last.x) / 2, (point.y - last.y) / 2);
+		});
+
+		for (const type of ["pointerup", "pointercancel", "lostpointercapture"] as const) {
+			frame.addEventListener(type, (event) => pointers.delete(event.pointerId));
+		}
+
+		frame.addEventListener(
+			"wheel",
+			(event) => {
+				if (!session) return;
+				event.preventDefault();
+				const unit =
+					event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? frame.clientHeight : 1;
+				/* Trackpad pinches arrive as wheel events with ctrlKey and much smaller deltas. */
+				const rate = event.ctrlKey ? 0.01 : 0.002;
+				zoomTo(view.zoom * Math.exp(-event.deltaY * unit * rate));
+			},
+			{ passive: false },
+		);
+
+		frame.addEventListener("keydown", (event) => {
+			const step = event.shiftKey ? 80 : 16;
+			switch (event.key) {
+				case "ArrowLeft":
+					panBy(-step, 0);
+					break;
+				case "ArrowRight":
+					panBy(step, 0);
+					break;
+				case "ArrowUp":
+					panBy(0, -step);
+					break;
+				case "ArrowDown":
+					panBy(0, step);
+					break;
+				case "+":
+				case "=":
+					zoomTo(view.zoom * 1.1);
+					break;
+				case "-":
+				case "_":
+					zoomTo(view.zoom / 1.1);
+					break;
+				default:
+					return;
+			}
+			event.preventDefault();
+		});
+
+		new ResizeObserver(() => setView(view)).observe(frame);
+	}
+</script>
+
+<style>
+	.crop-dialog {
+		width: min(calc(720px + 2.5rem), calc(100vw - 1rem));
+		max-width: none;
+		max-height: calc(100dvh - 1rem);
+		margin: auto;
+		padding: 1.25rem;
+		overflow: auto;
+		color: var(--color-text);
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 16px;
+		box-shadow: var(--shadow-xl);
+		transition:
+			opacity var(--transition-fast),
+			transform var(--transition-fast);
+	}
+
+	@starting-style {
+		.crop-dialog[open] {
+			opacity: 0;
+			transform: translateY(6px) scale(0.985);
+		}
+	}
+
+	.crop-dialog::backdrop {
+		background: rgb(10 10 10 / 0.4);
+	}
+
+	:global(:root.dark) .crop-dialog::backdrop {
+		background: rgb(0 0 0 / 0.65);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .crop-dialog::backdrop {
+			background: rgb(0 0 0 / 0.65);
+		}
+	}
+
+	.crop-title {
+		color: var(--color-text);
+		font-size: var(--font-size-lg);
+		font-weight: 600;
+		line-height: 1.35;
+		letter-spacing: -0.01em;
+	}
+
+	.crop-hint {
+		margin-top: 0.25rem;
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-size: var(--font-size-sm);
+		line-height: 1.5;
+	}
+
+	.crop-frame {
+		position: relative;
+		width: 100%;
+		margin-top: 1rem;
+		overflow: hidden;
+		aspect-ratio: 16 / 10;
+		background: var(--button-secondary-bg);
+		border-radius: var(--button-radius);
+		cursor: grab;
+		touch-action: none;
+		user-select: none;
+	}
+
+	.crop-frame:active {
+		cursor: grabbing;
+	}
+
+	.crop-frame:focus-visible {
+		outline: none;
+		box-shadow:
+			0 0 0 2px var(--color-surface),
+			0 0 0 4px var(--color-focus);
+	}
+
+	/* The transform positions the image from the frame's physical top left in every direction. */
+	.crop-image {
+		position: absolute;
+		top: 0;
+		left: 0;
+		max-width: none;
+		transform-origin: 0 0;
+		pointer-events: none;
+	}
+
+	/* An inner ring drawn over the image keeps the frame's edge visible on light screenshots. */
+	.crop-frame::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text) 12%, transparent);
+		pointer-events: none;
+	}
+
+	.crop-sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.crop-foot {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.875rem 1.5rem;
+		margin-top: 1rem;
+	}
+
+	.crop-zoom {
+		display: flex;
+		min-width: 0;
+		flex: 1 1 14rem;
+		max-width: 20rem;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.crop-zoom-label {
+		color: var(--color-text);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+	}
+
+	.crop-zoom-range {
+		--track: color-mix(in srgb, var(--color-text) 14%, transparent);
+
+		min-width: 0;
+		height: 1.25rem;
+		flex: 1;
+		background: transparent;
+		cursor: pointer;
+		appearance: none;
+	}
+
+	.crop-zoom-range::-webkit-slider-runnable-track {
+		height: 4px;
+		background: var(--track);
+		border-radius: var(--radius-full);
+	}
+
+	.crop-zoom-range::-moz-range-track {
+		height: 4px;
+		background: var(--track);
+		border-radius: var(--radius-full);
+	}
+
+	.crop-zoom-range::-webkit-slider-thumb {
+		width: 1rem;
+		height: 1rem;
+		margin-top: -6px;
+		background: var(--button-primary-bg);
+		border: 2px solid var(--color-surface);
+		border-radius: var(--radius-full);
+		box-shadow: 0 0 0 1px var(--button-primary-bg);
+		appearance: none;
+	}
+
+	.crop-zoom-range::-moz-range-thumb {
+		width: 1rem;
+		height: 1rem;
+		background: var(--button-primary-bg);
+		border: 2px solid var(--color-surface);
+		border-radius: var(--radius-full);
+		box-shadow: 0 0 0 1px var(--button-primary-bg);
+	}
+
+	.crop-zoom-range:focus-visible {
+		outline: none;
+	}
+
+	.crop-zoom-range:focus-visible::-webkit-slider-thumb {
+		box-shadow:
+			0 0 0 1px var(--button-primary-bg),
+			0 0 0 4px color-mix(in srgb, var(--color-focus) 30%, transparent);
+	}
+
+	.crop-zoom-range:focus-visible::-moz-range-thumb {
+		box-shadow:
+			0 0 0 1px var(--button-primary-bg),
+			0 0 0 4px color-mix(in srgb, var(--color-focus) 30%, transparent);
+	}
+
+	.crop-zoom-value {
+		min-width: 3rem;
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-size: var(--font-size-sm);
+		font-variant-numeric: tabular-nums;
+		text-align: end;
+	}
+
+	.crop-actions {
+		display: flex;
+		gap: 0.625rem;
+		margin-inline-start: auto;
+	}
+
+	.crop-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 2.625rem;
+		padding: 0.625rem 1.125rem;
+		color: var(--color-text);
+		font: inherit;
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		line-height: 1.35;
+		white-space: nowrap;
+		background: var(--button-secondary-bg);
+		border: 0;
+		border-radius: var(--button-radius);
+		cursor: pointer;
+		transition: background var(--transition-fast);
+	}
+
+	.crop-button:hover {
+		background: var(--button-secondary-bg-hover);
+	}
+
+	.crop-button--primary {
+		color: var(--button-primary-fg);
+		background: var(--button-primary-bg);
+	}
+
+	.crop-button--primary:hover {
+		background: var(--button-primary-bg-hover);
+	}
+
+	.crop-button:disabled {
+		cursor: progress;
+		opacity: 0.7;
+	}
+
+	@media (max-width: 479px) {
+		.crop-dialog {
+			padding: 1rem;
+		}
+
+		.crop-zoom {
+			max-width: none;
+			flex-basis: 100%;
+		}
+
+		.crop-actions {
+			flex: 1 1 100%;
+		}
+
+		.crop-button {
+			flex: 1;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.crop-dialog,
+		.crop-button {
+			transition: none;
+		}
+	}
+</style>

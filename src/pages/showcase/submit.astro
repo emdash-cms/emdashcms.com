@@ -7,6 +7,7 @@
  */
 import { Form } from "@emdash-cms/plugin-forms/ui";
 import ShowcaseCard from "../../components/showcase/ShowcaseCard.astro";
+import ShowcaseCropper from "../../components/showcase/ShowcaseCropper.astro";
 import ShowcaseHeader from "../../components/showcase/ShowcaseHeader.astro";
 import ShowcaseLayout from "../../components/showcase/ShowcaseLayout.astro";
 import type { ShowcaseSite } from "../../lib/showcase";
@@ -60,6 +61,7 @@ const previewSite: ShowcaseSite = {
 			</div>
 		</aside>
 	</div>
+	<ShowcaseCropper />
 </ShowcaseLayout>
 
 <script>
@@ -303,6 +305,29 @@ const previewSite: ShowcaseSite = {
 		border-color: var(--color-focus);
 		outline: none;
 		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus) 25%, transparent);
+	}
+
+	/* The native arrow hugs the edge, so it is replaced with a caret inset like the text. */
+	.showcase-submit-form :global(select.ec-form-input) {
+		padding-inline-end: 2.5rem;
+		background: var(--color-surface)
+			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a8a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m8 9 4-4 4 4M8 15l4 4 4-4'/%3E%3C/svg%3E")
+			no-repeat right 0.75rem center / 1rem;
+		cursor: pointer;
+		appearance: none;
+	}
+
+	/* A required select still on its empty option is :invalid, so its label reads as a placeholder. */
+	.showcase-submit-form :global(select.ec-form-input:invalid) {
+		color: color-mix(in srgb, var(--color-text) 40%, transparent);
+	}
+
+	.showcase-submit-form :global(select.ec-form-input option) {
+		color: var(--color-text);
+	}
+
+	:global([dir="rtl"]) .showcase-submit-form :global(select.ec-form-input) {
+		background-position: left 0.75rem center;
 	}
 
 	.showcase-submit-form :global(textarea.ec-form-input) {
