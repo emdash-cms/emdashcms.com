@@ -1,44 +1,85 @@
 ---
 /** Offers to crop a screenshot picked in the submission form to the cards' 16:10 shape. */
+import type { ShowcaseSite } from "../../lib/showcase";
+import ShowcaseCard from "./ShowcaseCard.astro";
+
+const previewSite: ShowcaseSite = {
+	id: "crop-preview",
+	title: "Your site",
+	href: "https://yoursite.com",
+	host: "yoursite.com",
+	screenshot: null,
+	description: null,
+	category: null,
+	featured: false,
+	quote: null,
+	quoteAuthor: null,
+	quoteRole: null,
+	storyUrl: null,
+};
 ---
 
 <dialog class="crop-dialog" aria-labelledby="crop-title" aria-describedby="crop-hint" data-cropper>
 	<h2 id="crop-title" class="crop-title">Crop your screenshot</h2>
-	<p id="crop-hint" class="crop-hint">Showcase cards are 16:10. Drag to move the image, zoom to fit what matters.</p>
-	<div
-		class="crop-frame"
-		tabindex="0"
-		role="group"
-		aria-label="Crop area"
-		aria-describedby="crop-keys"
-		data-crop-frame
-	>
-		<img class="crop-image" alt="" draggable="false" data-crop-image />
+	<p id="crop-hint" class="crop-hint">
+		Cards show screenshots at 16:10. Drag the frame to pick what shows, or drag a corner to resize it.
+	</p>
+	<div class="crop-body">
+		<div class="crop-stage" data-crop-stage>
+			<div class="crop-canvas" data-crop-canvas>
+				<img class="crop-source" alt="" draggable="false" data-crop-source />
+				<div class="crop-shade-clip" aria-hidden="true"><div class="crop-shade" data-crop-shade></div></div>
+				<div
+					class="crop-box"
+					tabindex="0"
+					role="group"
+					aria-label="Crop frame"
+					aria-describedby="crop-keys"
+					data-crop-box
+				>
+					<span class="crop-handle" data-corner="nw"></span>
+					<span class="crop-handle" data-corner="ne"></span>
+					<span class="crop-handle" data-corner="sw"></span>
+					<span class="crop-handle" data-corner="se"></span>
+				</div>
+			</div>
+		</div>
+		<div class="crop-side">
+			<p class="crop-label" aria-hidden="true">On the showcase</p>
+			<div class="crop-card" data-crop-card aria-hidden="true">
+				<ShowcaseCard site={previewSite} size="index" preview />
+			</div>
+			<p class="crop-readout" data-crop-readout aria-live="polite"></p>
+		</div>
 	</div>
-	<p id="crop-keys" class="crop-sr-only">Arrow keys move the image. Plus and minus zoom.</p>
+	<p id="crop-keys" class="crop-sr-only">Arrow keys move the frame. Plus and minus zoom.</p>
 	<div class="crop-foot">
 		<div class="crop-zoom">
 			<label class="crop-zoom-label" for="crop-zoom">Zoom</label>
 			<input id="crop-zoom" class="crop-zoom-range" type="range" min="100" max="400" step="1" value="100" data-crop-zoom />
-			<output class="crop-zoom-value" for="crop-zoom" data-crop-zoom-value>100%</output>
 		</div>
 		<div class="crop-actions">
+			<button type="button" class="crop-button crop-button--ghost" data-crop-reset>Reset</button>
 			<button type="button" class="crop-button" data-crop-skip>Use full image</button>
-			<button type="button" class="crop-button crop-button--primary" autofocus data-crop-apply>Crop</button>
+			<button type="button" class="crop-button crop-button--primary" autofocus data-crop-apply>Apply crop</button>
 		</div>
 	</div>
 </dialog>
 
 <script>
 	import {
-		CROP_ASPECT,
-		clampView,
-		coverScale,
-		initialView,
+		clampCrop,
+		cropHeight,
+		cropZoom,
+		initialCrop,
 		isCropAspect,
+		moveCrop,
 		outputSize,
-		sourceRect,
-		type CropView,
+		resizeCrop,
+		zoomCrop,
+		type Corner,
+		type Crop,
+		type Point,
 		type Size,
 	} from "../../lib/crop";
 
@@ -50,60 +91,115 @@
 		image: Size;
 	}
 
+	type Gesture =
+		| { kind: "move"; pointerId: number; last: Point }
+		| { kind: "resize"; pointerId: number; corner: Corner; offset: Point };
+
+	/* Below this width a crop is upscaled on the cards, so the readout warns about it. */
+	const SOFT_WIDTH = 960;
+	const EASE_MS = 220;
+
 	const dialog = document.querySelector<HTMLDialogElement>("[data-cropper]");
 	const container = document.querySelector<HTMLElement>(".showcase-submit-form");
 
 	if (dialog && container) {
-		const frame = dialog.querySelector<HTMLElement>("[data-crop-frame]")!;
-		const picture = dialog.querySelector<HTMLImageElement>("[data-crop-image]")!;
+		const stage = dialog.querySelector<HTMLElement>("[data-crop-stage]")!;
+		const canvas = dialog.querySelector<HTMLElement>("[data-crop-canvas]")!;
+		const sourceImage = dialog.querySelector<HTMLImageElement>("[data-crop-source]")!;
+		const box = dialog.querySelector<HTMLElement>("[data-crop-box]")!;
+		const shade = dialog.querySelector<HTMLElement>("[data-crop-shade]")!;
+		const card = dialog.querySelector<HTMLElement>("[data-crop-card] .showcase-card")!;
+		const cardWindow = card.querySelector<HTMLElement>(".showcase-card-window")!;
+		const readout = dialog.querySelector<HTMLElement>("[data-crop-readout]")!;
 		const zoomInput = dialog.querySelector<HTMLInputElement>("[data-crop-zoom]")!;
-		const zoomValue = dialog.querySelector<HTMLOutputElement>("[data-crop-zoom-value]")!;
 		const applyButton = dialog.querySelector<HTMLButtonElement>("[data-crop-apply]")!;
 		const skipButton = dialog.querySelector<HTMLButtonElement>("[data-crop-skip]")!;
+		const resetButton = dialog.querySelector<HTMLButtonElement>("[data-crop-reset]")!;
+
+		const cardImage = new Image();
+		cardImage.className = "crop-card-image";
+		cardImage.alt = "";
+		cardImage.draggable = false;
 
 		/* Files this script put into an input, whose change event must not offer a crop again. */
 		const produced = new WeakSet<File>();
-		const pointers = new Map<number, { x: number; y: number }>();
 		let session: Session | null = null;
-		let view: CropView = { zoom: 1, centerX: 0, centerY: 0 };
+		let crop: Crop = { x: 0, y: 0, width: 1 };
+		let gesture: Gesture | null = null;
+		let frame = 0;
+		let easeTimer = 0;
 		let latestPick = 0;
 
-		/* The crop math only depends on the frame's shape, so a not-yet-laid-out frame can stand in at 16:10. */
-		function frameSize(): Size {
-			const { clientWidth: width, clientHeight: height } = frame;
-			return width > 0 && height > 0 ? { width, height } : { width: CROP_ASPECT, height: 1 };
+		/* Display pixels per source pixel in the stage. */
+		function stageScale(): number {
+			return session ? canvas.clientWidth / session.image.width : 1;
 		}
 
-		function setView(next: CropView) {
+		function toSource(clientX: number, clientY: number): Point {
+			const rect = canvas.getBoundingClientRect();
+			const scale = rect.width / session!.image.width;
+			return { x: (clientX - rect.left) / scale, y: (clientY - rect.top) / scale };
+		}
+
+		function draw() {
+			frame = 0;
 			if (!session) return;
-			const size = frameSize();
-			view = clampView(next, session.image, size);
-			const scale = coverScale(session.image, size) * view.zoom;
-			const x = size.width / 2 - view.centerX * scale;
-			const y = size.height / 2 - view.centerY * scale;
-			picture.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-			const percent = Math.round(view.zoom * 100);
-			zoomInput.value = String(percent);
-			zoomValue.textContent = `${percent}%`;
+			const scale = stageScale();
+			for (const layer of [box, shade]) {
+				layer.style.transform = `translate3d(${crop.x * scale}px, ${crop.y * scale}px, 0)`;
+				layer.style.width = `${crop.width * scale}px`;
+				layer.style.height = `${cropHeight(crop) * scale}px`;
+			}
+
+			const cardScale = cardWindow.clientWidth / crop.width;
+			cardImage.style.transform = `translate3d(${-crop.x * cardScale}px, ${-crop.y * cardScale}px, 0) scale(${cardScale})`;
+
+			zoomInput.value = String(Math.round(cropZoom(crop, session.image) * 100));
+			const size = outputSize(crop);
+			const soft = size.width < SOFT_WIDTH;
+			readout.textContent = `16:10, saved at ${size.width}\u00a0×\u00a0${size.height}${soft ? ". Small crops can look soft on the cards." : ""}`;
+			readout.classList.toggle("is-soft", soft);
 		}
 
-		function panBy(dx: number, dy: number) {
+		function setCrop(next: Crop, { ease = false } = {}) {
 			if (!session) return;
-			const scale = coverScale(session.image, frameSize()) * view.zoom;
-			setView({ ...view, centerX: view.centerX - dx / scale, centerY: view.centerY - dy / scale });
+			crop = clampCrop(next, session.image);
+			window.clearTimeout(easeTimer);
+			dialog!.classList.toggle("is-easing", ease);
+			if (ease) easeTimer = window.setTimeout(() => dialog!.classList.remove("is-easing"), EASE_MS);
+			if (ease) draw();
+			else if (!frame) frame = requestAnimationFrame(draw);
 		}
 
-		function zoomTo(zoom: number) {
-			setView({ ...view, zoom });
+		/* Fits the whole image inside the stage, so the parts the crop leaves out stay in view. */
+		function layout() {
+			if (!session) return;
+			const { width, height } = session.image;
+			const padding = parseFloat(getComputedStyle(stage).paddingTop) * 2;
+			const scale = Math.min((stage.clientWidth - padding) / width, (stage.clientHeight - padding) / height);
+			canvas.style.width = `${Math.max(1, Math.floor(width * scale))}px`;
+			canvas.style.height = `${Math.max(1, Math.floor(height * scale))}px`;
+			if (frame) cancelAnimationFrame(frame);
+			draw();
+		}
+
+		function copyCaption() {
+			const page = document.querySelector<HTMLElement>("[data-submit-preview] .showcase-card");
+			for (const selector of [".showcase-card-link", ".showcase-card-meta"]) {
+				const from = page?.querySelector(selector);
+				const to = card.querySelector(selector);
+				if (from && to) to.textContent = from.textContent;
+			}
 		}
 
 		function end() {
 			const ended = session;
 			if (!ended) return;
 			session = null;
-			pointers.clear();
+			gesture = null;
 			URL.revokeObjectURL(ended.url);
-			picture.removeAttribute("src");
+			sourceImage.removeAttribute("src");
+			cardImage.removeAttribute("src");
 			if (dialog!.open) dialog!.close();
 			ended.input.focus();
 		}
@@ -125,32 +221,35 @@
 			}
 			end();
 			session = { input, file, source, url, image };
-			picture.src = url;
-			picture.style.width = `${image.width}px`;
-			picture.style.height = `${image.height}px`;
+			sourceImage.src = url;
+			cardImage.src = url;
+			cardImage.style.width = `${image.width}px`;
+			cardImage.style.height = `${image.height}px`;
+			cardWindow.replaceChildren(cardImage);
+			copyCaption();
+			crop = initialCrop(image);
 			applyButton.disabled = false;
 			dialog!.showModal();
-			setView(initialView(image, frameSize()));
+			layout();
 		}
 
-		function encode(canvas: HTMLCanvasElement, type: string): Promise<Blob> {
+		function encode(target: HTMLCanvasElement, type: string): Promise<Blob> {
 			return new Promise((resolve, reject) => {
-				canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error(`Could not encode ${type}`))), type, 0.9);
+				target.toBlob((blob) => (blob ? resolve(blob) : reject(new Error(`Could not encode ${type}`))), type, 0.9);
 			});
 		}
 
-		async function render({ file, source, image }: Session): Promise<File> {
-			const rect = sourceRect(view, image, frameSize());
-			const size = outputSize(rect);
-			const canvas = document.createElement("canvas");
-			canvas.width = size.width;
-			canvas.height = size.height;
-			const context = canvas.getContext("2d");
+		async function render({ file, source }: Session, region: Crop): Promise<File> {
+			const size = outputSize(region);
+			const target = document.createElement("canvas");
+			target.width = size.width;
+			target.height = size.height;
+			const context = target.getContext("2d");
 			if (!context) throw new Error("Canvas 2D is unavailable");
 			context.imageSmoothingQuality = "high";
-			context.drawImage(source, rect.x, rect.y, rect.width, rect.height, 0, 0, size.width, size.height);
-			let blob = await encode(canvas, "image/webp");
-			if (blob.type !== "image/webp") blob = await encode(canvas, "image/jpeg");
+			context.drawImage(source, region.x, region.y, region.width, cropHeight(region), 0, 0, size.width, size.height);
+			let blob = await encode(target, "image/webp");
+			if (blob.type !== "image/webp") blob = await encode(target, "image/jpeg");
 			const extension = blob.type === "image/webp" ? "webp" : "jpg";
 			const base = file.name.replace(/\.[^.]*$/, "") || "screenshot";
 			return new File([blob], `${base}.${extension}`, { type: blob.type, lastModified: Date.now() });
@@ -171,7 +270,7 @@
 			applyButton.disabled = true;
 			let cropped: File;
 			try {
-				cropped = await render(current);
+				cropped = await render(current, crop);
 			} catch {
 				end();
 				return;
@@ -188,89 +287,106 @@
 		});
 
 		skipButton.addEventListener("click", end);
+		resetButton.addEventListener("click", () => session && setCrop(initialCrop(session.image), { ease: true }));
 		/* Escape closes the dialog natively; a dialog reopened for a newer pick is still open by then. */
 		dialog.addEventListener("close", () => {
 			if (!dialog.open) end();
 		});
 
-		zoomInput.addEventListener("input", () => zoomTo(Number(zoomInput.value) / 100));
-
-		frame.addEventListener("pointerdown", (event) => {
-			if (!session || (event.pointerType === "mouse" && event.button !== 0)) return;
-			frame.setPointerCapture(event.pointerId);
-			pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+		zoomInput.addEventListener("input", () => {
+			if (!session) return;
+			setCrop(zoomCrop(crop, Number(zoomInput.value) / 100 / cropZoom(crop, session.image), session.image));
 		});
 
-		frame.addEventListener("pointermove", (event) => {
-			const last = pointers.get(event.pointerId);
-			if (!last) return;
-			const point = { x: event.clientX, y: event.clientY };
-			pointers.set(event.pointerId, point);
-			if (pointers.size === 1) {
-				panBy(point.x - last.x, point.y - last.y);
-				return;
+		canvas.addEventListener("pointerdown", (event) => {
+			if (!session || gesture || (event.pointerType === "mouse" && event.button !== 0)) return;
+			event.preventDefault();
+			const corner = (event.target as HTMLElement).dataset.corner as Corner | undefined;
+			const point = toSource(event.clientX, event.clientY);
+			if (corner) {
+				const cornerPoint = {
+					x: crop.x + (corner.endsWith("e") ? crop.width : 0),
+					y: crop.y + (corner.startsWith("s") ? cropHeight(crop) : 0),
+				};
+				gesture = {
+					kind: "resize",
+					pointerId: event.pointerId,
+					corner,
+					offset: { x: cornerPoint.x - point.x, y: cornerPoint.y - point.y },
+				};
+			} else {
+				gesture = { kind: "move", pointerId: event.pointerId, last: point };
 			}
-			const other = [...pointers].find(([id]) => id !== event.pointerId)?.[1];
-			const before = other && Math.hypot(last.x - other.x, last.y - other.y);
-			if (!other || !before) return;
-			zoomTo(view.zoom * (Math.hypot(point.x - other.x, point.y - other.y) / before));
-			panBy((point.x - last.x) / 2, (point.y - last.y) / 2);
+			canvas.setPointerCapture(event.pointerId);
+			canvas.dataset.gesture = corner ? `resize-${corner}` : "move";
+		});
+
+		canvas.addEventListener("pointermove", (event) => {
+			if (!session || gesture?.pointerId !== event.pointerId) return;
+			const point = toSource(event.clientX, event.clientY);
+			if (gesture.kind === "move") {
+				setCrop(moveCrop(crop, point.x - gesture.last.x, point.y - gesture.last.y, session.image));
+				gesture.last = point;
+			} else {
+				const target = { x: point.x + gesture.offset.x, y: point.y + gesture.offset.y };
+				setCrop(resizeCrop(crop, gesture.corner, target, session.image));
+			}
 		});
 
 		for (const type of ["pointerup", "pointercancel", "lostpointercapture"] as const) {
-			frame.addEventListener(type, (event) => pointers.delete(event.pointerId));
+			canvas.addEventListener(type, (event) => {
+				if (gesture?.pointerId !== event.pointerId) return;
+				gesture = null;
+				delete canvas.dataset.gesture;
+			});
 		}
 
-		frame.addEventListener(
+		stage.addEventListener(
 			"wheel",
 			(event) => {
 				if (!session) return;
 				event.preventDefault();
 				const unit =
-					event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? frame.clientHeight : 1;
+					event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? stage.clientHeight : 1;
 				/* Trackpad pinches arrive as wheel events with ctrlKey and much smaller deltas. */
 				const rate = event.ctrlKey ? 0.01 : 0.002;
-				zoomTo(view.zoom * Math.exp(-event.deltaY * unit * rate));
+				const focus = toSource(event.clientX, event.clientY);
+				setCrop(zoomCrop(crop, Math.exp(-event.deltaY * unit * rate), session.image, focus));
 			},
 			{ passive: false },
 		);
 
-		frame.addEventListener("keydown", (event) => {
-			const step = event.shiftKey ? 80 : 16;
-			switch (event.key) {
-				case "ArrowLeft":
-					panBy(-step, 0);
-					break;
-				case "ArrowRight":
-					panBy(step, 0);
-					break;
-				case "ArrowUp":
-					panBy(0, -step);
-					break;
-				case "ArrowDown":
-					panBy(0, step);
-					break;
-				case "+":
-				case "=":
-					zoomTo(view.zoom * 1.1);
-					break;
-				case "-":
-				case "_":
-					zoomTo(view.zoom / 1.1);
-					break;
-				default:
-					return;
-			}
+		box.addEventListener("keydown", (event) => {
+			if (!session) return;
+			const step = (event.shiftKey ? 0.1 : 0.02) * crop.width;
+			const moves: Record<string, [number, number]> = {
+				ArrowLeft: [-step, 0],
+				ArrowRight: [step, 0],
+				ArrowUp: [0, -step],
+				ArrowDown: [0, step],
+			};
+			const move = moves[event.key];
+			if (move) setCrop(moveCrop(crop, move[0], move[1], session.image));
+			else if (event.key === "+" || event.key === "=") setCrop(zoomCrop(crop, 1.1, session.image));
+			else if (event.key === "-" || event.key === "_") setCrop(zoomCrop(crop, 1 / 1.1, session.image));
+			else return;
 			event.preventDefault();
 		});
 
-		new ResizeObserver(() => setView(view)).observe(frame);
+		new ResizeObserver(layout).observe(stage);
+		new ResizeObserver(() => session && draw()).observe(cardWindow);
 	}
 </script>
 
 <style>
 	.crop-dialog {
-		width: min(calc(720px + 2.5rem), calc(100vw - 1rem));
+		--crop-shade: rgb(10 10 10 / 0.58);
+		--crop-line: rgb(255 255 255 / 0.95);
+		/* Mid grey stays visible over both light and dark screenshots. */
+		--crop-guide: rgb(128 128 128 / 0.85);
+		--crop-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+		width: min(60rem, calc(100vw - 1rem));
 		max-width: none;
 		max-height: calc(100dvh - 1rem);
 		margin: auto;
@@ -322,48 +438,216 @@
 		line-height: 1.5;
 	}
 
-	.crop-frame {
-		position: relative;
-		width: 100%;
+	.crop-body {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 16rem;
+		gap: 1.25rem;
 		margin-top: 1rem;
+	}
+
+	/* Coordinates are physical in every direction: the image and frame are positioned from the top left. */
+	.crop-stage {
+		display: flex;
+		height: min(56dvh, 30rem);
+		padding: 1rem;
+		align-items: center;
+		justify-content: center;
 		overflow: hidden;
-		aspect-ratio: 16 / 10;
-		background: var(--button-secondary-bg);
+		direction: ltr;
+		background:
+			radial-gradient(circle, color-mix(in srgb, var(--color-text) 9%, transparent) 1px, transparent 1.2px) 0 0 / 14px 14px,
+			color-mix(in srgb, var(--color-text) 3.5%, var(--color-surface));
 		border-radius: var(--button-radius);
-		cursor: grab;
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text) 10%, transparent);
 		touch-action: none;
 		user-select: none;
 	}
 
-	.crop-frame:active {
-		cursor: grabbing;
+	/* The frame's handles reach past the image's edges, so only the shade is clipped to it. */
+	.crop-canvas {
+		position: relative;
+		flex: none;
+		cursor: move;
 	}
 
-	.crop-frame:focus-visible {
+	.crop-shade-clip {
+		position: absolute;
+		inset: 0;
+		overflow: hidden;
+		pointer-events: none;
+	}
+
+	.crop-shade,
+	.crop-box {
+		position: absolute;
+		top: 0;
+		left: 0;
+		will-change: transform;
+	}
+
+	.crop-shade {
+		box-shadow: 0 0 0 9999px var(--crop-shade);
+	}
+
+	.crop-source {
+		display: block;
+		width: 100%;
+		max-width: none;
+		height: 100%;
+		pointer-events: none;
+	}
+
+	.crop-box {
+		box-shadow: 0 0 0 1.5px var(--crop-line);
+	}
+
+	/* Rule-of-thirds guides, shown while the frame moves or has focus. */
+	.crop-box::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(var(--crop-guide), var(--crop-guide)) 33.333% 0 / 1px 100% no-repeat,
+			linear-gradient(var(--crop-guide), var(--crop-guide)) 66.667% 0 / 1px 100% no-repeat,
+			linear-gradient(var(--crop-guide), var(--crop-guide)) 0 33.333% / 100% 1px no-repeat,
+			linear-gradient(var(--crop-guide), var(--crop-guide)) 0 66.667% / 100% 1px no-repeat;
+		opacity: 0;
+		transition: opacity 160ms ease-out;
+		pointer-events: none;
+	}
+
+	.crop-canvas[data-gesture] .crop-box::before {
+		opacity: 1;
+	}
+
+	.crop-box:focus-visible {
 		outline: none;
 		box-shadow:
-			0 0 0 2px var(--color-surface),
+			0 0 0 1.5px var(--crop-line),
 			0 0 0 4px var(--color-focus);
 	}
 
-	/* The transform positions the image from the frame's physical top left in every direction. */
-	.crop-image {
+	/* 44px targets centred on each corner, drawn as short brackets. */
+	.crop-handle {
+		position: absolute;
+		width: 2.75rem;
+		height: 2.75rem;
+		margin: -1.375rem;
+	}
+
+	.crop-handle::after {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 1rem;
+		height: 1rem;
+		margin: -3px;
+		border: 0 solid var(--crop-line);
+		filter: drop-shadow(0 0 1px rgb(0 0 0 / 0.5));
+	}
+
+	.crop-handle[data-corner="nw"] {
+		top: 0;
+		left: 0;
+		cursor: nwse-resize;
+	}
+
+	.crop-handle[data-corner="nw"]::after {
+		border-width: 3px 0 0 3px;
+	}
+
+	.crop-handle[data-corner="ne"] {
+		top: 0;
+		right: 0;
+		cursor: nesw-resize;
+	}
+
+	.crop-handle[data-corner="ne"]::after {
+		left: auto;
+		right: 50%;
+		border-width: 3px 3px 0 0;
+	}
+
+	.crop-handle[data-corner="sw"] {
+		bottom: 0;
+		left: 0;
+		cursor: nesw-resize;
+	}
+
+	.crop-handle[data-corner="sw"]::after {
+		top: auto;
+		bottom: 50%;
+		border-width: 0 0 3px 3px;
+	}
+
+	.crop-handle[data-corner="se"] {
+		right: 0;
+		bottom: 0;
+		cursor: nwse-resize;
+	}
+
+	.crop-handle[data-corner="se"]::after {
+		top: auto;
+		left: auto;
+		right: 50%;
+		bottom: 50%;
+		border-width: 0 3px 3px 0;
+	}
+
+	.crop-canvas[data-gesture="move"] {
+		cursor: grabbing;
+	}
+
+	.crop-side {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+	}
+
+	.crop-label {
+		margin-bottom: 0.75rem;
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		line-height: 1.5;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.crop-card :global(.showcase-card) {
+		--card-inset: 0px;
+		pointer-events: none;
+	}
+
+	.crop-card :global(.crop-card-image) {
 		position: absolute;
 		top: 0;
 		left: 0;
 		max-width: none;
 		transform-origin: 0 0;
-		pointer-events: none;
+		will-change: transform;
 	}
 
-	/* An inner ring drawn over the image keeps the frame's edge visible on light screenshots. */
-	.crop-frame::after {
-		content: "";
-		position: absolute;
-		inset: 0;
-		border-radius: inherit;
-		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-text) 12%, transparent);
-		pointer-events: none;
+	.crop-readout {
+		margin-top: 0.875rem;
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-size: var(--font-size-sm);
+		font-variant-numeric: tabular-nums;
+		line-height: 1.5;
+	}
+
+	.crop-readout.is-soft {
+		color: color-mix(in srgb, var(--color-primary) 72%, var(--color-text));
+	}
+
+	.crop-dialog.is-easing .crop-box,
+	.crop-dialog.is-easing .crop-shade,
+	.crop-dialog.is-easing :global(.crop-card-image) {
+		transition:
+			transform 220ms var(--crop-ease),
+			width 220ms var(--crop-ease),
+			height 220ms var(--crop-ease);
 	}
 
 	.crop-sr-only {
@@ -387,8 +671,8 @@
 	.crop-zoom {
 		display: flex;
 		min-width: 0;
-		flex: 1 1 14rem;
-		max-width: 20rem;
+		flex: 1 1 12rem;
+		max-width: 18rem;
 		align-items: center;
 		gap: 0.75rem;
 	}
@@ -458,14 +742,6 @@
 			0 0 0 4px color-mix(in srgb, var(--color-focus) 30%, transparent);
 	}
 
-	.crop-zoom-value {
-		min-width: 3rem;
-		color: color-mix(in srgb, var(--color-text) 66%, transparent);
-		font-size: var(--font-size-sm);
-		font-variant-numeric: tabular-nums;
-		text-align: end;
-	}
-
 	.crop-actions {
 		display: flex;
 		gap: 0.625rem;
@@ -495,6 +771,17 @@
 		background: var(--button-secondary-bg-hover);
 	}
 
+	.crop-button:focus-visible {
+		outline: none;
+		box-shadow:
+			0 0 0 2px var(--color-surface),
+			0 0 0 4px var(--color-focus);
+	}
+
+	.crop-button--ghost {
+		background: transparent;
+	}
+
 	.crop-button--primary {
 		color: var(--button-primary-fg);
 		background: var(--button-primary-bg);
@@ -507,6 +794,35 @@
 	.crop-button:disabled {
 		cursor: progress;
 		opacity: 0.7;
+	}
+
+	@media (max-width: 767px) {
+		.crop-body {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.crop-stage {
+			height: min(44dvh, 22rem);
+		}
+
+		.crop-side {
+			display: grid;
+			grid-template-columns: 9rem minmax(0, 1fr);
+			align-items: center;
+			gap: 0 1rem;
+		}
+
+		.crop-label {
+			grid-column: 1 / -1;
+		}
+
+		.crop-card :global(.showcase-card-caption) {
+			display: none;
+		}
+
+		.crop-readout {
+			margin-top: 0;
+		}
 	}
 
 	@media (max-width: 479px) {
@@ -526,11 +842,22 @@
 		.crop-button {
 			flex: 1;
 		}
+
+		.crop-button--ghost {
+			flex: none;
+		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
 		.crop-dialog,
-		.crop-button {
+		.crop-button,
+		.crop-box::before {
+			transition: none;
+		}
+
+		.crop-dialog.is-easing .crop-box,
+		.crop-dialog.is-easing .crop-shade,
+		.crop-dialog.is-easing :global(.crop-card-image) {
 			transition: none;
 		}
 	}

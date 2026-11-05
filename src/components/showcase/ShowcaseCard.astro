@@ -201,11 +201,12 @@ const sizes = spotlight
 		opacity: 0.7;
 	}
 
-	/* The window overshoots the bottom edge so the 3px hover lift never shows a gap. */
+	/* 16:10 like the screenshots. It overshoots the well's bottom edge by 4px so the 3px hover lift never shows a gap. */
 	.showcase-card-window {
 		position: absolute;
-		inset: 7% 6% -4px;
+		inset: calc(8% + 4px) 4% auto;
 		overflow: hidden;
+		aspect-ratio: 16 / 10;
 		background: var(--color-surface);
 		border-radius: var(--window-radius) var(--window-radius) 0 0;
 		box-shadow:
