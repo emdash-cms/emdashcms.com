@@ -305,7 +305,7 @@ const previewSite: ShowcaseSite = {
 
 	.showcase-submit-form :global(.ec-form-input:focus-visible) {
 		border-color: var(--color-focus);
-		outline: none;
+		outline: 2px solid transparent;
 		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus) 25%, transparent);
 	}
 
@@ -457,6 +457,17 @@ const previewSite: ShowcaseSite = {
 
 	.showcase-submit-form :global(.ec-form-checkbox-label input[type="checkbox"]:user-invalid) {
 		box-shadow: inset 0 0 0 1px #c2410c;
+	}
+
+	/* Forced colours drop the shadow border and the masked check, so the native box comes back. */
+	@media (forced-colors: active) {
+		.showcase-submit-form :global(.ec-form-checkbox-label input[type="checkbox"]) {
+			appearance: auto;
+		}
+
+		.showcase-submit-form :global(.ec-form-checkbox-label input[type="checkbox"])::before {
+			display: none;
+		}
 	}
 
 	.showcase-submit-form :global(.ec-form-nav) {

@@ -23,7 +23,11 @@
 		list.id = listId;
 		list.role = "listbox";
 		list.hidden = true;
-		if (select.labels?.[0]?.id) list.setAttribute("aria-labelledby", select.labels[0].id);
+		const label = select.labels?.[0];
+		if (label) {
+			label.id ||= `${listId}-label`;
+			list.setAttribute("aria-labelledby", label.id);
+		}
 		field.classList.add("showcase-select-field");
 		field.insertBefore(list, select.nextSibling);
 		select.setAttribute("aria-haspopup", "listbox");
@@ -64,7 +68,11 @@
 			if (!item) return;
 			item.dataset.highlighted = "";
 			select.setAttribute("aria-activedescendant", item.id);
-			item.scrollIntoView({ block: "nearest" });
+			/* Scrolls only the list; scrollIntoView would also scroll the page under the pointer. */
+			const top = item.offsetTop - item.offsetHeight / 4;
+			const bottom = item.offsetTop + item.offsetHeight * 1.25;
+			if (top < list.scrollTop) list.scrollTop = top;
+			else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight;
 		}
 
 		function isOpen() {
@@ -279,6 +287,23 @@
 		from {
 			opacity: 0;
 			transform: translateY(4px) scale(0.98);
+		}
+	}
+
+	/* Forced colours drop the shadow ring and the highlight tint. */
+	@media (forced-colors: active) {
+		.showcase-select-list {
+			outline: 1px solid CanvasText;
+		}
+
+		.showcase-select-item[data-highlighted] {
+			color: HighlightText;
+			background: Highlight;
+			forced-color-adjust: none;
+		}
+
+		.showcase-select-item[data-highlighted] .showcase-select-check {
+			color: HighlightText;
 		}
 	}
 
