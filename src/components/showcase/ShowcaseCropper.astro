@@ -60,7 +60,6 @@ const previewSite: ShowcaseSite = {
 		</div>
 		<div class="crop-actions">
 			<button type="button" class="crop-button crop-button--ghost" data-crop-reset>Reset</button>
-			<button type="button" class="crop-button" data-crop-skip>Use full image</button>
 			<button type="button" class="crop-button crop-button--primary" autofocus data-crop-apply>Apply crop</button>
 		</div>
 	</div>
@@ -113,7 +112,6 @@ const previewSite: ShowcaseSite = {
 		const readout = dialog.querySelector<HTMLElement>("[data-crop-readout]")!;
 		const zoomInput = dialog.querySelector<HTMLInputElement>("[data-crop-zoom]")!;
 		const applyButton = dialog.querySelector<HTMLButtonElement>("[data-crop-apply]")!;
-		const skipButton = dialog.querySelector<HTMLButtonElement>("[data-crop-skip]")!;
 		const resetButton = dialog.querySelector<HTMLButtonElement>("[data-crop-reset]")!;
 
 		const cardImage = new Image();
@@ -192,7 +190,8 @@ const previewSite: ShowcaseSite = {
 			}
 		}
 
-		function end() {
+		/* Cancelling clears the pick, so the form never sends a screenshot in another shape. */
+		function end({ cancel = false } = {}) {
 			const ended = session;
 			if (!ended) return;
 			session = null;
@@ -201,6 +200,10 @@ const previewSite: ShowcaseSite = {
 			sourceImage.removeAttribute("src");
 			cardImage.removeAttribute("src");
 			if (dialog!.open) dialog!.close();
+			if (cancel) {
+				ended.input.value = "";
+				ended.input.dispatchEvent(new Event("change", { bubbles: true }));
+			}
 			ended.input.focus();
 		}
 
@@ -286,11 +289,10 @@ const previewSite: ShowcaseSite = {
 			current.input.dispatchEvent(new Event("change", { bubbles: true }));
 		});
 
-		skipButton.addEventListener("click", end);
 		resetButton.addEventListener("click", () => session && setCrop(initialCrop(session.image), { ease: true }));
 		/* Escape closes the dialog natively; a dialog reopened for a newer pick is still open by then. */
 		dialog.addEventListener("close", () => {
-			if (!dialog.open) end();
+			if (!dialog.open) end({ cancel: true });
 		});
 
 		zoomInput.addEventListener("input", () => {
