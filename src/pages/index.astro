@@ -42,12 +42,48 @@ function withCapabilities(content: PortableTextBlock[] | undefined) {
 }
 
 const pageContent = withCapabilities(page?.data.content);
+
+const siteUrl = "https://emdashcms.com/";
+const structuredData = {
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "Organization",
+			"@id": `${siteUrl}#organization`,
+			name: "EmDash CMS",
+			url: siteUrl,
+			logo: new URL("/brand/favicon.png", siteUrl).href,
+			sameAs: [
+				"https://github.com/emdash-cms",
+				"https://bsky.app/profile/emdashcms.com",
+				"https://x.com/EmDashCMS",
+				"https://discord.gg/YY9vBaQRYt",
+			],
+		},
+		{
+			"@type": "SoftwareApplication",
+			"@id": `${siteUrl}#software`,
+			name: "EmDash",
+			description: "An open source Astro CMS built for humans and agents.",
+			url: siteUrl,
+			applicationCategory: "DeveloperApplication",
+			operatingSystem: "Cloudflare Workers, Node.js",
+			license: "https://opensource.org/license/mit",
+			isAccessibleForFree: true,
+			offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+			author: { "@type": "Organization", name: "Cloudflare", url: "https://www.cloudflare.com/" },
+			publisher: { "@id": `${siteUrl}#organization` },
+			sameAs: ["https://github.com/emdash-cms/emdash"],
+		},
+	],
+};
 ---
 
 <Base
 	title={pageTitle !== "Home" ? pageTitle : undefined}
 	description="An open source Astro CMS built for humans and agents."
 >
+	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 	{
 		pageContent ? (
 			<MarketingBlocks value={pageContent} />
