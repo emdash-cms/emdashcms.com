@@ -45,11 +45,13 @@ const previewSite: ShowcaseSite = {
 			</div>
 		</div>
 		<div class="crop-side">
-			<p class="crop-label" aria-hidden="true">On the showcase</p>
-			<div class="crop-card" data-crop-card aria-hidden="true">
-				<ShowcaseCard site={previewSite} size="index" preview />
+			<div class="crop-preview">
+				<p class="crop-label" aria-hidden="true">On the showcase</p>
+				<div class="crop-card" data-crop-card aria-hidden="true">
+					<ShowcaseCard site={previewSite} size="index" preview />
+				</div>
+				<p class="crop-soft" aria-live="polite" data-crop-soft></p>
 			</div>
-			<p class="crop-readout" data-crop-readout aria-live="polite"></p>
 		</div>
 	</div>
 	<p id="crop-keys" class="crop-sr-only">Arrow keys move the frame. Plus and minus zoom.</p>
@@ -94,7 +96,7 @@ const previewSite: ShowcaseSite = {
 		| { kind: "move"; pointerId: number; last: Point }
 		| { kind: "resize"; pointerId: number; corner: Corner; offset: Point };
 
-	/* Below this width a crop is upscaled on the cards, so the readout warns about it. */
+	/* Below this width a crop is upscaled on the cards, so the dialog warns about it. */
 	const SOFT_WIDTH = 960;
 	const EASE_MS = 220;
 
@@ -109,7 +111,7 @@ const previewSite: ShowcaseSite = {
 		const shade = dialog.querySelector<HTMLElement>("[data-crop-shade]")!;
 		const card = dialog.querySelector<HTMLElement>("[data-crop-card] .showcase-card")!;
 		const cardWindow = card.querySelector<HTMLElement>(".showcase-card-window")!;
-		const readout = dialog.querySelector<HTMLElement>("[data-crop-readout]")!;
+		const softNote = dialog.querySelector<HTMLElement>("[data-crop-soft]")!;
 		const zoomInput = dialog.querySelector<HTMLInputElement>("[data-crop-zoom]")!;
 		const applyButton = dialog.querySelector<HTMLButtonElement>("[data-crop-apply]")!;
 		const resetButton = dialog.querySelector<HTMLButtonElement>("[data-crop-reset]")!;
@@ -153,10 +155,8 @@ const previewSite: ShowcaseSite = {
 			cardImage.style.transform = `translate3d(${-crop.x * cardScale}px, ${-crop.y * cardScale}px, 0) scale(${cardScale})`;
 
 			zoomInput.value = String(Math.round(cropZoom(crop, session.image) * 100));
-			const size = outputSize(crop);
-			const soft = size.width < SOFT_WIDTH;
-			readout.textContent = `16:10, saved at ${size.width}\u00a0×\u00a0${size.height}${soft ? ". Small crops can look soft on the cards." : ""}`;
-			readout.classList.toggle("is-soft", soft);
+			const soft = outputSize(crop).width < SOFT_WIDTH;
+			softNote.textContent = soft ? "This crop is small, so it may look soft on the cards." : "";
 		}
 
 		function setCrop(next: Crop, { ease = false } = {}) {
@@ -601,10 +601,19 @@ const previewSite: ShowcaseSite = {
 		cursor: grabbing;
 	}
 
+	/* The inline padding leaves room for the card well's 4px outer ring. */
 	.crop-side {
 		display: flex;
 		min-width: 0;
-		flex-direction: column;
+		padding-inline: 4px;
+		align-items: center;
+		justify-content: center;
+	}
+
+	/* The warning hangs below the card, so the card stays centred and still whether it shows or not. */
+	.crop-preview {
+		position: relative;
+		width: 100%;
 	}
 
 	.crop-label {
@@ -631,16 +640,15 @@ const previewSite: ShowcaseSite = {
 		will-change: transform;
 	}
 
-	.crop-readout {
+	.crop-soft {
+		position: absolute;
+		top: 100%;
+		right: 0;
+		left: 0;
 		margin-top: 0.875rem;
-		color: color-mix(in srgb, var(--color-text) 66%, transparent);
-		font-size: var(--font-size-sm);
-		font-variant-numeric: tabular-nums;
-		line-height: 1.5;
-	}
-
-	.crop-readout.is-soft {
 		color: color-mix(in srgb, var(--color-primary) 72%, var(--color-text));
+		font-size: var(--font-size-sm);
+		line-height: 1.5;
 	}
 
 	.crop-dialog.is-easing .crop-box,
@@ -807,23 +815,18 @@ const previewSite: ShowcaseSite = {
 			height: min(44dvh, 22rem);
 		}
 
-		.crop-side {
-			display: grid;
-			grid-template-columns: 9rem minmax(0, 1fr);
-			align-items: center;
-			gap: 0 1rem;
-		}
-
-		.crop-label {
-			grid-column: 1 / -1;
+		.crop-preview {
+			width: min(100%, 12rem);
 		}
 
 		.crop-card :global(.showcase-card-caption) {
 			display: none;
 		}
 
-		.crop-readout {
-			margin-top: 0;
+		.crop-soft {
+			position: static;
+			min-height: 3em;
+			text-align: center;
 		}
 	}
 
