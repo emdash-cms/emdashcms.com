@@ -1,0 +1,122 @@
+---
+import { getEmDashCollection } from "emdash";
+import ShowcaseButton from "../components/showcase/ShowcaseButton.astro";
+import ShowcaseCard from "../components/showcase/ShowcaseCard.astro";
+import ShowcaseGrid from "../components/showcase/ShowcaseGrid.astro";
+import ShowcaseHeader from "../components/showcase/ShowcaseHeader.astro";
+import ShowcaseInvite from "../components/showcase/ShowcaseInvite.astro";
+import ShowcaseLabel from "../components/showcase/ShowcaseLabel.astro";
+import ShowcaseLayout from "../components/showcase/ShowcaseLayout.astro";
+import ShowcaseQuotes from "../components/showcase/ShowcaseQuotes.astro";
+import ShowcaseSlot from "../components/showcase/ShowcaseSlot.astro";
+import { splitFeatured, toShowcaseSite, type ShowcaseSite } from "../lib/showcase";
+
+const { entries, error, cacheHint } = await getEmDashCollection("showcase", {
+	orderBy: { published_at: "desc" },
+});
+
+if (error) console.error("Failed to load showcase sites:", error);
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const sites = error ? [] : entries.map(toShowcaseSite).filter((site): site is ShowcaseSite => site !== null);
+const { featured, rest } = splitFeatured(sites);
+const stories = featured.filter((site): site is ShowcaseSite & { storyUrl: string } => site.storyUrl !== null);
+const featuredCards = featured.filter((site) => site.storyUrl === null);
+const spotlightLast = featuredCards.length % 2 === 1;
+
+/** Open cells that fill the index grid's last row: each says which column counts it shows at. */
+const slotsAt3 = (3 - (rest.length % 3)) % 3;
+const slotsAt2 = rest.length % 2;
+const slots = Array.from({ length: Math.max(slotsAt3, slotsAt2) }, (_, index) => ({
+	at3: index < slotsAt3,
+	at2: index < slotsAt2,
+}));
+---
+
+<ShowcaseLayout title="Showcase" description="Real sites in production, built with EmDash." labelledBy="showcase-title">
+	<ShowcaseHeader
+		titleId="showcase-title"
+		lead="Real sites, in production,"
+		title="built with EmDash."
+		intro="Publications, studios, shops and docs that run on EmDash. Each card opens the live site."
+	>
+		<ShowcaseButton label="Submit your site" />
+	</ShowcaseHeader>
+
+	{
+		sites.length === 0 ? (
+			<ShowcaseInvite
+				title="The first sites are on their way"
+				copy="Nothing is listed yet. If you run a site on EmDash, submit it and it could be the first one here."
+			/>
+		) : (
+			<>
+				{featured.length > 0 && (
+					<section class="showcase-ruled" aria-labelledby="showcase-featured-title">
+						<ShowcaseLabel id="showcase-featured-title" label="Featured" count={featured.length} dot />
+						<ShowcaseGrid variant="featured" wideLast={spotlightLast}>
+							{stories.map((site, index) => (
+								<li class="showcase-grid-full">
+									<ShowcaseCard site={site} size="spotlight" priority={index === 0} />
+								</li>
+							))}
+							{featuredCards.map((site, index) => (
+								<li>
+									<ShowcaseCard
+										site={site}
+										size={spotlightLast && index === featuredCards.length - 1 ? "spotlight" : "featured"}
+										priority={stories.length === 0 && index < 2}
+									/>
+								</li>
+							))}
+						</ShowcaseGrid>
+					</section>
+				)}
+				{rest.length > 0 && (
+					<section class="showcase-ruled" aria-labelledby="showcase-all-title">
+						<ShowcaseLabel
+							id="showcase-all-title"
+							label={featured.length > 0 ? "More sites" : "All sites"}
+							count={rest.length}
+						/>
+						<ShowcaseGrid variant="index">
+							{rest.map((site) => (
+								<li>
+									<ShowcaseCard site={site} size="index" />
+								</li>
+							))}
+							{slots.map(({ at3, at2 }) => (
+								<li class:list={["showcase-slot-cell", { "showcase-slot-cell--3": at3, "showcase-slot-cell--2": at2 }]}>
+									<ShowcaseSlot />
+								</li>
+							))}
+						</ShowcaseGrid>
+					</section>
+				)}
+				<ShowcaseQuotes sites={sites} />
+				<ShowcaseInvite
+					title="Your site could be next"
+					copy="If you run a site on EmDash, submit it. A maintainer reviews each one by hand."
+				/>
+			</>
+		)
+	}
+</ShowcaseLayout>
+
+<style>
+	.showcase-slot-cell {
+		display: none;
+	}
+
+	@media (min-width: 640px) and (max-width: 1023.98px) {
+		.showcase-slot-cell--2 {
+			display: block;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.showcase-slot-cell--3 {
+			display: block;
+		}
+	}
+</style>

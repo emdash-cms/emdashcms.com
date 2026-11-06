@@ -1,0 +1,316 @@
+---
+/**
+ * Replaces the native menu of the submission form's selects with a Kumo-style listbox.
+ * The plugin's <select> stays the control, so labels, validation, saved state and reset keep working.
+ * Touch keeps the platform picker.
+ */
+---
+
+<script>
+	const CHECK_ICON =
+		'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+	const TYPEAHEAD_MS = 600;
+	const GAP = 6;
+
+	let count = 0;
+
+	function enhance(select: HTMLSelectElement) {
+		const field = select.parentElement;
+		if (!field || select.multiple || select.size > 1) return;
+		const listId = `showcase-select-${++count}`;
+		const list = document.createElement("div");
+		list.className = "showcase-select-list";
+		list.id = listId;
+		list.role = "listbox";
+		list.hidden = true;
+		const label = select.labels?.[0];
+		if (label) {
+			label.id ||= `${listId}-label`;
+			list.setAttribute("aria-labelledby", label.id);
+		}
+		field.classList.add("showcase-select-field");
+		field.insertBefore(list, select.nextSibling);
+		select.setAttribute("aria-haspopup", "listbox");
+		select.setAttribute("aria-controls", listId);
+		select.setAttribute("aria-expanded", "false");
+
+		let items: HTMLElement[] = [];
+		let active = -1;
+		let typed = "";
+		let typedAt = 0;
+
+		/* A required select's empty option is only a placeholder, so it isn't offered as a choice. */
+		function choices(): HTMLOptionElement[] {
+			return [...select.options].filter((option) => !option.disabled && !(select.required && option.value === ""));
+		}
+
+		function build() {
+			items = choices().map((option, index) => {
+				const item = document.createElement("div");
+				item.className = "showcase-select-item";
+				item.id = `${listId}-${index}`;
+				item.role = "option";
+				item.dataset.value = option.value;
+				item.setAttribute("aria-selected", String(option.selected && option.value !== ""));
+				const label = document.createElement("span");
+				label.textContent = option.text;
+				item.appendChild(label);
+				item.insertAdjacentHTML("beforeend", `<span class="showcase-select-check">${CHECK_ICON}</span>`);
+				return item;
+			});
+			list.replaceChildren(...items);
+		}
+
+		function highlight(index: number) {
+			items[active]?.removeAttribute("data-highlighted");
+			active = Math.max(0, Math.min(items.length - 1, index));
+			const item = items[active];
+			if (!item) return;
+			item.dataset.highlighted = "";
+			select.setAttribute("aria-activedescendant", item.id);
+			/* Scrolls only the list; scrollIntoView would also scroll the page under the pointer. */
+			const top = item.offsetTop - item.offsetHeight / 4;
+			const bottom = item.offsetTop + item.offsetHeight * 1.25;
+			if (top < list.scrollTop) list.scrollTop = top;
+			else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight;
+		}
+
+		function isOpen() {
+			return !list.hidden;
+		}
+
+		function open() {
+			if (isOpen()) return;
+			build();
+			list.hidden = false;
+			const trigger = select.getBoundingClientRect();
+			const below = window.innerHeight - trigger.bottom - GAP;
+			const above = trigger.top - GAP;
+			const side = below < Math.min(list.scrollHeight, 288) && above > below ? "top" : "bottom";
+			list.dataset.side = side;
+			list.style.top = side === "bottom" ? `${select.offsetTop + select.offsetHeight + GAP}px` : "";
+			list.style.bottom = side === "top" ? `${field!.clientHeight - select.offsetTop + GAP}px` : "";
+			select.setAttribute("aria-expanded", "true");
+			const selected = items.findIndex((item) => item.getAttribute("aria-selected") === "true");
+			highlight(selected === -1 ? 0 : selected);
+			select.focus({ preventScroll: true });
+			document.addEventListener("pointerdown", onOutside, true);
+		}
+
+		function close() {
+			if (!isOpen()) return;
+			list.hidden = true;
+			select.setAttribute("aria-expanded", "false");
+			select.removeAttribute("aria-activedescendant");
+			document.removeEventListener("pointerdown", onOutside, true);
+		}
+
+		function choose(index: number) {
+			const value = items[index]?.dataset.value;
+			close();
+			if (value === undefined || value === select.value) return;
+			select.value = value;
+			select.dispatchEvent(new Event("input", { bubbles: true }));
+			select.dispatchEvent(new Event("change", { bubbles: true }));
+		}
+
+		function onOutside(event: PointerEvent) {
+			const target = event.target as Node;
+			if (target !== select && !list.contains(target)) close();
+		}
+
+		function typeahead(key: string) {
+			const now = Date.now();
+			typed = now - typedAt > TYPEAHEAD_MS ? key : typed + key;
+			typedAt = now;
+			const needle = typed.toLowerCase();
+			const start = typed.length === 1 ? active + 1 : active;
+			const order = [...items.slice(start), ...items.slice(0, start)];
+			const match = order.find((item) => item.textContent!.trim().toLowerCase().startsWith(needle));
+			if (match) highlight(items.indexOf(match));
+		}
+
+		select.addEventListener("mousedown", (event) => {
+			if (event.button !== 0) return;
+			event.preventDefault();
+			if (isOpen()) close();
+			else open();
+		});
+
+		select.addEventListener("keydown", (event) => {
+			if (!isOpen()) {
+				if (["ArrowDown", "ArrowUp", "Enter", " "].includes(event.key) || (event.altKey && event.key === "ArrowDown")) {
+					event.preventDefault();
+					open();
+				}
+				return;
+			}
+			switch (event.key) {
+				case "ArrowDown":
+					highlight(active + 1);
+					break;
+				case "ArrowUp":
+					highlight(active - 1);
+					break;
+				case "Home":
+				case "PageUp":
+					highlight(0);
+					break;
+				case "End":
+				case "PageDown":
+					highlight(items.length - 1);
+					break;
+				case "Enter":
+				case " ":
+					if (event.key === " " && Date.now() - typedAt < TYPEAHEAD_MS) typeahead(" ");
+					else choose(active);
+					break;
+				case "Escape":
+					close();
+					break;
+				case "Tab":
+					close();
+					return;
+				default:
+					if (event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) typeahead(event.key);
+					else return;
+			}
+			event.preventDefault();
+		});
+
+		select.addEventListener("blur", close);
+
+		list.addEventListener("mousedown", (event) => event.preventDefault());
+		list.addEventListener("pointermove", (event) => {
+			const item = (event.target as HTMLElement).closest<HTMLElement>(".showcase-select-item");
+			if (item && items.indexOf(item) !== active) highlight(items.indexOf(item));
+		});
+		list.addEventListener("click", (event) => {
+			const item = (event.target as HTMLElement).closest<HTMLElement>(".showcase-select-item");
+			if (item) choose(items.indexOf(item));
+		});
+	}
+
+	/* Touch devices keep the platform picker, which suits a finger better than a list. */
+	if (matchMedia("(pointer: fine)").matches) {
+		for (const select of document.querySelectorAll(".showcase-submit-form select.ec-form-input")) {
+			if (select instanceof HTMLSelectElement) enhance(select);
+		}
+	}
+</script>
+
+<style is:global>
+	.showcase-select-field {
+		position: relative;
+	}
+
+	.showcase-select-field select[aria-expanded="true"] {
+		border-color: var(--color-focus);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus) 25%, transparent);
+	}
+
+	.showcase-select-list {
+		position: absolute;
+		inset-inline: 0;
+		z-index: 20;
+		max-height: min(18rem, 50vh);
+		padding-block: 0.375rem;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		color: var(--color-text);
+		background: var(--color-surface);
+		border-radius: 0.5rem;
+		box-shadow:
+			0 0 0 1px var(--color-border),
+			0 12px 28px -12px rgb(0 0 0 / 0.28),
+			0 2px 6px -2px rgb(0 0 0 / 0.08);
+		transform-origin: top center;
+		animation: showcase-select-in 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+
+	.showcase-select-list[data-side="top"] {
+		transform-origin: bottom center;
+	}
+
+	.showcase-select-list[hidden] {
+		display: none;
+	}
+
+	.showcase-select-item {
+		display: flex;
+		margin-inline: 0.375rem;
+		padding: 0.375rem 0.5rem;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		border-radius: 0.375rem;
+		cursor: pointer;
+		user-select: none;
+	}
+
+	.showcase-select-item[data-highlighted] {
+		background: color-mix(in srgb, var(--color-text) 7%, transparent);
+	}
+
+	.showcase-select-check {
+		display: flex;
+		width: 1rem;
+		height: 1rem;
+		flex: none;
+		color: var(--color-text);
+		visibility: hidden;
+	}
+
+	.showcase-select-item[aria-selected="true"] .showcase-select-check {
+		visibility: visible;
+	}
+
+	.showcase-select-check svg {
+		width: 100%;
+		height: 100%;
+	}
+
+	@keyframes showcase-select-in {
+		from {
+			opacity: 0;
+			transform: translateY(-4px) scale(0.98);
+		}
+	}
+
+	.showcase-select-list[data-side="top"] {
+		animation-name: showcase-select-in-up;
+	}
+
+	@keyframes showcase-select-in-up {
+		from {
+			opacity: 0;
+			transform: translateY(4px) scale(0.98);
+		}
+	}
+
+	/* Forced colours drop the shadow ring and the highlight tint. */
+	@media (forced-colors: active) {
+		.showcase-select-list {
+			outline: 1px solid CanvasText;
+		}
+
+		.showcase-select-item[data-highlighted] {
+			color: HighlightText;
+			background: Highlight;
+			forced-color-adjust: none;
+		}
+
+		.showcase-select-item[data-highlighted] .showcase-select-check {
+			color: HighlightText;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.showcase-select-list,
+		.showcase-select-list[data-side="top"] {
+			animation: none;
+		}
+	}
+</style>

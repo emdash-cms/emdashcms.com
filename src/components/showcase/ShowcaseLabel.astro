@@ -1,0 +1,57 @@
+---
+interface Props {
+	id: string;
+	label: string;
+	count: number;
+	dot?: boolean;
+}
+
+const { id, label, count, dot = false } = Astro.props;
+---
+
+<div class="showcase-label showcase-ruled">
+	<h2 id={id} class="showcase-label-title">
+		{dot && <span class="showcase-label-dot" aria-hidden="true" />}
+		{label}
+	</h2>
+	<span class="showcase-label-count" aria-hidden="true">{String(count).padStart(2, "0")}</span>
+</div>
+
+<style>
+	.showcase-label {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 3.5rem var(--showcase-inset) 0.75rem;
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		line-height: 1.5;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.showcase-label-title {
+		display: flex;
+		align-items: center;
+		gap: 0.625rem;
+		color: var(--color-text);
+		font: inherit;
+		letter-spacing: inherit;
+	}
+
+	.showcase-label-dot {
+		width: 6px;
+		height: 6px;
+		background: var(--color-primary);
+		border-radius: var(--radius-full);
+	}
+
+	@media (max-width: 639.98px) {
+		.showcase-label {
+			padding-top: 2.5rem;
+		}
+	}
+</style>

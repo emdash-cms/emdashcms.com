@@ -1,0 +1,19 @@
+<div class="showcase-ghost" aria-hidden="true"></div>
+
+<style>
+	.showcase-ghost {
+		aspect-ratio: 16 / 10;
+		background: repeating-linear-gradient(-45deg, var(--showcase-hatch) 0 1px, transparent 1px 7px);
+		border: 1px dashed var(--showcase-ghost-edge);
+		border-radius: 14px;
+		transition:
+			border-color var(--transition-base),
+			box-shadow var(--transition-base);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.showcase-ghost {
+			transition: none;
+		}
+	}
+</style>

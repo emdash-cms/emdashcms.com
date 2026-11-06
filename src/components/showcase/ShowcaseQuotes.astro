@@ -1,0 +1,114 @@
+---
+import type { ShowcaseSite } from "../../lib/showcase";
+import ShowcaseGrid from "./ShowcaseGrid.astro";
+import ShowcaseLabel from "./ShowcaseLabel.astro";
+
+interface Props {
+	sites: ShowcaseSite[];
+}
+
+const quotes = Astro.props.sites.filter((site) => site.quote);
+---
+
+{
+	quotes.length > 0 && (
+		<section class="showcase-quotes showcase-ruled" aria-labelledby="showcase-quotes-title">
+			<ShowcaseLabel id="showcase-quotes-title" label="From the builders" count={quotes.length} />
+			<ShowcaseGrid variant="index">
+				{quotes.map((site) => (
+					<li class="showcase-quote-cell">
+						<figure class="showcase-quote">
+							<blockquote class="showcase-quote-text">
+								<p>{site.quote}</p>
+							</blockquote>
+							<figcaption class="showcase-quote-by">
+								{site.quoteAuthor && <span class="showcase-quote-name">{site.quoteAuthor}</span>}
+								{site.quoteRole && <span class="showcase-quote-role">{site.quoteRole}</span>}
+								<a href={site.href} class="showcase-quote-host" target="_blank" rel="noopener">
+									{site.host.split("/").map((part, index) => (index === 0 ? part : <>/<wbr />{part}</>))}
+								</a>
+							</figcaption>
+						</figure>
+					</li>
+				))}
+			</ShowcaseGrid>
+		</section>
+	)
+}
+
+<style>
+	/* Quote and credit rows are shared across a row of cells, so credits line up. */
+	.showcase-quote-cell,
+	.showcase-quote {
+		display: grid;
+		grid-row: span 2;
+		grid-template-rows: subgrid;
+	}
+
+	.showcase-quote {
+		row-gap: 1.75rem;
+		padding: 1.75rem var(--showcase-inset) 1.5rem;
+	}
+
+	.showcase-quote-text {
+		color: var(--color-text);
+		font-size: 1.0625rem;
+		line-height: 1.5;
+		letter-spacing: -0.011em;
+		overflow-wrap: break-word;
+		text-wrap: pretty;
+	}
+
+	.showcase-quote-text p::before {
+		content: "\201C";
+	}
+
+	.showcase-quote-text p::after {
+		content: "\201D";
+	}
+
+	.showcase-quote-by {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.125rem;
+		line-height: 1.4;
+	}
+
+	.showcase-quote-name {
+		color: var(--color-text);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+	}
+
+	.showcase-quote-role {
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-size: 0.8125rem;
+	}
+
+	.showcase-quote-host {
+		margin-top: 0.5rem;
+		color: color-mix(in srgb, var(--color-text) 66%, transparent);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		overflow-wrap: anywhere;
+		text-decoration: underline;
+		text-decoration-color: color-mix(in srgb, var(--color-text) 20%, transparent);
+		text-underline-offset: 3px;
+		border-radius: var(--radius-sm);
+		transition:
+			color var(--transition-base),
+			text-decoration-color var(--transition-base);
+	}
+
+	.showcase-quote-host:hover {
+		color: var(--color-text);
+		text-decoration-color: currentColor;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.showcase-quote-host {
+			transition: none;
+		}
+	}
+</style>

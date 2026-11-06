@@ -1,0 +1,87 @@
+---
+import arrowRightSvg from "../../icons/arrow-right.svg?raw";
+import arrowUpRightSvg from "../../icons/arrow-up-right.svg?raw";
+import { SHOWCASE_SUBMIT_URL } from "../../lib/showcase";
+
+interface Props {
+	label: string;
+	href?: string;
+	/** "external" opens the link in a new tab and trails a diagonal arrow. */
+	icon?: "arrow" | "external";
+}
+
+const { label, href = SHOWCASE_SUBMIT_URL, icon = "arrow" } = Astro.props;
+const external = icon === "external";
+---
+
+<a href={href} class="showcase-button" target={external ? "_blank" : undefined} rel={external ? "noopener" : undefined}>
+	{label}
+	<span class="showcase-button-icon" aria-hidden="true" set:html={external ? arrowUpRightSvg : arrowRightSvg} />
+</a>
+
+<style>
+	.showcase-button {
+		--button-border: var(--color-border);
+		--button-ring: var(--border-faint);
+
+		display: inline-flex;
+		flex: none;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		min-height: 2.375rem;
+		padding: 0.5rem 0.875rem;
+		color: var(--color-text);
+		font-size: var(--font-size-sm);
+		font-weight: 500;
+		line-height: 1.35;
+		white-space: nowrap;
+		background: var(--color-surface);
+		border: 1px solid var(--button-border);
+		border-radius: var(--button-radius);
+		box-shadow:
+			0 0 0 4px var(--button-ring),
+			var(--shadow-sm);
+		transition: border-color var(--transition-base);
+	}
+
+	:global(:root.dark) .showcase-button {
+		--button-border: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+		--button-ring: color-mix(in srgb, var(--color-text) 5%, transparent);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .showcase-button {
+			--button-border: color-mix(in srgb, var(--color-bg) 90%, var(--color-text));
+			--button-ring: color-mix(in srgb, var(--color-text) 5%, transparent);
+		}
+	}
+
+	.showcase-button:hover {
+		border-color: color-mix(in srgb, var(--color-text) 18%, var(--color-surface));
+	}
+
+	.showcase-button:focus-visible {
+		box-shadow:
+			0 0 0 2px var(--color-bg),
+			0 0 0 4px var(--color-focus);
+	}
+
+	.showcase-button-icon {
+		display: block;
+		width: 1rem;
+		height: 1rem;
+	}
+
+	.showcase-button-icon :global(svg) {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.showcase-button {
+			transition: none;
+		}
+	}
+</style>
