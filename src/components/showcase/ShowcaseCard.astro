@@ -215,13 +215,14 @@ const sizes = spotlight
 		transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
 	}
 
-	/* No display rule here: EmDash hides one of the light/dark variants with display: none. */
+	/*
+	 * Full width, top aligned: a screenshot in another shape loses its bottom, never an edge of the page.
+	 * No display rule here: EmDash hides one of the light/dark variants with display: none.
+	 */
 	.showcase-card-window :global(.showcase-card-image) {
 		width: 100%;
 		max-width: none;
-		height: 100%;
-		object-fit: cover;
-		object-position: left top;
+		height: auto;
 	}
 
 	.showcase-card-host-pill {
