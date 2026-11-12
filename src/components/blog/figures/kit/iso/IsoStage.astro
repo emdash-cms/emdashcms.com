@@ -1,0 +1,34 @@
+---
+/**
+ * An isometric figure's stage: one SVG per composition, of which the
+ * figure's width shows one (lg at 900px and up, md from 600px, sm below).
+ * Each SVG scales to the stage's width, up to a little over its own, so the
+ * stage keeps one height for every step and mode.
+ */
+import "./iso.css";
+import type { Composition } from "./iso";
+
+interface Props {
+	compositions: readonly Composition[];
+}
+
+const { compositions } = Astro.props;
+---
+
+<div class="iso" data-fig-lock>
+	{
+		compositions.map((c) => (
+			<svg
+				class="iso-comp"
+				data-comp={c.size}
+				viewBox={`0 0 ${c.W} ${c.H}`}
+				width={c.W}
+				height={c.H}
+				style={`--w:${c.W}`}
+				aria-hidden="true"
+				focusable="false"
+				set:html={c.svg}
+			/>
+		))
+	}
+</div>

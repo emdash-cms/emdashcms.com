@@ -1,0 +1,463 @@
+---
+/**
+ * Figure 4: 10,000 fuzz runs as a grid of squares, with counters for what
+ * they lost and a small tree showing why. The scene in fuzz-runs.client.ts
+ * draws the grid on a canvas and plays the runs with either schema.
+ */
+import { personStyle } from "./kit/cast";
+import FigureFrame from "./kit/FigureFrame.astro";
+import Pill from "./kit/Pill.astro";
+import { info } from "./fuzz-runs";
+
+const counters = [
+	{ id: "runs", label: "Runs" },
+	{ id: "lost", label: "Lost content", share: true },
+	{ id: "chars", label: "Characters lost" },
+	{ id: "atoms", label: "Images and embeds lost" },
+];
+---
+
+<FigureFrame
+	name="fuzz-runs"
+	info={info}
+	eyebrow={{ old: "10,000 fuzz runs · Old schema", new: "10,000 fuzz runs · New schema" }}
+	footnote="Each square is one run of 200 concurrent edits by three editors, delivered in order. Counts are from our fuzz results; positions are illustrative."
+>
+	<div class="fz" data-fig-lock>
+		<div class="fz-chart" data-part="chart">
+			<div class="fz-grid-slot" data-part="slot">
+				<canvas class="fz-grid" data-part="grid"></canvas>
+				<span class="fz-probe" data-part="probe"></span>
+			</div>
+			<div class="fz-legend">
+				<span class="fz-key"><span class="fz-swatch fz-swatch--lost"></span>Lost content</span>
+				<span class="fz-key"><span class="fz-swatch fz-swatch--done"></span>Nothing lost</span>
+			</div>
+		</div>
+
+		<div class="fz-side">
+			<div class="fz-counters" data-part="counters">
+				{
+					counters.map((c) => (
+						<div class="fz-counter" data-counter={c.id}>
+							<span class="fz-counter-label">{c.label}</span>
+							<span class="fz-counter-value">
+								<span class="fz-counter-num" data-count={c.id}>
+									0
+								</span>
+								{c.share && (
+									<span class="fz-counter-share" data-count="share">
+										0.0%
+									</span>
+								)}
+							</span>
+						</div>
+					))
+				}
+			</div>
+
+			<div class="fz-why" data-part="why" data-fig-lock>
+				<div class="fz-why-head">
+					<span data-when-mode="old">Why most of it was lost</span><span data-when-mode="new" hidden>Why nothing was lost</span>
+				</div>
+				<div class="fz-rule" data-part="rule">
+					<span data-when-mode="old">A list item must start with a paragraph.</span><span data-when-mode="new" hidden
+						>A list item can start with a paragraph or a list.</span
+					>
+				</div>
+				<div class="fz-tree">
+					<div class="fz-row fz-row--parent" data-depth="0">
+						<span class="fz-cell"><span class="fz-box" data-box="root">List item</span></span>
+						<span class="fz-note" data-note="merged">Merged, it starts with a list</span>
+					</div>
+					<div class="fig-collapse" data-collapse="para">
+						<div>
+							<div class="fz-row fz-row--more" data-depth="1" style={personStyle("ana")}>
+								<span class="fz-cell"><span class="fz-box fz-box--who" data-box="para">Paragraph</span></span>
+								<span class="fz-note fz-note--who" data-note="removed">One person's edits remove it</span>
+							</div>
+						</div>
+					</div>
+					<div class="fig-collapse" data-collapse="list">
+						<div>
+							<div class="fz-row fz-row--parent" data-depth="1" style={personStyle("noah")}>
+								<span class="fz-cell"><span class="fz-box fz-box--who" data-box="list">List</span></span>
+								<span class="fz-note fz-note--who" data-note="nested">Another nests a list under it</span>
+							</div>
+							<div class="fz-row" data-depth="2">
+								<span class="fz-cell"><span class="fz-box" data-box="item">List item</span></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="fz-verdict" data-part="verdict">
+					<div class="fz-pills">
+						<Pill tone="danger" icon="xCircle" label="Deleted, with its contents" data-pill="deleted" />
+						<Pill tone="ok" icon="checkCircle" label="Kept" data-pill="kept" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</FigureFrame>
+
+<style>
+	.fz {
+		--fz-pending: color-mix(in srgb, var(--fig-text) 7%, var(--fig-panel));
+		--fz-done: color-mix(in srgb, var(--fig-text) 24%, var(--fig-panel));
+		--fz-active: color-mix(in srgb, var(--fig-text) 46%, var(--fig-panel));
+		--fz-lost: var(--fig-danger);
+		--fz-kept: var(--fz-done);
+		--fz-kept-active: var(--fz-active);
+
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: start;
+		column-gap: 48px;
+	}
+
+	/* Light squares and red on a dark panel read brighter, so the dark shades sit lower. */
+	:global(:root.dark) .fz {
+		--fz-pending: color-mix(in srgb, var(--fig-text) 8%, var(--fig-panel));
+		--fz-done: color-mix(in srgb, var(--fig-text) 20%, var(--fig-panel));
+		--fz-active: color-mix(in srgb, var(--fig-text) 40%, var(--fig-panel));
+		--fz-lost: color-mix(in srgb, var(--fig-danger) 84%, var(--fig-panel));
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .fz {
+			--fz-pending: color-mix(in srgb, var(--fig-text) 8%, var(--fig-panel));
+			--fz-done: color-mix(in srgb, var(--fig-text) 20%, var(--fig-panel));
+			--fz-active: color-mix(in srgb, var(--fig-text) 40%, var(--fig-panel));
+			--fz-lost: color-mix(in srgb, var(--fig-danger) 84%, var(--fig-panel));
+		}
+	}
+
+	.fz-chart {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
+
+	.fz-grid-slot {
+		position: relative;
+	}
+
+	.fz-grid {
+		display: block;
+	}
+
+	.fz-probe {
+		position: absolute;
+		width: 0;
+		height: 0;
+		overflow: hidden;
+	}
+
+	.fz-legend {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px 18px;
+		color: var(--fig-muted);
+		font-family: var(--fig-sans);
+		font-size: 13px;
+		line-height: 18px;
+	}
+
+	.fz-key {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.fz-swatch {
+		width: 8px;
+		height: 8px;
+		border-radius: 1px;
+	}
+
+	.fz-swatch--lost {
+		background: var(--fz-lost);
+	}
+
+	.fz-swatch--done {
+		background: var(--fz-done);
+	}
+
+	:global(.fig[data-mode="new"]) .fz-swatch--done {
+		background: var(--fz-kept);
+	}
+
+	/* ---------- Counters ---------- */
+
+	.fz-side {
+		display: flex;
+		flex-direction: column;
+		gap: 28px;
+		min-width: 0;
+	}
+
+	.fz-counters {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		column-gap: 24px;
+		row-gap: 20px;
+	}
+
+	/* Label and number share rows across each pair, so numbers sit on one baseline. */
+	.fz-counter {
+		display: grid;
+		grid-row: span 2;
+		grid-template-rows: subgrid;
+		row-gap: 6px;
+		min-width: 0;
+	}
+
+	.fz-counter-label {
+		align-self: end;
+		color: var(--fig-muted);
+		font-family: var(--fig-sans);
+		font-size: 13px;
+		line-height: 18px;
+		text-wrap: balance;
+	}
+
+	.fz-counter-value {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		white-space: nowrap;
+	}
+
+	.fz-counter-num {
+		color: var(--fig-text);
+		font-size: 32px;
+		font-weight: 500;
+		line-height: 36px;
+		letter-spacing: -0.02em;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.fz-counter[data-counter="lost"][data-hot] .fz-counter-num {
+		color: var(--fig-danger-text);
+	}
+
+	.fz-counter-share {
+		color: var(--fig-muted);
+		font-size: 14px;
+		line-height: 20px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* ---------- Why ---------- */
+
+	.fz-why {
+		display: flex;
+		flex-direction: column;
+		padding-top: 20px;
+		border-top: 1px solid var(--fig-hairline);
+	}
+
+	.fz-why-head {
+		color: var(--fig-text);
+		font-family: var(--fig-sans);
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 20px;
+	}
+
+	.fz-tree {
+		--tree-w: 128px;
+		--indent: 20px;
+		--line: var(--fig-arrow);
+		margin-top: 16px;
+	}
+
+	.fz-row {
+		position: relative;
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		padding-top: 8px;
+	}
+
+	.fz-row[data-depth="0"] {
+		--depth: 0;
+		padding-top: 0;
+	}
+
+	.fz-row[data-depth="1"] {
+		--depth: 1;
+	}
+
+	.fz-row[data-depth="2"] {
+		--depth: 2;
+	}
+
+	.fz-cell {
+		flex: none;
+		width: var(--tree-w);
+		padding-inline-start: calc(var(--depth) * var(--indent));
+	}
+
+	/* An elbow from the parent's box to this one. */
+	.fz-row:not([data-depth="0"])::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		inset-inline-start: calc((var(--depth) - 1) * var(--indent) + 10px);
+		width: 10px;
+		height: 20px;
+		border-inline-start: 1px solid var(--line);
+		border-block-end: 1px solid var(--line);
+		border-end-start-radius: 5px;
+	}
+
+	/* The parent's line carries on past a sibling to the next one. */
+	.fz-row--more::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		inset-inline-start: calc((var(--depth) - 1) * var(--indent) + 10px);
+		border-inline-start: 1px solid var(--line);
+	}
+
+	/* A parent's line runs from its box down to its first child. */
+	.fz-row--parent::after {
+		content: "";
+		position: absolute;
+		top: calc(var(--top, 8px) + 24px);
+		bottom: 0;
+		inset-inline-start: calc(var(--depth) * var(--indent) + 10px);
+		border-inline-start: 1px solid var(--line);
+	}
+
+	.fz-row--parent[data-depth="0"] {
+		--top: 0px;
+	}
+
+	.fz-box {
+		display: inline-flex;
+		align-items: center;
+		height: 24px;
+		padding: 0 8px;
+		color: color-mix(in srgb, var(--fig-danger-text) calc(var(--lost, 0) * 100%), var(--fig-text));
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 1;
+		white-space: nowrap;
+		background: color-mix(in srgb, var(--fig-danger) calc(var(--lost, 0) * 8%), var(--fig-card));
+		border: 1px solid color-mix(in srgb, var(--fig-danger) calc(var(--lost, 0) * 45%), var(--fig-card-border));
+		border-radius: 6px;
+		text-decoration-line: line-through;
+		text-decoration-thickness: 1.5px;
+		text-decoration-color: color-mix(in srgb, var(--fig-danger-text) calc(clamp(0, var(--lost, 0) * 2 - 1, 1) * 100%), transparent);
+	}
+
+	/* A box an editor touched: tinted in their colour while --hl is up; --gone dashes and strikes it. */
+	.fz-box--who {
+		background: color-mix(in srgb, var(--who) calc(var(--hl, 0) * 14%), color-mix(in srgb, var(--fig-danger) calc(var(--lost, 0) * 8%), var(--fig-card)));
+		border-color: color-mix(in srgb, var(--who) calc(var(--hl, 0) * 70%), color-mix(in srgb, var(--fig-danger) calc(var(--lost, 0) * 45%), var(--fig-card-border)));
+	}
+
+	.fz-box[data-gone] {
+		color: var(--fig-muted);
+		border-style: dashed;
+		text-decoration-color: currentColor;
+	}
+
+	.fz-note {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		min-width: 0;
+		min-height: 24px;
+		color: var(--fig-muted);
+		font-size: 13px;
+		line-height: 18px;
+		text-wrap: balance;
+	}
+
+	.fz-note--who::before {
+		content: "";
+		flex: none;
+		width: 6px;
+		height: 6px;
+		background: var(--who);
+		border-radius: 50%;
+	}
+
+	.fz-verdict {
+		margin-top: 16px;
+	}
+
+	/* The schema's rule: muted until the merged item meets it, then full strength. */
+	.fz-rule {
+		margin-top: 8px;
+		color: color-mix(in srgb, var(--fig-text) calc(var(--fire, 0) * 100%), var(--fig-muted));
+		font-size: 14px;
+		line-height: 20px;
+		text-wrap: pretty;
+	}
+
+	.fz-pills {
+		display: grid;
+	}
+
+	.fz-pills > :global(*) {
+		grid-area: 1 / 1;
+		justify-self: start;
+	}
+
+	/* ---------- Narrow: a smaller grid, so the counters and the cause keep their lines ---------- */
+
+	@container fig (max-width: 859.98px) {
+		.fz {
+			column-gap: 32px;
+		}
+
+		.fz-counter-num {
+			font-size: 26px;
+			line-height: 30px;
+		}
+
+		.fz-tree {
+			--tree-w: 112px;
+		}
+	}
+
+	/* ---------- Phones: grid on top, counters two by two, then the cause ---------- */
+
+	@container fig (max-width: 599.98px) {
+		.fz {
+			grid-template-columns: minmax(0, 1fr);
+			row-gap: 24px;
+		}
+
+		.fz-side {
+			gap: 24px;
+		}
+
+		.fz-counters {
+			column-gap: 16px;
+			row-gap: 16px;
+		}
+
+		.fz-counter-share {
+			font-size: 13px;
+		}
+
+		.fz-note,
+		.fz-box {
+			font-size: 12px;
+		}
+	}
+</style>
+
+<script>
+	import { mountFigures } from "./kit";
+	import { scene } from "./fuzz-runs.client";
+
+	mountFigures("fuzz-runs", scene);
+</script>

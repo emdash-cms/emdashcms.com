@@ -1,0 +1,77 @@
+---
+/**
+ * Figure 2: Matt's, Noah's and Ana's desks around one entry's room, Content
+ * save and the database in front of it, and an agent over MCP. The scene in
+ * how-the-parts-fit.client.ts plays Noah's edits, the room's save, and the
+ * agent's write that the room merges into every editor, on Cloudflare or on
+ * Node.js.
+ */
+import FigureFrame from "./kit/FigureFrame.astro";
+import IsoStage from "./kit/iso/IsoStage.astro";
+import { info } from "./how-the-parts-fit";
+import { compose } from "./how-the-parts-fit.compose";
+
+const compositions = compose();
+---
+
+<FigureFrame name="how-the-parts-fit" info={info} eyebrow="How the parts fit" footnote="Simplified. Writes from outside the room save as usual, then notify it.">
+	<div class="hpf">
+		<IsoStage compositions={compositions} />
+	</div>
+</FigureFrame>
+
+<style>
+	/* Writes from outside the room travel in a neutral ink: no person, no cursor. */
+	.hpf {
+		--hpf-ink: color-mix(in srgb, var(--fig-text) 78%, var(--fig-panel));
+	}
+
+	/* Noah's new paragraph leaves room for his name flag above it. */
+	.hpf :global(.iw-p + [data-block="added"]) {
+		margin-top: 16px;
+	}
+
+	/* Wide compositions set Content save's four checks in two columns beside the gate. */
+	.hpf :global(:is([data-comp="lg"], [data-comp="md"]) .ick) {
+		grid-template-columns: auto auto;
+		justify-content: start;
+		column-gap: 16px;
+	}
+
+	.hpf :global(:is([data-comp="lg"], [data-comp="md"]) .ick-title) {
+		grid-column: 1 / -1;
+	}
+
+	/* The agent's write: the excerpt in a field like the editors', on its own. */
+	.hpf :global(.hpf-say) {
+		display: flex;
+		height: 100%;
+	}
+
+	.hpf :global(:is([data-comp="md"], [data-comp="sm"]) .hpf-say) {
+		font-size: 12px;
+	}
+
+	.hpf :global(.hpf-say .iw-field-box) {
+		flex: 1;
+		background: var(--c-card);
+		box-shadow: inset 0 0 0 1px var(--c-line), 0 1px 2px rgb(0 0 0 / 0.05);
+	}
+
+	.hpf :global([data-run$="-excerpt"]) {
+		--who: var(--hpf-ink);
+	}
+
+	.hpf :global(.iw-sk[data-bar$="-excerpt"]) {
+		height: 7px;
+		background: color-mix(in srgb, var(--hpf-ink) 55%, var(--c-card));
+		border-radius: 2px;
+	}
+</style>
+
+<script>
+	import { mountFigures } from "./kit";
+	import { scene } from "./how-the-parts-fit.client";
+
+	mountFigures("how-the-parts-fit", scene);
+</script>

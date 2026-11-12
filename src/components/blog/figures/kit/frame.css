@@ -1,0 +1,190 @@
+/*
+ * Figure kit: tokens, the panel, its header and footnote, and the control bar.
+ * Every colour derives from the site tokens, so light and dark follow the
+ * theme; the dark overrides sit under :root.dark and the system preference.
+ */
+
+.fig {
+	--fig-text: var(--color-text);
+	/* Muted and subtle text stay at or above 4.5:1 on the panel and on cards. */
+	--fig-muted: color-mix(in srgb, var(--color-text) 72%, transparent);
+	--fig-subtle: color-mix(in srgb, var(--color-text) 66%, transparent);
+	--fig-body: color-mix(in srgb, var(--color-text) 86%, transparent);
+	--fig-panel: color-mix(in srgb, var(--color-text) 4%, var(--color-bg));
+	--fig-card: var(--color-surface);
+	--fig-card-border: color-mix(in srgb, var(--color-text) 18%, var(--fig-card));
+	--fig-hairline: color-mix(in srgb, var(--color-text) 10%, var(--fig-panel));
+	--fig-arrow: color-mix(in srgb, var(--color-text) 50%, var(--fig-panel));
+	--fig-hover: color-mix(in srgb, var(--color-text) 6%, transparent);
+	--fig-press: color-mix(in srgb, var(--color-text) 9%, transparent);
+	--fig-avatar-ring: rgb(0 0 0 / 0.08);
+	--fig-focus: var(--color-focus, var(--color-primary));
+
+	--fig-brand: var(--color-primary);
+	--fig-brand-text: color-mix(in srgb, var(--color-primary) 70%, #000);
+	--fig-ok: #16a34a;
+	--fig-ok-text: #166534;
+	--fig-ok-fill: color-mix(in srgb, #16a34a 8%, var(--fig-card));
+	--fig-warn: #d97706;
+	--fig-warn-text: #955a06;
+	--fig-warn-fill: color-mix(in srgb, #d97706 9%, var(--fig-card));
+	--fig-danger: #dc2626;
+	--fig-danger-text: #b91c1c;
+	--fig-danger-fill: color-mix(in srgb, #dc2626 7%, var(--fig-card));
+
+	--fig-sans: var(--font-sans);
+	--fig-pad: 44px;
+	--fig-radius: 22px;
+	--fig-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+	container: fig / inline-size;
+	font-family: var(--fig-sans);
+	font-size: 14px;
+	line-height: 20px;
+	-webkit-font-smoothing: antialiased;
+}
+
+:root.dark .fig {
+	--fig-muted: color-mix(in srgb, var(--color-text) 70%, transparent);
+	--fig-subtle: color-mix(in srgb, var(--color-text) 62%, transparent);
+	--fig-panel: color-mix(in srgb, var(--color-text) 7%, var(--color-bg));
+	--fig-card: var(--color-bg);
+	--fig-card-border: color-mix(in srgb, var(--color-text) 17%, var(--fig-card));
+	--fig-hairline: color-mix(in srgb, var(--color-text) 10%, var(--fig-panel));
+	--fig-arrow: color-mix(in srgb, var(--color-text) 42%, var(--fig-panel));
+	--fig-avatar-ring: rgb(255 255 255 / 0.1);
+	--fig-brand-text: color-mix(in srgb, var(--color-primary) 85%, #fff);
+	--fig-ok: #22c55e;
+	--fig-ok-text: #4ade80;
+	--fig-ok-fill: color-mix(in srgb, #22c55e 14%, var(--fig-card));
+	--fig-warn: #f59e0b;
+	--fig-warn-text: #fbbf24;
+	--fig-warn-fill: color-mix(in srgb, #f59e0b 14%, var(--fig-card));
+	--fig-danger: #ef4444;
+	--fig-danger-text: #f87171;
+	--fig-danger-fill: color-mix(in srgb, #ef4444 15%, var(--fig-card));
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not(.light) .fig {
+		--fig-muted: color-mix(in srgb, var(--color-text) 70%, transparent);
+		--fig-subtle: color-mix(in srgb, var(--color-text) 62%, transparent);
+		--fig-panel: color-mix(in srgb, var(--color-text) 7%, var(--color-bg));
+		--fig-card: var(--color-bg);
+		--fig-card-border: color-mix(in srgb, var(--color-text) 17%, var(--fig-card));
+		--fig-hairline: color-mix(in srgb, var(--color-text) 10%, var(--fig-panel));
+		--fig-arrow: color-mix(in srgb, var(--color-text) 42%, var(--fig-panel));
+		--fig-avatar-ring: rgb(255 255 255 / 0.1);
+		--fig-brand-text: color-mix(in srgb, var(--color-primary) 85%, #fff);
+		--fig-ok: #22c55e;
+		--fig-ok-text: #4ade80;
+		--fig-ok-fill: color-mix(in srgb, #22c55e 14%, var(--fig-card));
+		--fig-warn: #f59e0b;
+		--fig-warn-text: #fbbf24;
+		--fig-warn-fill: color-mix(in srgb, #f59e0b 14%, var(--fig-card));
+		--fig-danger: #ef4444;
+		--fig-danger-text: #f87171;
+		--fig-danger-fill: color-mix(in srgb, #ef4444 15%, var(--fig-card));
+	}
+}
+
+/* ---------- Panel ---------- */
+
+.fig-panel {
+	position: relative;
+	padding: var(--fig-pad);
+	color: var(--fig-text);
+	background: var(--fig-panel);
+	border-radius: var(--fig-radius);
+}
+
+.fig-eyebrow {
+	margin: 0;
+	color: var(--fig-text);
+	font-family: var(--fig-sans);
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 22px;
+}
+
+.fig-subtitle {
+	margin: 2px 0 0;
+	color: var(--fig-muted);
+	font-size: 15px;
+	line-height: 22px;
+	text-wrap: pretty;
+}
+
+.fig-stage {
+	position: relative;
+	margin-top: 28px;
+}
+
+.fig-ghost {
+	position: absolute;
+	z-index: 2;
+	margin: 0;
+	pointer-events: none;
+}
+
+.fig-foot {
+	margin-top: 32px;
+	padding-top: 16px;
+	border-top: 1px solid var(--fig-hairline);
+}
+
+.fig-footnote {
+	margin: 14px 0 0;
+	color: var(--fig-subtle);
+	font-family: var(--fig-sans);
+	font-size: 13px;
+	line-height: 19px;
+	text-wrap: pretty;
+}
+
+/* Until the script draws the first frame, the stage would show raw markup. */
+:root.js .fig:not([data-ready]) .fig-stage {
+	visibility: hidden;
+}
+
+/* Without script, the text alternative stands in for the stage and its controls. */
+:root:not(.js) .fig-stage,
+:root:not(.js) .fig-bar {
+	display: none;
+}
+
+/* Compact figures (phones): the queries measure the figure, not the viewport. */
+@container fig (max-width: 599.98px) {
+	.fig-panel {
+		--fig-pad: 20px;
+		--fig-radius: 18px;
+	}
+
+	.fig-subtitle {
+		font-size: 14px;
+		line-height: 20px;
+	}
+
+	.fig-stage {
+		margin-top: 16px;
+	}
+
+	.fig-foot {
+		margin-top: 24px;
+	}
+}
+
+.fig [hidden] {
+	display: none !important;
+}
+
+/*
+ * A host page's prose rules for bare p, ul, ol and li reach into a figure and
+ * outrank its one-class rules. Here they start from nothing; a figure spaces
+ * its own blocks on divs and spans.
+ */
+:root .fig .fig-panel :is(p, ul, ol, li) {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}

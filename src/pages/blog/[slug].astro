@@ -5,6 +5,7 @@ import PostBlock from "../../components/blog/PostBlock.astro";
 import HighlightedCode from "../../components/blog/HighlightedCode.astro";
 import PostByline from "../../components/blog/PostByline.astro";
 import PostCover from "../../components/blog/PostCover.astro";
+import PostFigure from "../../components/blog/PostFigure.astro";
 import PostGrid from "../../components/blog/PostGrid.astro";
 import arrowRightSvg from "../../icons/arrow-right.svg?raw";
 import Base from "../../layouts/Base.astro";
@@ -130,7 +131,7 @@ const articleMeta = {
 		</div>
 
 		<div class="post-prose">
-			<PortableText value={post.data.content} components={{ block: PostBlock, type: { code: HighlightedCode } }} />
+			<PortableText value={post.data.content} components={{ block: PostBlock, type: { code: HighlightedCode, "blog.figure": PostFigure } }} />
 		</div>
 	</article>
 
@@ -533,8 +534,37 @@ const articleMeta = {
 		border-radius: 12px;
 	}
 
+	/* The launch video breaks out of the column like a figure, framed like the cover; its caption keeps the column. */
+	.post .post-prose :global(.emdash-video) {
+		--video-width: min(60rem, 100vw - 2 * var(--spacing-lg));
+
+		width: var(--video-width);
+		margin-block: 2.5rem;
+		margin-inline: calc((100% - var(--video-width)) / 2);
+	}
+
+	.post .post-prose :global(.emdash-video video) {
+		max-height: none;
+		background: var(--post-sunken);
+		border: 1px solid var(--post-border);
+		border-radius: 18px;
+		box-shadow:
+			0 0 0 4px var(--post-ring),
+			var(--shadow-sm);
+	}
+
+	.post .post-prose :global(.emdash-video figcaption) {
+		max-width: var(--post-measure);
+		margin: 0.875rem auto 0;
+		color: var(--post-subtle);
+		font-size: var(--font-size-sm);
+		line-height: 1.5;
+		text-align: start;
+		text-wrap: pretty;
+	}
+
 	.post .post-prose :global(.emdash-table-wrapper) {
-		margin: 1.75em 0;
+		margin: 2.5rem 0;
 		border: 1px solid var(--post-line);
 		border-radius: 12px;
 	}

@@ -1,0 +1,19 @@
+---
+/** A small rounded status pill. Tones: ok (saved), warn (offline), danger (lost), or neutral. */
+import { icon, type IconName } from "./icons";
+
+interface Props {
+	label: string;
+	tone?: "ok" | "warn" | "danger";
+	icon?: IconName;
+	class?: string;
+	[key: `data-${string}`]: string | undefined;
+}
+
+const { label, tone, icon: iconName, class: className, ...rest } = Astro.props;
+---
+
+<span class:list={["fig-pill", className]} data-tone={tone} {...rest}>
+	{iconName && <Fragment set:html={icon(iconName, 14)} />}
+	<span>{label}</span>
+</span>
