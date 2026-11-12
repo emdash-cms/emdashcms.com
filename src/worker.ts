@@ -1,6 +1,9 @@
 import handler from "@astrojs/cloudflare/entrypoints/server";
+import { handleRoomUpgrade } from "@emdash-cms/cloudflare/worker";
 
 export { PluginBridge } from "@emdash-cms/cloudflare/sandbox";
+// Co-editing rooms: a Durable Object per entry, and the entrypoint it saves through.
+export { EmDashRoom, EmDashRoomSite } from "@emdash-cms/cloudflare/worker";
 
 const CANONICAL_HOST = "emdashcms.com";
 const WWW_HOST = "www.emdashcms.com";
@@ -13,6 +16,10 @@ function isEmDashPath(pathname: string) {
 
 export default {
 	async fetch(request, env, context) {
+		// Co-editing WebSocket upgrades go to their room before any routing.
+		const upgrade = handleRoomUpgrade(request, env);
+		if (upgrade) return upgrade;
+
 		const url = new URL(request.url);
 
 		// Only redirect production hosts so local dev (http://localhost) still works.

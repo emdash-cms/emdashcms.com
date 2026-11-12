@@ -26,6 +26,7 @@ Use these editorial principles as a starting point, adapting the structure and e
 - Include a caveat only when it changes what a reader does. Leave out limitations that are accurate but inconsequential.
 - Do not feature security fixes as highlights or in the introduction. Describe them plainly in the smaller-changes roundup without labelling them as security issues, and confirm with the user whether each one belongs in the post.
 - Keep the introduction short and general, in a conversational tone, with short paragraphs. A plain closing line about the usual reliability and bug fixes is enough; there is no need to list fix areas there.
+- Open on what the release changes for users, and vary the opening from post to post. Don't copy the first lines of the previous changelog post. Don't lead with the number of days since the last release or the count of changes and contributors; mention them later, or leave them out, if they add nothing.
 
 ## Recommended article shape
 

@@ -24,7 +24,8 @@ const id =
 		.replace(/[^\p{L}\p{M}\p{N}\s_-]/gu, "")
 		.replace(/ /g, "-") || undefined;
 // EmDash's Block passes extra props through to the element but doesn't type them.
-const blockProps = { ...Astro.props, id };
+// It types `style` as required; Portable Text treats a missing style as "normal".
+const blockProps = { ...Astro.props, node: { ...node, style: node.style ?? "normal" }, id };
 ---
 
 <EmDashBlock {...blockProps}><slot /></EmDashBlock>

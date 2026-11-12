@@ -40,6 +40,21 @@
 			"bucket_name": "emdashcms-com-media",
 		},
 	],
+	// Co-editing rooms, one per entry being edited
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "EMDASH_ROOMS",
+				"class_name": "EmDashRoom",
+			},
+		],
+	},
+	"exports": {
+		"EmDashRoom": {
+			"type": "durable-object",
+			"storage": "sqlite",
+		},
+	},
 	// Worker Loader for plugin sandboxing
 	"worker_loaders": [
 		{
