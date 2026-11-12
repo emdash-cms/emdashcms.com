@@ -39,3 +39,6 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# EmDash upgrade work order and build-generated migration manifest
+.emdash/

@@ -32,6 +32,32 @@ export default defineConfig({
 });
 ```
 
+### Reverse proxy
+
+When behind a TLS-terminating reverse proxy, `Astro.url` returns the internal address (e.g. `http://localhost:4321`) instead of the public one (`https://mysite.example.com`). This breaks passkeys, CSRF, OAuth, redirects, and more.
+
+**Step 1:** Declare allowed public hosts via [`security.allowedDomains`](https://docs.astro.build/en/reference/configuration-reference/#securityalloweddomains) so Astro reconstructs the URL from `X-Forwarded-*` headers. In dev, add matching **`vite.server.allowedHosts`** or Vite rejects the proxy `Host`.
+
+**Step 2:** If the reconstructed URL still disagrees with the browser (common with TLS termination), set **`siteUrl`**:
+
+```javascript
+emdash({
+	siteUrl: "https://mysite.example.com",
+	// ...
+});
+```
+
+Or via environment variable (useful for container deployments):
+
+```bash
+EMDASH_SITE_URL=https://mysite.example.com
+# or: SITE_URL=https://mysite.example.com
+```
+
+`siteUrl` replaces `passkeyPublicOrigin` (which only fixed passkeys). It applies to passkeys, CSRF origin matching, OAuth redirects, login redirects, MCP discovery, snapshot exports, sitemap, robots.txt, and JSON-LD structured data.
+
+With TLS terminated in front, **`astro dev --host 127.0.0.1`** (loopback) is usually enough: the proxy reaches the dev server locally while **`siteUrl`** matches the browser’s HTTPS origin -- without opening the Node port on the LAN.
+
 ### Cloudflare (D1 + R2)
 
 ```javascript
@@ -51,7 +77,7 @@ export default defineConfig({
 	integrations: [
 		react(),
 		emdash({
-			database: d1({ binding: "DB", session: "auto" }),
+			database: d1({ binding: "DB", session: "auto", coalesce: true }),
 			storage: r2({ binding: "MEDIA" }),
 		}),
 	],
@@ -64,14 +90,13 @@ Requires a `wrangler.jsonc` with D1 and R2 bindings:
 ```jsonc
 {
 	"name": "my-site",
+	"main": "./src/worker.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
-	"assets": { "directory": "./dist" },
 	"d1_databases": [
 		{
 			"binding": "DB",
 			"database_name": "my-site",
-			"database_id": "", // from `wrangler d1 create my-site`
 		},
 	],
 	"r2_buckets": [
@@ -80,7 +105,23 @@ Requires a `wrangler.jsonc` with D1 and R2 bindings:
 			"bucket_name": "my-site-media",
 		},
 	],
+	"triggers": {
+		"crons": ["* * * * *"],
+	},
 }
+```
+
+Use the EmDash Worker entry point so scheduled publishing and maintenance run through the same deployment:
+
+```typescript
+import handler, { createScheduledHandler, PluginBridge } from "@emdash-cms/cloudflare/worker";
+
+export { PluginBridge };
+
+export default {
+	...handler,
+	scheduled: createScheduledHandler(),
+} satisfies ExportedHandler;
 ```
 
 ### Plugins
@@ -88,12 +129,12 @@ Requires a `wrangler.jsonc` with D1 and R2 bindings:
 Register plugins in `astro.config.mjs`:
 
 ```javascript
-import { auditLogPlugin } from "@emdash-cms/plugin-audit-log";
+import auditLog from "@emdash-cms/plugin-audit-log";
 
 emdash({
 	database: sqlite({ url: "file:./data.db" }),
 	storage: local({ directory: "./uploads", baseUrl: "/_emdash/api/media/file" }),
-	plugins: [auditLogPlugin()],
+	plugins: [auditLog],
 }),
 ```
 
@@ -119,7 +160,7 @@ Auto-generated at the project root when the dev server starts. Provides TypeScri
 ```typescript
 /// <reference types="emdash/locals" />
 
-import type { PortableTextBlock } from "emdash";
+import type { BylineSummary, ContentBylineCredit, TaxonomyTerm, PortableTextBlock } from "emdash";
 
 export interface Post {
 	id: string;
@@ -138,6 +179,9 @@ export interface Post {
 	createdAt: Date;
 	updatedAt: Date;
 	publishedAt: Date | null;
+	byline?: BylineSummary | null;
+	bylines?: ContentBylineCredit[];
+	terms?: Record<string, TaxonomyTerm[]>;
 }
 
 declare module "emdash" {
@@ -152,11 +196,11 @@ The dev server regenerates this file automatically when schema changes. You can 
 ## Type Generation
 
 ```bash
-# From local dev server (writes emdash-env.d.ts at project root)
+# From local dev server (writes .emdash/types.ts; the dev server itself writes emdash-env.d.ts)
 npx emdash types
 
 # From remote instance
-npx emdash types --url https://my-site.pages.dev
+npx emdash types --url https://example.com
 
 # Custom output path
 npx emdash types --output src/types/cms.ts
@@ -171,12 +215,12 @@ Key dependencies for a Node.js site:
 ```json
 {
 	"dependencies": {
-		"astro": "^6.0.0",
-		"emdash": "workspace:*",
-		"@astrojs/node": "^9.0.0",
-		"@astrojs/react": "^4.0.0",
-		"react": "^18.0.0",
-		"react-dom": "^18.0.0"
+		"astro": "^7.0.0",
+		"emdash": "^1.0.0",
+		"@astrojs/node": "^11.1.5",
+		"@astrojs/react": "^6.0.5",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0"
 	}
 }
 ```
@@ -186,8 +230,8 @@ For Cloudflare, replace `@astrojs/node` with `@astrojs/cloudflare` and add `@emd
 ## Dev Server
 
 ```bash
-npx emdash dev              # Start dev server (runs migrations, applies seed)
-npx emdash dev --types      # Start and generate types from schema
+pnpm dev                    # Start the Astro dev server
+npx emdash types            # Refresh types from the running site
 ```
 
-The admin UI is at `http://localhost:4321/_emdash/admin`. On first run, you'll go through setup to create an admin account.
+The runtime runs pending migrations on the first request and, before setup is completed, applies the seed's schema and structure once. Sample content needs an explicit step; see [Applying Seeds](schema-and-seed.md#applying-seeds). The Astro integration generates `emdash-env.d.ts` when the server starts. The admin UI is at `http://localhost:4321/_emdash/admin`. On first run, you'll go through setup to create an admin account.

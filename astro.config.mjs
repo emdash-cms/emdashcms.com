@@ -63,6 +63,9 @@ export default defineConfig({
 			// Known at build time so Astro's image service resizes media from this origin.
 			siteUrl: "https://emdashcms.com",
 			database: d1({ binding: "DB", session: "auto" }),
+			// Apply core migrations with `emdash migrate` before deploying, rather
+			// than on the first request; pending migrations make the site answer 503.
+			migrations: { runtime: "check" },
 			storage: r2({ binding: "MEDIA" }),
 			// Cloudflare Access for admin UI auth.
 			// AUD is read at runtime from CF_ACCESS_AUDIENCE (wrangler secret).

@@ -4,20 +4,17 @@
  * its own sections, as in `[Upgrade notes](#upgrade-notes)`. Ids follow
  * GitHub's heading anchors: lowercase, punctuation dropped, spaces as hyphens.
  */
-import { emdashComponents, type PortableTextBlock } from "emdash/ui";
-
-interface Props {
-	node: PortableTextBlock;
-	index: number;
-	isInline: boolean;
-}
+import type { ComponentProps } from "astro/types";
+import { emdashComponents } from "emdash/ui";
 
 const EmDashBlock = emdashComponents.block;
+type Props = ComponentProps<typeof EmDashBlock>;
+
 const { node } = Astro.props;
 
 const text = /^h[2-4]$/.test(node.style ?? "")
 	? node.children
-			.map((child: { text?: unknown }) => (typeof child.text === "string" ? child.text : ""))
+			.map((child) => ("text" in child && typeof child.text === "string" ? child.text : ""))
 			.join("")
 			.trim()
 	: "";
