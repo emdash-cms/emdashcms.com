@@ -1,0 +1,581 @@
+---
+/**
+ * Figure 3: Maya's browser window and her Revisions panel above a timeline in
+ * real seconds. The scene in saved-means-saved.client.ts plays a room save, a
+ * dropped connection, offline typing and the merged save that follows it.
+ */
+import "./kit/iso/iso.css";
+import { avatarSVG } from "./kit/avatar";
+import { PEOPLE, type PersonKey } from "./kit/cast";
+import FigureFrame from "./kit/FigureFrame.astro";
+import { emdashMark, icon } from "./kit/icons";
+import { type Block, browserWindow } from "./kit/iso/cards";
+import Status, { type StatusState } from "./kit/Status.astro";
+import { AXIS_TICKS, EDITS, type Edit, f, info, LATEST, R, TEXT } from "./saved-means-saved";
+
+const doc: Block[] = [
+	{ title: [TEXT.title, { caret: "noah-before", who: "noah" }, TEXT.titleEnd] },
+	{ p: [TEXT.lead, { run: "maya", text: TEXT.maya + TEXT.mayaOffline, who: "maya", typed: true, caret: { caret: "maya", who: "maya", local: true } }] },
+	{ p: [TEXT.p2, { run: "ana", text: TEXT.ana, who: "ana", typed: true, caret: { caret: "ana", who: "ana" } }, TEXT.p2End] },
+	{ p: [{ run: "noah", text: TEXT.noah, who: "noah", tint: "off", caret: { caret: "noah", who: "noah" } }], id: "noah" },
+];
+const editor = browserWindow({ who: "maya", size: "lg", doc, presence: ["noah", "ana"], save: ["saved", "save", "offline"], part: "editor" });
+
+const times: StatusState[] = LATEST.map(({ id, time }) => ({ id, label: time }));
+const people: StatusState[] = LATEST.map(({ id, people }) => ({ id, label: people }));
+
+const rows = ["maya", "noah", "ana"] as const;
+const dots: Array<{ row: (typeof rows)[number]; edit: Edit; offline?: boolean }> = [
+	...EDITS.maya.map((edit) => ({ row: "maya" as const, edit })),
+	...EDITS.ana.map((edit) => ({ row: "ana" as const, edit })),
+	...EDITS.mayaOffline.map((edit) => ({ row: "maya" as const, edit, offline: true })),
+	...EDITS.noah.map((edit) => ({ row: "noah" as const, edit })),
+];
+const x = (real: number) => `--f:${f(real)}`;
+const span = (from: number, to: number) => `--f:${f(from)};--w:${f(to) - f(from)}`;
+const face = (who: PersonKey) => avatarSVG(PEOPLE[who].id, PEOPLE[who].name, 18);
+/** The room's save: the same document glyph that carries a save in Figures 1 and 2. */
+const saveDoc = `<svg width="16" height="20" viewBox="-8 -10 16 20" aria-hidden="true"><path d="M-7.5 -9.5 H3.5 L7.5 -5.5 V9.5 H-7.5 Z"/><path class="sms-save-lines" d="M-4 -3.5 H4 M-4 0.5 H4 M-4 4.5 H1.5"/></svg>`;
+---
+
+<FigureFrame
+	name="saved-means-saved"
+	info={info}
+	eyebrow="When it says saved"
+	footnote="Simplified. The axis shows EmDash's real delays; the animation runs faster."
+>
+	<div class="iso sms" data-fig-lock>
+		<div class="sms-editor" set:html={editor} />
+
+		<div class="sms-history" data-part="history">
+			<div class="sms-history-head">Revisions <span class="sms-count">(2)</span></div>
+			<div class="sms-day">Today</div>
+			<div class="sms-revs">
+				<div class="sms-rev" data-part="latest">
+					<span class="sms-rev-dot sms-rev-dot--current" data-part="latest-dot" style={`--who:${PEOPLE.ana.caret}`}></span>
+					<span class="sms-rev-text">
+						<span class="sms-rev-head">
+							<Status class="sms-rev-time" states={times} data-status="latest-time" />
+							<span class="sms-badge">Current version</span>
+						</span>
+						<Status class="sms-rev-people" states={people} data-status="latest-people" />
+					</span>
+				</div>
+				<div class="sms-rev">
+					<span class="sms-rev-dot" style={`--who:${PEOPLE.noah.caret}`}></span>
+					<span class="sms-rev-text">
+						<span class="sms-rev-head">
+							<span class="sms-rev-time">9:15 AM</span>
+							<span class="sms-badge" data-tone="ok">Published</span>
+						</span>
+						<span class="sms-rev-people">Noah</span>
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="sms-chart" data-part="chart">
+			{AXIS_TICKS.map((s) => <span class="sms-grid" style={x(s)} />)}
+			{
+				AXIS_TICKS.map((s) => (
+					<span class="sms-tick" style={x(s)}>
+						{s} s
+					</span>
+				))
+			}
+			{rows.map((row) => <span class="sms-base" data-row={row} />)}
+			<span class="sms-base" data-row="saves"></span>
+			{
+				rows.map((row) => (
+					<span class="sms-label" data-row={row}>
+						<span class="sms-face" set:html={face(row)} />
+						<span class="sms-name">{PEOPLE[row].name}</span>
+					</span>
+				))
+			}
+			<span class="sms-label" data-row="saves">
+				<span class="sms-face" set:html={emdashMark(18)} />
+				<span class="sms-name"><span class="sms-long">Room s</span><span class="sms-short">S</span>aves</span>
+			</span>
+
+			<span class="sms-band" data-row="maya" data-part="band" style={x(R.drop)}></span>
+			<span class="sms-band sms-band--notice" data-row="maya" data-part="band-notice" style={x(R.offline)}></span>
+			<span class="sms-bracket" data-row="maya" data-part="bracket-offline" style={span(R.drop, R.offline)}>
+				<span class="sms-bracket-label">5 s</span>
+			</span>
+			<span class="sms-note" data-row="maya" data-part="offline-note" style={x(R.offline)}
+				><Fragment set:html={icon("cloudSlash", 12)} /><span>Offline</span></span
+			>
+
+			<span class="sms-guide" data-part="guide-1" style={x(R.lastEdit)}></span>
+			<span class="sms-guide" data-part="guide-2" style={x(R.back)}></span>
+			<span class="sms-bracket" data-row="saves" data-part="bracket-1" style={span(R.lastEdit, R.save1)}>
+				<span class="sms-bracket-label">2 s</span>
+			</span>
+			<span class="sms-bracket" data-row="saves" data-part="bracket-2" style={span(R.back, R.save2)}>
+				<span class="sms-bracket-label">2 s</span>
+			</span>
+
+			{
+				dots.map(({ row, edit, offline }) => (
+					<span
+						class="sms-dot"
+						data-row={row}
+						data-r={edit.r}
+						data-offline={offline ? "" : undefined}
+						data-thin={edit.thin ? "" : undefined}
+						data-sparse={edit.sparse ? "" : undefined}
+						style={`${x(edit.r)};--c:${PEOPLE[row].caret}`}
+					/>
+				))
+			}
+			<span class="sms-save-mark" data-row="saves" data-save={R.save1} style={x(R.save1)} set:html={saveDoc} />
+			<span class="sms-save-mark" data-row="saves" data-save={R.save2} style={x(R.save2)} set:html={saveDoc} />
+			<span class="sms-now" data-part="now"></span>
+		</div>
+	</div>
+</FigureFrame>
+
+<style>
+	.sms {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 17rem);
+		grid-template-areas:
+			"editor history"
+			"chart chart";
+		align-content: start;
+		column-gap: 16px;
+		row-gap: 40px;
+	}
+
+	/* ---------- Maya's browser window ---------- */
+
+	.sms-editor {
+		grid-area: editor;
+		min-width: 0;
+		font-size: 13px;
+		line-height: 20px;
+	}
+
+	/* Room for a name flag above each paragraph. */
+	.sms-editor :global(.iw-p + .iw-p) {
+		margin-top: 12px;
+	}
+
+	.sms-short {
+		display: none;
+	}
+
+	/* ---------- Revisions, as the editor's panel draws them ---------- */
+
+	.sms-history {
+		grid-area: history;
+		min-width: 0;
+		padding: 16px 16px 10px;
+		color: var(--c-text);
+		font-size: 13px;
+		line-height: 20px;
+		background: var(--c-card);
+		border-radius: 10px;
+		box-shadow:
+			0 0 0 1px var(--c-edge),
+			var(--c-shadow);
+	}
+
+	.sms-history-head {
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 20px;
+	}
+
+	.sms-count {
+		color: var(--c-muted);
+		font-weight: 400;
+	}
+
+	.sms-day {
+		margin: 12px 0 4px;
+		color: var(--c-muted);
+		font-size: 12px;
+		font-weight: 500;
+		line-height: 16px;
+	}
+
+	.sms-revs {
+		display: grid;
+		gap: 4px;
+		margin-inline: -8px;
+	}
+
+	.sms-rev {
+		position: relative;
+		display: grid;
+		grid-template-columns: 12px minmax(0, 1fr);
+		column-gap: 10px;
+		padding: 6px 8px;
+		background: color-mix(in srgb, var(--c-text) calc(var(--hl, 0) * 6%), transparent);
+		border-radius: 8px;
+	}
+
+	/* The day's timeline runs between the version dots, broken around each. */
+	.sms-rev:first-child::after {
+		position: absolute;
+		top: 24px;
+		bottom: -10px;
+		inset-inline-start: calc(8px + 5.25px);
+		width: 1.5px;
+		background: color-mix(in srgb, var(--c-text) 14%, var(--c-card));
+		content: "";
+	}
+
+	.sms-rev-dot {
+		display: grid;
+		place-items: center;
+		height: 20px;
+	}
+
+	.sms-rev-dot::before {
+		width: 8px;
+		height: 8px;
+		background: var(--who);
+		border-radius: 50%;
+		content: "";
+	}
+
+	.sms-rev-dot--current::before {
+		width: 10px;
+		height: 10px;
+		background: none;
+		border: 2px solid color-mix(in srgb, var(--who) calc(var(--solo, 1) * 100%), var(--c-muted));
+	}
+
+	.sms-rev-text {
+		display: grid;
+		min-width: 0;
+	}
+
+	.sms-rev-head {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.sms :global(.sms-rev-time) {
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.sms :global(.sms-rev-people) {
+		color: var(--c-muted);
+		white-space: nowrap;
+	}
+
+	.sms-badge {
+		display: inline-flex;
+		align-items: center;
+		height: 20px;
+		padding: 0 8px;
+		color: var(--c-muted);
+		font-size: 12px;
+		font-weight: 500;
+		line-height: 16px;
+		white-space: nowrap;
+		background: var(--c-pill);
+		border-radius: 999px;
+	}
+
+	.sms-badge[data-tone="ok"] {
+		color: var(--fig-ok-text);
+		background: var(--fig-ok-fill);
+	}
+
+	/*
+	 * ---------- Timeline ----------
+	 * Everything is placed on one grid: --f is a real time's place on the axis
+	 * (0 to 1), --w a span's length, and each row's track centre is --y.
+	 */
+
+	.sms-chart {
+		--a: 28px;
+		--t: 28px;
+		--g: 4px;
+		--x0: 112px;
+		--y-maya: calc(var(--a) + var(--t) / 2);
+		--y-noah: calc(var(--y-maya) + var(--t) + var(--g));
+		--y-ana: calc(var(--y-noah) + var(--t) + var(--g));
+		--y-saves: calc(var(--y-ana) + var(--t) + var(--g) + var(--a));
+		--h: calc(var(--y-saves) + var(--t) / 2);
+
+		position: relative;
+		grid-area: chart;
+		height: calc(var(--h) + 32px);
+	}
+
+	.sms-chart > * {
+		position: absolute;
+		left: calc(var(--x0) + var(--f, 0) * (100% - var(--x0)));
+	}
+
+	.sms-chart [data-row="maya"] {
+		--y: var(--y-maya);
+	}
+
+	.sms-chart [data-row="noah"] {
+		--y: var(--y-noah);
+	}
+
+	.sms-chart [data-row="ana"] {
+		--y: var(--y-ana);
+	}
+
+	.sms-chart [data-row="saves"] {
+		--y: var(--y-saves);
+	}
+
+	.sms-grid,
+	.sms-now {
+		top: 0;
+		width: 1px;
+		height: calc(var(--h) + 6px);
+		margin-inline-start: -0.5px;
+		background: var(--fig-hairline);
+	}
+
+	.sms-now {
+		z-index: 1;
+		background: color-mix(in srgb, var(--fig-text) 45%, transparent);
+	}
+
+	.sms-tick {
+		top: calc(var(--h) + 12px);
+		color: var(--fig-subtle);
+		font-size: 12px;
+		font-variant-numeric: tabular-nums;
+		line-height: 16px;
+		white-space: nowrap;
+		transform: translateX(-50%);
+	}
+
+	/* Each lane rests as a dotted line, like a resting link in Figures 1 and 2. */
+	.sms-base {
+		top: var(--y);
+		right: 0;
+		height: 2px;
+		margin-top: -1px;
+		background: radial-gradient(circle, var(--i-link) 0.9px, transparent 1.15px) 0 50% / 6px 2px repeat-x;
+	}
+
+	.sms-chart > .sms-label {
+		left: 0;
+		top: var(--y);
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		color: var(--fig-text);
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 20px;
+		white-space: nowrap;
+		transform: translateY(-50%);
+	}
+
+	.sms-face :global(svg) {
+		display: block;
+	}
+
+	/* The connection is down: dashed. Once the button says Offline: filled. */
+	.sms-band {
+		top: var(--y);
+		width: calc(var(--w, 0) * (100% - var(--x0)));
+		height: 20px;
+		margin-top: -10px;
+		background: color-mix(in srgb, var(--fig-warn) 5%, transparent);
+		border: 1px dashed color-mix(in srgb, var(--fig-warn) 60%, transparent);
+		border-radius: 6px;
+	}
+
+	.sms-band--notice {
+		background: color-mix(in srgb, var(--fig-warn) 14%, transparent);
+		border-style: solid;
+		border-radius: 0 6px 6px 0;
+	}
+
+	.sms-bracket {
+		top: calc(var(--y) - var(--t) / 2 - 4px);
+		width: calc(var(--w, 0) * (100% - var(--x0)));
+		height: 6px;
+		border-top: 1px solid var(--fig-arrow);
+	}
+
+	.sms-bracket::before,
+	.sms-bracket::after {
+		position: absolute;
+		top: -1px;
+		width: 1px;
+		height: 7px;
+		background: var(--fig-arrow);
+		content: "";
+	}
+
+	.sms-bracket::before {
+		left: -0.5px;
+	}
+
+	.sms-bracket::after {
+		right: -0.5px;
+		opacity: var(--end, 1);
+	}
+
+	.sms-bracket-label,
+	.sms-note {
+		color: var(--fig-muted);
+		font-size: 12px;
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+		line-height: 16px;
+		white-space: nowrap;
+	}
+
+	.sms-bracket-label {
+		position: absolute;
+		bottom: calc(100% + 4px);
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.sms-note {
+		top: calc(var(--y) - var(--t) / 2 - 4px - 20px);
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		margin-inline-start: 6px;
+		color: var(--fig-warn-text);
+	}
+
+	.sms-note :global(svg) {
+		flex: none;
+	}
+
+	.sms-guide {
+		top: calc(var(--y-maya) + 6px);
+		height: calc(var(--y-saves) - var(--t) / 2 - 4px - var(--y-maya) - 6px);
+		margin-inline-start: -0.5px;
+		border-inline-start: 1px dashed var(--fig-arrow);
+	}
+
+	/* A keystroke, drawn as the packet that carries it: filled online, hollow until an offline one merges. */
+	.sms-dot {
+		top: var(--y);
+		width: 8px;
+		height: 8px;
+		margin: -4px 0 0 -4px;
+		background: color-mix(in srgb, var(--c) calc(var(--fill, 1) * 100%), var(--fig-panel));
+		border-radius: 50%;
+		box-shadow:
+			inset 0 0 0 1.5px var(--c),
+			0 0 0 1.5px var(--fig-panel);
+	}
+
+	.sms-save-mark {
+		top: var(--y);
+		width: 16px;
+		height: 20px;
+		margin: -10px 0 0 -8px;
+	}
+
+	.sms-save-mark :global(svg) {
+		display: block;
+		overflow: visible;
+	}
+
+	.sms-save-mark :global(path) {
+		fill: var(--fig-brand);
+		stroke: var(--fig-panel);
+		stroke-width: 1.5;
+		stroke-linejoin: round;
+	}
+
+	.sms-save-mark :global(.sms-save-lines) {
+		fill: none;
+		stroke: #fff;
+		stroke-width: 1.2;
+		stroke-linecap: round;
+	}
+
+	@container fig (max-width: 859.98px) {
+		.sms {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 15.5rem);
+			row-gap: 36px;
+		}
+
+		.sms-chart {
+			--x0: 108px;
+		}
+
+		.sms-chart [data-thin] {
+			display: none;
+		}
+	}
+
+	@container fig (max-width: 599.98px) {
+		.sms {
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-areas:
+				"editor"
+				"chart"
+				"history";
+			row-gap: 28px;
+		}
+
+		.sms-long {
+			display: none;
+		}
+
+		.sms-short {
+			display: inline;
+		}
+
+		.sms-chart {
+			--a: 24px;
+			--t: 24px;
+			--g: 2px;
+			--x0: 76px;
+		}
+
+		.sms-chart > .sms-label {
+			gap: 6px;
+		}
+
+		.sms-tick,
+		.sms-bracket-label,
+		.sms-note {
+			font-size: 11px;
+		}
+
+		.sms-note {
+			top: calc(var(--y) - var(--t) / 2 - 4px - 18px);
+			margin-inline-start: 4px;
+		}
+
+		.sms-chart [data-thin] {
+			display: revert;
+		}
+
+		.sms-chart [data-sparse] {
+			display: none;
+		}
+
+		.sms-dot {
+			width: 7px;
+			height: 7px;
+			margin: -3.5px 0 0 -3.5px;
+		}
+	}
+</style>
+
+<script>
+	import { mountFigures } from "./kit";
+	import { scene } from "./saved-means-saved.client";
+
+	mountFigures("saved-means-saved", scene);
+</script>

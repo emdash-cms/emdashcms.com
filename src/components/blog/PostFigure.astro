@@ -1,0 +1,96 @@
+---
+/**
+ * Renders a `blog.figure` Portable Text block (src/plugins/blog-figures):
+ * one of the site's interactive figures, its caption, and the text
+ * alternative read to people who can't see it. Unknown figures render nothing.
+ *
+ * The figure breaks out of the prose column to a wider stage, up to 60rem,
+ * keeping the page gutter; the caption stays at prose width.
+ */
+import FuzzRuns from "./figures/FuzzRuns.astro";
+import HowThePartsFit from "./figures/HowThePartsFit.astro";
+import RelayOrRoom from "./figures/RelayOrRoom.astro";
+import SavedMeansSaved from "./figures/SavedMeansSaved.astro";
+
+interface Props {
+	node: {
+		_type: "blog.figure";
+		_key?: string;
+		figure?: string;
+		caption?: string;
+		description?: string;
+	};
+}
+
+const FIGURES = {
+	"relay-or-room": RelayOrRoom,
+	"how-the-parts-fit": HowThePartsFit,
+	"saved-means-saved": SavedMeansSaved,
+	"fuzz-runs": FuzzRuns,
+};
+
+const { node } = Astro.props;
+const id = node?.figure;
+const Figure = id && Object.hasOwn(FIGURES, id) ? FIGURES[id as keyof typeof FIGURES] : undefined;
+if (!Figure) return null;
+
+const caption = node.caption?.trim();
+const description = node.description?.trim();
+const descriptionId = description ? `figure-${node._key ?? id}-description` : undefined;
+---
+
+<figure class="post-figure" aria-describedby={descriptionId}>
+	<Figure />
+	{
+		description && (
+			<p id={descriptionId} class="post-figure-description">
+				{description}
+			</p>
+		)
+	}
+	{caption && <figcaption class="post-figure-caption">{caption}</figcaption>}
+</figure>
+
+<style>
+	.post-figure {
+		--figure-width: min(60rem, 100vw - 2 * var(--spacing-lg, 1.5rem));
+
+		width: var(--figure-width);
+		margin-block: 2.5rem;
+		margin-inline: calc((100% - var(--figure-width)) / 2);
+	}
+
+	.post-figure-caption {
+		max-width: var(--post-measure, 42rem);
+		margin: 0.875rem auto 0;
+		color: var(--post-subtle, color-mix(in srgb, var(--color-text) 66%, transparent));
+		font-size: var(--font-size-sm, 0.875rem);
+		line-height: 1.5;
+		text-align: start;
+		text-wrap: pretty;
+	}
+
+	/* Read by assistive tech; shown only when the figure can't run. */
+	.post-figure-description {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	:global(:root:not(.js)) .post-figure-description {
+		position: static;
+		width: auto;
+		height: auto;
+		max-width: var(--post-measure, 42rem);
+		margin: 0.875rem auto 0;
+		overflow: visible;
+		clip-path: none;
+		white-space: normal;
+	}
+</style>

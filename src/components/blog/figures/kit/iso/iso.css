@@ -1,0 +1,873 @@
+/*
+ * The isometric kit's look: the cover's faces and hairlines, the floating
+ * cards, links and packets. Everything sits under .iso, inside a figure's
+ * stage, and follows the site's light and dark tokens.
+ */
+
+.iso {
+	--i-hero: #1f1f1f;
+	--i-struct: #4a4a4a;
+	--i-detail: #a6a6a6;
+	--i-content: #8f8f8f;
+	--i-grid: #ececec;
+	--i-floor: #ffffff;
+	--i-top: #ffffff;
+	--i-fy: #f3f3f3;
+	--i-fx: #e8e8e8;
+	--i-paper: #ffffff;
+	--i-paper-y: #efefef;
+	--i-paper-x: #e4e4e4;
+	--i-wall-x: #f6f6f6;
+	--i-wall-y: #ffffff;
+	--i-room: color-mix(in srgb, var(--fig-brand) 7%, #fff);
+	--i-room-grid: color-mix(in srgb, var(--fig-brand) 22%, #fff);
+	--i-glass: #3b3b3b;
+	--i-led: #c4c4c4;
+	--i-link: #a3a3a3;
+	--i-stem: #9a9a9a;
+	--i-ring: rgb(0 0 0 / 0.08);
+
+	--c-card: #ffffff;
+	--c-chrome: #f7f7f7;
+	--c-line: #e8e8e8;
+	--c-edge: rgb(0 0 0 / 0.09);
+	--c-shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 12px 28px -14px rgb(0 0 0 / 0.22);
+	--c-sk: #e3e3e3;
+	--c-sk-strong: #cfcfcf;
+	--c-text: var(--fig-text);
+	--c-muted: color-mix(in srgb, var(--color-text) 66%, #fff);
+	--c-publish: #2563eb;
+	--c-pill: #efefef;
+	--c-danger: #b91c1c;
+	--c-ok: #15803d;
+	--c-tint: 16%;
+	--c-ghost: color-mix(in srgb, var(--color-text) 24%, var(--fig-panel));
+	--c-badge: #fff;
+	--c-badge-ink: #8a5a00;
+
+	position: relative;
+	display: block;
+}
+
+:root.dark .iso {
+	--i-hero: #e6e6e6;
+	--i-struct: #747474;
+	--i-detail: #505050;
+	--i-content: #858585;
+	--i-grid: #2a2a2a;
+	--i-floor: #212121;
+	--i-top: #262626;
+	--i-fy: #1c1c1c;
+	--i-fx: #171717;
+	--i-paper: #2c2c2c;
+	--i-paper-y: #222222;
+	--i-paper-x: #1c1c1c;
+	--i-wall-x: #1f1f1f;
+	--i-wall-y: #242424;
+	--i-room: color-mix(in srgb, var(--fig-brand) 10%, #222);
+	--i-room-grid: color-mix(in srgb, var(--fig-brand) 30%, #222);
+	--i-glass: #0c0c0c;
+	--i-led: #5a5a5a;
+	--i-link: #686868;
+	--i-stem: #777777;
+	--i-ring: rgb(255 255 255 / 0.1);
+
+	--c-card: #202020;
+	--c-chrome: #1a1a1a;
+	--c-line: #2f2f2f;
+	--c-edge: rgb(255 255 255 / 0.1);
+	--c-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 14px 30px -12px rgb(0 0 0 / 0.6);
+	--c-sk: #353535;
+	--c-sk-strong: #474747;
+	--c-muted: color-mix(in srgb, var(--color-text) 64%, #202020);
+	--c-pill: #2e2e2e;
+	--c-danger: #f87171;
+	--c-ok: #4ade80;
+	--c-tint: 28%;
+	--c-ghost: color-mix(in srgb, var(--color-text) 26%, var(--fig-panel));
+	--c-badge: #262626;
+	--c-badge-ink: #fbbf24;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not(.light) .iso {
+		--i-hero: #e6e6e6;
+		--i-struct: #747474;
+		--i-detail: #505050;
+		--i-content: #858585;
+		--i-grid: #2a2a2a;
+		--i-floor: #212121;
+		--i-top: #262626;
+		--i-fy: #1c1c1c;
+		--i-fx: #171717;
+		--i-paper: #2c2c2c;
+		--i-paper-y: #222222;
+		--i-paper-x: #1c1c1c;
+		--i-wall-x: #1f1f1f;
+		--i-wall-y: #242424;
+		--i-room: color-mix(in srgb, var(--fig-brand) 10%, #222);
+		--i-room-grid: color-mix(in srgb, var(--fig-brand) 30%, #222);
+		--i-glass: #0c0c0c;
+		--i-led: #5a5a5a;
+		--i-link: #686868;
+		--i-stem: #777777;
+		--i-ring: rgb(255 255 255 / 0.1);
+
+		--c-card: #202020;
+		--c-chrome: #1a1a1a;
+		--c-line: #2f2f2f;
+		--c-edge: rgb(255 255 255 / 0.1);
+		--c-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 14px 30px -12px rgb(0 0 0 / 0.6);
+		--c-sk: #353535;
+		--c-sk-strong: #474747;
+		--c-muted: color-mix(in srgb, var(--color-text) 64%, #202020);
+		--c-pill: #2e2e2e;
+		--c-danger: #f87171;
+		--c-ok: #4ade80;
+		--c-tint: 28%;
+		--c-ghost: color-mix(in srgb, var(--color-text) 26%, var(--fig-panel));
+		--c-badge: #262626;
+		--c-badge-ink: #fbbf24;
+	}
+}
+
+/* ---------- Compositions: one per width (lg ≥ 900px figure, md 600-900, sm below) ---------- */
+
+.iso-comp {
+	display: none;
+	width: 100%;
+	max-width: calc(var(--w) * 1.12px);
+	height: auto;
+	margin-inline: auto;
+	overflow: visible;
+}
+
+.iso-comp[data-comp="lg"] {
+	display: block;
+}
+
+@container fig (max-width: 899.98px) {
+	.iso-comp[data-comp="lg"] {
+		display: none;
+	}
+
+	.iso-comp[data-comp="md"] {
+		display: block;
+	}
+}
+
+@container fig (max-width: 599.98px) {
+	.iso-comp[data-comp="md"] {
+		display: none;
+	}
+
+	.iso-comp[data-comp="sm"] {
+		display: block;
+	}
+}
+
+.iso text {
+	font-family: var(--fig-sans);
+}
+
+.iso foreignObject {
+	overflow: visible;
+}
+
+/* ---------- Paints ---------- */
+
+.iso .f-floor { fill: var(--i-floor); }
+.iso .f-top { fill: var(--i-top); }
+.iso .f-fy { fill: var(--i-fy); }
+.iso .f-fx { fill: var(--i-fx); }
+.iso .f-paper { fill: var(--i-paper); }
+.iso .f-paperY { fill: var(--i-paper-y); }
+.iso .f-paperX { fill: var(--i-paper-x); }
+.iso .f-wallx { fill: var(--i-wall-x); }
+.iso .f-wally { fill: var(--i-wall-y); }
+.iso .f-room { fill: var(--i-room); }
+.iso .f-glass { fill: var(--i-glass); }
+.iso .f-led { fill: var(--led, var(--i-led)); }
+.iso .s-hero { stroke: var(--i-hero); }
+.iso .s-struct { stroke: var(--i-struct); }
+.iso .s-detail { stroke: var(--i-detail); }
+.iso .s-content { stroke: var(--i-content); }
+.iso .s-grid { stroke: var(--i-grid); }
+.iso .s-roomgrid { stroke: var(--i-room-grid); }
+.iso .s-ring { stroke: var(--i-ring); }
+
+.iso .i-flash {
+	fill: var(--flash, transparent);
+	opacity: 0;
+}
+
+.iso .i-label {
+	fill: var(--fig-muted);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.iso .i-name {
+	fill: var(--fig-text);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+/* ---------- Links, stems and packets ---------- */
+
+.iso .il path {
+	fill: none;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-dasharray: 0 6;
+}
+
+.iso .il-rest {
+	stroke: var(--i-link);
+	stroke-width: 1.75;
+}
+
+.iso .il-lit {
+	stroke: var(--lit, var(--fig-brand));
+	stroke-width: 2.5;
+}
+
+.iso .il-badge circle {
+	fill: var(--c-badge);
+	stroke: color-mix(in srgb, var(--fig-warn) 60%, transparent);
+	stroke-width: 1;
+}
+
+.iso .il-badge {
+	color: var(--c-badge-ink);
+}
+
+.iso .il-badge path {
+	fill: currentColor;
+}
+
+.iso .i-stem path {
+	fill: none;
+	stroke: var(--stem, var(--i-stem));
+	stroke-width: 1.25;
+}
+
+.iso .i-stem circle {
+	fill: var(--stem, var(--i-stem));
+}
+
+.iso .ip-dot {
+	fill: var(--packet);
+	stroke: var(--fig-panel);
+	stroke-width: 1.75;
+}
+
+.iso .ip-trail {
+	fill: var(--packet);
+}
+
+.iso .ip-doc path:first-child {
+	fill: var(--packet);
+	stroke: var(--fig-panel);
+	stroke-width: 1.5;
+	stroke-linejoin: round;
+}
+
+.iso .ip-doc .ip-lines {
+	fill: none;
+	stroke: #fff;
+	stroke-width: 1.2;
+	stroke-linecap: round;
+}
+
+.iso .ip[data-kind="dot"] .ip-doc,
+.iso .ip[data-kind="doc"] .ip-dot {
+	display: none;
+}
+
+.iso .ip-ring {
+	fill: none;
+	stroke: var(--packet);
+	stroke-width: 1.5;
+}
+
+/* ---------- Floating cards ---------- */
+
+.iso .ifo {
+	width: 100%;
+	height: 100%;
+	color: var(--c-text);
+	font-family: var(--fig-sans);
+	font-size: 13px;
+	line-height: 20px;
+	-webkit-font-smoothing: antialiased;
+}
+
+.iw,
+.is {
+	position: relative;
+	height: 100%;
+	color: var(--c-text);
+}
+
+.iw-live,
+.is {
+	background: var(--c-card);
+	border-radius: 10px;
+	box-shadow: 0 0 0 1px var(--c-edge), var(--c-shadow);
+}
+
+.iw-live {
+	position: relative;
+	height: 100%;
+	overflow: hidden;
+	transform-origin: 50% 100%;
+}
+
+.iw-ghost {
+	position: absolute;
+	inset: 0;
+	border-radius: 10px;
+	outline: 1.25px dashed var(--c-ghost);
+	outline-offset: -1px;
+}
+
+/* Browser chrome: window controls, the address field, and whose browser it is. */
+.iw-chrome {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	height: 30px;
+	padding: 0 6px 0 12px;
+	background: var(--c-chrome);
+	border-bottom: 1px solid var(--c-line);
+}
+
+.iw-ghost .iw-chrome {
+	background: transparent;
+	border-bottom: 1.25px dashed var(--c-ghost);
+}
+
+.iw-dots {
+	display: flex;
+	flex: none;
+	gap: 5px;
+}
+
+.iw-dots i {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 1px var(--c-sk-strong);
+}
+
+.iw-ghost .iw-dots i {
+	box-shadow: inset 0 0 0 1px var(--c-ghost);
+}
+
+.iw-url {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	height: 18px;
+	margin-inline: 4px 2px;
+	padding-inline: 6px;
+	color: var(--c-muted);
+	background: var(--c-card);
+	border-radius: 5px;
+	box-shadow: inset 0 0 0 1px var(--c-line);
+}
+
+.iw-ghost .iw-url {
+	color: var(--c-ghost);
+	background: transparent;
+	box-shadow: inset 0 0 0 1px var(--c-ghost);
+}
+
+.iw-me {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 5px;
+	height: 20px;
+	padding: 0 8px 0 2px;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 16px;
+	background: var(--c-card);
+	border-radius: 10px;
+	box-shadow: inset 0 0 0 1px var(--c-line);
+}
+
+.iw-me svg,
+.iw-face svg {
+	display: block;
+	flex: none;
+}
+
+.iw-ghost .iw-me {
+	color: var(--c-muted);
+	background: transparent;
+	box-shadow: inset 0 0 0 1px var(--c-ghost);
+}
+
+.iw-ghost .iw-me svg {
+	opacity: 0.45;
+}
+
+/* The editor's top bar: back to Posts, who else is here, Save, Publish. */
+.iw-bar {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	height: 40px;
+	padding: 0 8px 0 12px;
+	border-bottom: 1px solid var(--c-line);
+}
+
+.iw-back {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-inline-end: auto;
+	color: var(--c-muted);
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 16px;
+}
+
+.iw-back svg {
+	flex: none;
+}
+
+.iw-presence {
+	display: flex;
+	flex: none;
+}
+
+.iw-face {
+	border-radius: 50%;
+	box-shadow: 0 0 0 1.5px var(--c-card);
+}
+
+.iw-face + .iw-face {
+	margin-inline-start: -5px;
+}
+
+.iw-save {
+	display: inline-grid;
+	flex: none;
+	align-items: center;
+	height: 24px;
+	padding: 0 8px;
+	color: color-mix(in srgb, var(--c-text) calc((var(--solid, 0) + var(--pill, 0)) * 100%), var(--c-muted));
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 16px;
+	background: color-mix(in srgb, var(--c-pill) calc(var(--pill, 0) * 100%), transparent);
+	border-radius: 6px;
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-line) calc(var(--solid, 0) * 140%), transparent);
+}
+
+.iw-save .fig-status {
+	justify-items: center;
+}
+
+.iw-save [data-skin] {
+	gap: 4px;
+}
+
+.iw-publish {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	height: 24px;
+	padding: 0 8px;
+	color: var(--c-publish-soft-ink);
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 16px;
+	background: var(--c-publish-soft);
+	border-radius: 6px;
+}
+
+.iw-doc {
+	padding: 16px;
+}
+
+.iw-title {
+	margin-bottom: 14px;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+}
+
+.iw-p + .iw-p {
+	margin-top: 8px;
+}
+
+/* A person's addition stays on one line, as a unit the eye can follow between documents. */
+.iw-run[data-tint] {
+	white-space: nowrap;
+}
+
+.iw-run[data-tint] > .fig-run-on {
+	background: color-mix(in srgb, var(--who) calc(var(--hl, 0) * var(--c-tint)), transparent);
+	border-radius: 3px;
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+}
+
+.iw .fig-flag {
+	font-size: 11px;
+}
+
+/* Abstract lines for small windows: bars in each author's colour. */
+.iw-line {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	height: 12px;
+}
+
+.iw-line + .iw-line {
+	margin-top: 2px;
+}
+
+.iw-line--title {
+	height: 14px;
+	margin-bottom: 4px;
+}
+
+.iw-sk {
+	display: block;
+	flex: none;
+	width: var(--w);
+	height: 6px;
+	background: var(--c-sk);
+	border-radius: 3px;
+	transform: scaleX(var(--grow, 1));
+	transform-origin: 0 50%;
+}
+
+:dir(rtl) .iw-sk {
+	transform-origin: 100% 50%;
+}
+
+.iw-sk--title {
+	height: 8px;
+	background: var(--c-sk-strong);
+	border-radius: 4px;
+}
+
+.iw-sk[data-who] {
+	height: 7px;
+	background: color-mix(in srgb, var(--who) 55%, var(--c-card));
+	border-radius: 2px;
+}
+
+/* The stored version: a plain sheet, with the outcome in its corner. */
+.is .iw-doc {
+	padding: 16px 16px;
+}
+
+.is-mark {
+	position: absolute;
+	top: 14px;
+	inset-inline-end: 14px;
+	display: block;
+	line-height: 0;
+}
+
+.is-mark[data-outcome="lost"] {
+	color: var(--c-danger);
+}
+
+.is-mark[data-outcome="kept"] {
+	color: var(--c-ok);
+}
+
+.is .fig-lost {
+	color: color-mix(in srgb, var(--c-danger) calc(var(--lost, 0) * 100%), var(--c-text));
+	text-decoration-color: color-mix(in srgb, var(--c-danger) calc(clamp(0, var(--lost, 0) * 2 - 1, 1) * 100%), transparent);
+	background: none;
+}
+
+.is .fig-lost > .fig-run-on {
+	background: color-mix(in srgb, var(--who) calc((1 - var(--lost, 0)) * var(--hl, 0) * var(--c-tint)), color-mix(in srgb, var(--c-danger) calc(var(--lost, 0) * 9%), transparent));
+}
+
+/* A labelled field below the body, as the admin draws the excerpt. */
+.iw-field {
+	display: grid;
+	gap: 4px;
+	margin-top: 10px;
+}
+
+.iw-field-label {
+	color: var(--c-muted);
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 16px;
+}
+
+.iw-field-box {
+	display: flex;
+	align-items: center;
+	min-height: 32px;
+	padding: 6px 10px;
+	border-radius: 6px;
+	box-shadow: inset 0 0 0 1px var(--c-line);
+}
+
+/* A checklist (Content save). */
+.ick {
+	display: grid;
+	gap: 4px;
+}
+
+.ick-title {
+	margin-bottom: 2px;
+	color: var(--fig-muted);
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 16px;
+}
+
+.ick-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--fig-muted);
+	font-size: 12px;
+	line-height: 16px;
+}
+
+.ick-item svg {
+	flex: none;
+	color: var(--c-ok);
+}
+
+/* ---------- Medium windows (tablet) ---------- */
+
+.iw--md .iw-chrome {
+	gap: 6px;
+	height: 26px;
+	padding: 0 5px 0 10px;
+}
+
+.iw--md .iw-dots {
+	gap: 4px;
+}
+
+.iw--md .iw-dots i {
+	width: 7px;
+	height: 7px;
+}
+
+.iw--md .iw-url {
+	height: 16px;
+}
+
+.iw--md .iw-me {
+	height: 18px;
+	font-size: 11px;
+}
+
+.iw--md .iw-bar {
+	gap: 4px;
+	height: 34px;
+	padding: 0 6px 0 10px;
+}
+
+.iw--md .iw-save,
+.iw--md .iw-publish {
+	height: 22px;
+	padding: 0 6px;
+	font-size: 11px;
+}
+
+.iw--md .iw-doc,
+.is--md .iw-doc {
+	padding: 12px;
+}
+
+.iw--md .iw-title,
+.is--md .iw-title {
+	margin-bottom: 12px;
+	font-size: 13px;
+	line-height: 18px;
+}
+
+.iw--md .iw-doc,
+.is--md .iw-doc {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+.is--md .is-mark {
+	top: 12px;
+	inset-inline-end: 12px;
+}
+
+/* ---------- Small windows (phone) ---------- */
+
+.iw--sm .iw-live,
+.iw--sm .iw-ghost {
+	border-radius: 8px;
+}
+
+.iw--sm .iw-chrome {
+	gap: 4px;
+	height: 20px;
+	padding: 0 4px 0 7px;
+}
+
+.iw--sm .iw-dots {
+	gap: 3px;
+}
+
+.iw--sm .iw-dots i {
+	width: 5px;
+	height: 5px;
+}
+
+.iw--sm .iw-url {
+	height: 12px;
+	margin-inline: 2px 1px;
+	padding-inline: 3px;
+	border-radius: 3px;
+}
+
+.iw--sm .iw-me {
+	gap: 3px;
+	height: 15px;
+	padding: 0 5px 0 1.5px;
+	font-size: 10px;
+	line-height: 12px;
+}
+
+.iw--sm .iw-bar {
+	gap: 3px;
+	height: 26px;
+	padding: 0 4px 0 7px;
+}
+
+.iw--sm .iw-save {
+	height: 18px;
+	padding: 0 4px;
+	font-size: 10px;
+	line-height: 12px;
+	border-radius: 4px;
+}
+
+.iw--sm .iw-save [data-skin] {
+	gap: 3px;
+}
+
+.iw--sm .iw-publish {
+	width: 18px;
+	height: 18px;
+	padding: 0;
+	border-radius: 4px;
+}
+
+.iw--sm .iw-face + .iw-face {
+	margin-inline-start: -4px;
+}
+
+.iw--sm .iw-doc {
+	padding: 9px 8px;
+}
+
+.is--sm .iw-doc {
+	padding: 14px;
+}
+
+.is--sm .is-mark {
+	top: 12px;
+	inset-inline-end: 12px;
+}
+
+/* ---------- Additions for scenes with several windows and a save path ---------- */
+
+/* Publish is tinted, not solid, so it doesn't pull the eye from the story. */
+.iso {
+	--c-publish-soft: color-mix(in srgb, var(--c-publish) 11%, var(--c-card));
+	--c-publish-soft-ink: #1d4ed8;
+}
+
+:root.dark .iso {
+	--c-publish-soft: color-mix(in srgb, #3b82f6 20%, var(--c-card));
+	--c-publish-soft-ink: #a5c4ff;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not(.light) .iso {
+		--c-publish-soft: color-mix(in srgb, #3b82f6 20%, var(--c-card));
+		--c-publish-soft-ink: #a5c4ff;
+	}
+}
+
+/* An object asleep between messages: a moon on a small badge. */
+.iso .i-sleep circle {
+	fill: var(--c-badge);
+	stroke: var(--i-struct);
+	stroke-width: 1;
+}
+
+.iso .i-moon {
+	fill: var(--i-struct);
+}
+
+/* A packet's avatar: whom a document travels for. */
+.iso .ip-mark {
+	pointer-events: none;
+}
+
+/* Checklist items that tick as a save passes. */
+.ick-tick {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 14px;
+	height: 14px;
+}
+
+.ick-tick > * {
+	grid-area: 1 / 1;
+}
+
+.ick-off {
+	width: 11px;
+	height: 11px;
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 1px var(--fig-arrow);
+}
+
+.ick-on {
+	display: grid;
+	color: var(--c-ok);
+}
+
+.ick-item:has(.ick-tick) {
+	color: color-mix(in srgb, var(--fig-text) calc(var(--tick, 0) * 100%), var(--fig-muted));
+}
+
+/* A labelled field drawn as bars, for small windows. */
+.iw--sm .iw-field {
+	gap: 2px;
+	margin-top: 6px;
+}
+
+.iw--sm .iw-field-label {
+	font-size: 9px;
+	line-height: 12px;
+}
+
+.iw--sm .iw-field-box {
+	min-height: 18px;
+	padding: 0 6px;
+	border-radius: 4px;
+}

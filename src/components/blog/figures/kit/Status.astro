@@ -1,0 +1,33 @@
+---
+/**
+ * A line of status text with every state drawn in one cell; renderStatus()
+ * shows the state for t. Tones: ok (green icon), warn, danger, brand.
+ */
+import { icon, type IconName } from "./icons";
+
+export interface StatusState {
+	id: string;
+	label: string;
+	icon?: IconName;
+	tone?: "ok" | "warn" | "danger" | "brand";
+}
+
+interface Props {
+	states: readonly StatusState[];
+	class?: string;
+	[key: `data-${string}`]: string | undefined;
+}
+
+const { states, class: className, ...rest } = Astro.props;
+---
+
+<span class:list={["fig-status", className]} {...rest}>
+	{
+		states.map((state, i) => (
+			<span data-skin={state.id} data-tone={state.tone} data-spin={state.icon === "spinner" ? "" : undefined} style={i > 0 ? "opacity:0;visibility:hidden" : undefined}>
+				{state.icon && <Fragment set:html={icon(state.icon, 14)} />}
+				<span>{state.label}</span>
+			</span>
+		))
+	}
+</span>

@@ -1,0 +1,97 @@
+---
+/**
+ * The panel every figure sits in: an eyebrow and subtitle, the stage (the
+ * figure's own markup, drawn by its scene), the control bar and a footnote.
+ * Eyebrow, subtitle, footnote and step labels may differ per mode: pass
+ * { [modeId]: text }.
+ * Mount the scene from the figure's script with mountFigures(name, scene).
+ */
+import "./frame.css";
+import "./controls.css";
+import "./parts.css";
+import { icon } from "./icons";
+import { type PerMode, type SceneInfo, textFor } from "./scene";
+
+interface Props {
+	name: string;
+	info: SceneInfo;
+	eyebrow: PerMode;
+	subtitle?: PerMode;
+	footnote?: PerMode;
+	class?: string;
+}
+
+const { name, info, eyebrow, subtitle, footnote, class: className } = Astro.props;
+const modes = info.modes;
+const firstMode = modes?.[0]?.id;
+const variants = (value: PerMode | undefined) =>
+	value === undefined ? [] : typeof value === "string" ? [{ mode: undefined, text: value }] : Object.entries(value).map(([mode, text]) => ({ mode, text }));
+const controlIcon = (name: "play" | "pause" | "replay") => icon(name, name === "replay" ? 16 : 13).replace("<svg ", `<svg data-for="${name}" `);
+const steps = info.steps;
+---
+
+<div class:list={["fig", className]} data-figure={name} data-mode={firstMode}>
+	<div class="fig-panel">
+		{
+			variants(eyebrow).map(({ mode, text }) => (
+				<div class="fig-eyebrow" data-when-mode={mode} hidden={mode !== undefined && mode !== firstMode}>
+					{text}
+				</div>
+			))
+		}
+		{
+			variants(subtitle).map(({ mode, text }) => (
+				<div class="fig-subtitle" data-when-mode={mode} hidden={mode !== undefined && mode !== firstMode}>
+					{text}
+				</div>
+			))
+		}
+		<div class="fig-stage" data-fig-stage aria-hidden="true">
+			<slot />
+		</div>
+		<div class="fig-foot">
+			<div class="fig-bar">
+				{
+					modes && (
+						<div class="fig-switch" role="group" aria-label={info.modesLabel ?? "Compare"}>
+							{modes.map((mode, i) => (
+								<button type="button" class="fig-switch-btn" data-fig-mode={mode.id} aria-pressed={i === 0 ? "true" : "false"}>
+									{mode.label}
+								</button>
+							))}
+						</div>
+					)
+				}
+				<div class="fig-steps">
+					<span class="fig-step-label" data-fig-step-label>{steps[0] && textFor(steps[0].label, firstMode)}</span>
+					<div class="fig-track" role="group" aria-label="Steps">
+						<span class="fig-track-line" aria-hidden="true"><span class="fig-track-fill" data-fig-fill></span></span>
+						{
+							steps.map((step, i) => (
+								<button
+									type="button"
+									class="fig-dot"
+									data-fig-step={i}
+									data-state={i === 0 ? "current" : "todo"}
+									style={`--at:${i / steps.length}`}
+									aria-label={`Step ${i + 1} of ${steps.length}: ${textFor(step.label, firstMode)}`}
+									tabindex={i === 0 ? 0 : -1}
+								/>
+							))
+						}
+					</div>
+				</div>
+				<button type="button" class="fig-play" data-fig-play data-icon="play" aria-label="Play animation">
+					<Fragment set:html={controlIcon("play") + controlIcon("pause") + controlIcon("replay")} />
+				</button>
+			</div>
+			{
+				variants(footnote).map(({ mode, text }) => (
+					<div class="fig-footnote" data-when-mode={mode} hidden={mode !== undefined && mode !== firstMode}>
+						{text}
+					</div>
+				))
+			}
+		</div>
+	</div>
+</div>

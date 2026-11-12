@@ -1,0 +1,149 @@
+/*
+ * Figure kit primitives: status lines, pills, and document text with carets.
+ */
+
+.fig-avatar-svg .fig-avatar-edge {
+	stroke: var(--fig-avatar-ring);
+}
+
+/* ---------- Status line and pills ---------- */
+
+/* Every state is drawn in one grid cell, so swapping them never moves anything. */
+.fig-status {
+	display: inline-grid;
+	align-items: center;
+	justify-items: start;
+}
+
+.fig-status > [data-skin] {
+	display: inline-flex;
+	grid-area: 1 / 1;
+	align-items: center;
+	gap: 6px;
+	white-space: nowrap;
+}
+
+.fig-status .fig-icon {
+	flex: none;
+}
+
+[data-tone="ok"] > .fig-icon {
+	color: var(--fig-ok);
+}
+
+[data-tone="warn"] {
+	color: var(--fig-warn-text);
+}
+
+[data-tone="danger"] {
+	color: var(--fig-danger-text);
+}
+
+[data-tone="brand"] {
+	color: var(--fig-brand-text);
+}
+
+.fig-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 26px;
+	padding: 0 10px 0 8px;
+	color: var(--fig-muted);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1;
+	white-space: nowrap;
+	background: var(--fig-card);
+	border: 1px solid var(--fig-card-border);
+	border-radius: 999px;
+}
+
+.fig-pill[data-tone="ok"] {
+	color: var(--fig-ok-text);
+	background: var(--fig-ok-fill);
+	border-color: color-mix(in srgb, var(--fig-ok) 40%, transparent);
+}
+
+.fig-pill[data-tone="warn"] {
+	background: var(--fig-warn-fill);
+	border-color: color-mix(in srgb, var(--fig-warn) 40%, transparent);
+}
+
+.fig-pill[data-tone="danger"] {
+	background: var(--fig-danger-fill);
+	border-color: color-mix(in srgb, var(--fig-danger) 40%, transparent);
+}
+
+.fig-pill > .fig-icon {
+	flex: none;
+}
+
+/* ---------- Document text ---------- */
+
+.fig-run-off {
+	color: transparent;
+}
+
+/* Lost text: --lost 0 to 1 turns it red, then strikes it through. */
+.fig-lost {
+	color: color-mix(in srgb, var(--fig-danger-text) calc(var(--lost, 0) * 100%), var(--fig-body));
+	text-decoration-line: line-through;
+	text-decoration-thickness: 1.5px;
+	text-decoration-color: color-mix(in srgb, var(--fig-danger-text) calc(clamp(0, var(--lost, 0) * 2 - 1, 1) * 100%), transparent);
+	background: color-mix(in srgb, var(--fig-danger) calc(var(--lost, 0) * 10%), transparent);
+	border-radius: 3px;
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+}
+
+/* A block that opens and closes: script sets grid-template-rows from 0fr to 1fr. */
+.fig-collapse {
+	display: grid;
+	grid-template-rows: 1fr;
+}
+
+.fig-collapse > * {
+	min-height: 0;
+	overflow: hidden;
+	transform: translateY(var(--rise, 0));
+}
+
+/*
+ * Carets sit inline between word joiners, so a line never breaks at one.
+ * A remote caret is 2px in its person's colour with a name flag; a local
+ * caret is the editor's own 1px caret.
+ */
+.fig-caret {
+	position: relative;
+	margin-inline: -1px;
+	border-inline-start: 2px solid color-mix(in srgb, var(--who) calc(var(--caret-on, 0) * 100%), transparent);
+}
+
+.fig-caret--local {
+	margin-inline: -0.5px;
+	border-inline-start-width: 1px;
+	--who: var(--fig-text);
+}
+
+.fig-flag {
+	position: absolute;
+	bottom: calc(100% - 1px);
+	inset-inline-start: -2px;
+	height: 16px;
+	padding: 0 5px;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 16px;
+	white-space: nowrap;
+	background: var(--who-flag);
+	border-radius: 4px 4px 4px 0;
+	pointer-events: none;
+}
+
+/* A flag that hangs back over the text, for carets near a card's end edge. */
+.fig-caret--hang .fig-flag {
+	inset-inline: auto -2px;
+	border-radius: 4px 4px 0;
+}

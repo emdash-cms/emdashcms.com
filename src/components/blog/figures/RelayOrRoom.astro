@@ -1,0 +1,30 @@
+---
+/**
+ * Figure 1: Ana's and Noah's desks, the server (or the EmDash room) their
+ * links meet in, and the database with the stored version over it. The scene
+ * in relay-or-room.client.ts plays WordPress's example through it, with
+ * browsers saving or with the room saving.
+ */
+import FigureFrame from "./kit/FigureFrame.astro";
+import IsoStage from "./kit/iso/IsoStage.astro";
+import { info } from "./relay-or-room";
+import { compose } from "./relay-or-room.compose";
+
+const compositions = compose();
+---
+
+<FigureFrame
+	name="relay-or-room"
+	info={info}
+	eyebrow={{ browsers: "When browsers save", room: "When the room saves" }}
+	footnote="Simplified. Based on the example in WordPress's server-aware proposal."
+>
+	<IsoStage compositions={compositions} />
+</FigureFrame>
+
+<script>
+	import { mountFigures } from "./kit";
+	import { scene } from "./relay-or-room.client";
+
+	mountFigures("relay-or-room", scene);
+</script>
