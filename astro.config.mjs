@@ -64,6 +64,8 @@ export default defineConfig({
 			siteUrl: "https://emdashcms.com",
 			database: d1({ binding: "DB", session: "auto" }),
 			storage: r2({ binding: "MEDIA" }),
+			// Real-time co-editing. Rooms run in the EMDASH_ROOMS Durable Object (wrangler.jsonc).
+			coEditing: true,
 			// Cloudflare Access for admin UI auth.
 			// AUD is read at runtime from CF_ACCESS_AUDIENCE (wrangler secret).
 			// MCP + OAuth paths are bypassed by a separate Access app so EmDash's
