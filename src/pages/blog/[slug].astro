@@ -2,6 +2,7 @@
 import { decodeSlug, getEmDashCollection, getEmDashEntry } from "emdash";
 import { PortableText } from "emdash/ui";
 import PostBlock from "../../components/blog/PostBlock.astro";
+import HighlightedCode from "../../components/blog/HighlightedCode.astro";
 import PostByline from "../../components/blog/PostByline.astro";
 import PostCover from "../../components/blog/PostCover.astro";
 import PostGrid from "../../components/blog/PostGrid.astro";
@@ -129,7 +130,7 @@ const articleMeta = {
 		</div>
 
 		<div class="post-prose">
-			<PortableText value={post.data.content} components={{ block: PostBlock }} />
+			<PortableText value={post.data.content} components={{ block: PostBlock, type: { code: HighlightedCode } }} />
 		</div>
 	</article>
 
@@ -457,6 +458,46 @@ const articleMeta = {
 		line-height: 1.65;
 		background: transparent;
 		border-radius: 0;
+	}
+
+	/* Room for the copy button on the first line. */
+	.post .post-prose :global(.emdash-code pre.shiki) {
+		padding-inline-end: 3rem;
+	}
+
+	/* Shiki writes both themes' colors on every token; pick one per scheme. */
+	.post .post-prose :global(.shiki span) {
+		color: var(--shiki-light);
+		font-style: var(--shiki-light-font-style);
+		font-weight: var(--shiki-light-font-weight);
+		text-decoration: var(--shiki-light-text-decoration);
+	}
+
+	:global(:root.dark) .post .post-prose :global(.shiki span) {
+		color: var(--shiki-dark);
+		font-style: var(--shiki-dark-font-style);
+		font-weight: var(--shiki-dark-font-weight);
+		text-decoration: var(--shiki-dark-text-decoration);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .post .post-prose :global(.shiki span) {
+			color: var(--shiki-dark);
+			font-style: var(--shiki-dark-font-style);
+			font-weight: var(--shiki-dark-font-weight);
+			text-decoration: var(--shiki-dark-text-decoration);
+		}
+	}
+
+	/* Vesper's comment color is translucent and falls below 4.5:1, so drop the alpha. */
+	:global(:root.dark) .post .post-prose :global(.shiki span[style*="--shiki-dark:#8B8B8B94" i]) {
+		color: #8b8b8b;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .post .post-prose :global(.shiki span[style*="--shiki-dark:#8B8B8B94" i]) {
+			color: #8b8b8b;
+		}
 	}
 
 	.post .post-prose :global(.emdash-code code) {
