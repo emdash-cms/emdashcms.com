@@ -1,0 +1,132 @@
+---
+import { Icon } from "astro-iconset/components";
+import { highlightCode } from "../../lib/highlight-code";
+
+interface Props {
+	node: {
+		_type: "code";
+		_key?: string;
+		code?: string;
+		language?: string;
+		filename?: string;
+	};
+}
+
+const { node } = Astro.props;
+if (!node?.code) return null;
+
+const html = await highlightCode(node.code, node.language);
+---
+
+<div class="emdash-code">
+	{node.filename && <div class="emdash-code-filename">{node.filename}</div>}
+	<div class="code-body">
+		<Fragment set:html={html} />
+		<button type="button" class="code-copy" aria-label="Copy code" data-code-copy>
+			<Icon name="ph:copy" class="code-copy-idle" aria-hidden="true" />
+			<Icon name="ph:check" class="code-copy-done" aria-hidden="true" />
+		</button>
+		<span class="code-copy-status" role="status" data-code-copy-status></span>
+	</div>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>("[data-code-copy]").forEach((button) => {
+		const body = button.parentElement;
+		const code = body?.querySelector("pre code");
+		const status = body?.querySelector<HTMLElement>("[data-code-copy-status]");
+		if (!code || !status) return;
+
+		let resetTimer: number | undefined;
+		button.addEventListener("click", async () => {
+			try {
+				await navigator.clipboard.writeText(code.textContent ?? "");
+			} catch (error) {
+				console.warn("Copying code failed:", error);
+				return;
+			}
+			window.clearTimeout(resetTimer);
+			button.setAttribute("data-copied", "");
+			status.textContent = "Code copied";
+			resetTimer = window.setTimeout(() => {
+				button.removeAttribute("data-copied");
+				status.textContent = "";
+			}, 1500);
+		});
+	});
+</script>
+
+<style>
+	.code-body {
+		position: relative;
+	}
+
+	.code-copy {
+		position: absolute;
+		inset-block-start: 0.75rem;
+		inset-inline-end: 0.75rem;
+		display: inline-flex;
+		width: 2rem;
+		height: 2rem;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		color: var(--post-muted);
+		background: color-mix(in srgb, var(--color-text) 10%, var(--post-sunken));
+		border: 0;
+		border-radius: 6px;
+		cursor: pointer;
+		transition:
+			color 150ms ease,
+			background-color 150ms ease;
+	}
+
+	.code-copy:hover,
+	.code-copy[data-copied] {
+		color: var(--color-text);
+		background: color-mix(in srgb, var(--color-text) 16%, var(--post-sunken));
+	}
+
+	.code-copy :global(svg) {
+		width: 1rem;
+		height: 1rem;
+	}
+
+	.code-copy :global(.code-copy-done),
+	.code-copy[data-copied] :global(.code-copy-idle) {
+		display: none;
+	}
+
+	.code-copy[data-copied] :global(.code-copy-done) {
+		display: block;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.code-copy[data-copied] :global(.code-copy-done) {
+			animation: code-copy-check 220ms ease-out;
+		}
+	}
+
+	@keyframes code-copy-check {
+		from {
+			opacity: 0;
+			transform: scale(0.5);
+		}
+		60% {
+			transform: scale(1.15);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	.code-copy-status {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+</style>
