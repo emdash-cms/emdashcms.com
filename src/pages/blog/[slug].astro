@@ -40,7 +40,7 @@ const {
 	limit: 4,
 });
 if (recentPostsError) console.error("Failed to load posts for Keep reading:", recentPostsError);
-// Only the tags, so publishing a post purges this page but its lastModified stays its own.
+// Only the tags, so publishing a post purges this page without merging the list's other hints.
 if (Astro.cache?.enabled && recentPostsCacheHint.tags) Astro.cache.set({ tags: recentPostsCacheHint.tags });
 const morePosts = recentPosts.filter((entry) => entry.data.id !== post.data.id).slice(0, 3);
 
