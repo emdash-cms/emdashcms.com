@@ -111,7 +111,7 @@ export function buildRuns(progress: (p: number) => number): Runs {
 		charsOf[cell] = charsOf[cell]! + 1;
 	}
 
-	// One image or embed each in 110 of the failed runs.
+	// One non-text item (an image, embed, divider or line break) each in 110 of the failed runs.
 	const atomsOf = new Uint8Array(n);
 	for (const cell of failed.slice(lostRuns - atoms)) atomsOf[cell] = 1;
 
