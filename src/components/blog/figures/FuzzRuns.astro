@@ -1,8 +1,9 @@
 ---
 /**
  * Figure 4: 10,000 fuzz runs as a grid of squares, with counters for what
- * they lost and a small tree showing why. The scene in fuzz-runs.client.ts
- * draws the grid on a canvas and plays the runs with either schema.
+ * they lost and a small tree showing a common cause. The scene in
+ * fuzz-runs.client.ts draws the grid on a canvas and plays the runs with
+ * either schema.
  */
 import { personStyle } from "./kit/cast";
 import FigureFrame from "./kit/FigureFrame.astro";
@@ -13,7 +14,8 @@ const counters = [
 	{ id: "runs", label: "Runs" },
 	{ id: "lost", label: "Lost content", share: true },
 	{ id: "chars", label: "Characters lost" },
-	{ id: "atoms", label: "Images and embeds lost" },
+	// Images, embeds, dividers and line breaks.
+	{ id: "atoms", label: "Non-text items lost" },
 ];
 ---
 
@@ -58,7 +60,7 @@ const counters = [
 
 			<div class="fz-why" data-part="why" data-fig-lock>
 				<div class="fz-why-head">
-					<span data-when-mode="old">Why most of it was lost</span><span data-when-mode="new" hidden>Why nothing was lost</span>
+					<span data-when-mode="old">A common way it was lost</span><span data-when-mode="new" hidden>Why nothing was lost</span>
 				</div>
 				<div class="fz-rule" data-part="rule">
 					<span data-when-mode="old">A list item must start with a paragraph.</span><span data-when-mode="new" hidden
