@@ -17,7 +17,7 @@ export const FIGURE_OPTIONS = [
 	{ label: "Relay or room", value: "relay-or-room" },
 	{ label: "How the parts fit", value: "how-the-parts-fit" },
 	{ label: "Saved means saved", value: "saved-means-saved" },
-	{ label: "10,000 fuzz runs", value: "fuzz-runs" },
+	{ label: "10,000 test runs", value: "fuzz-runs" },
 ];
 
 const definition: PluginDefinition = {
