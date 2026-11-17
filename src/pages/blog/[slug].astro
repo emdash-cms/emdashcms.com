@@ -91,17 +91,17 @@ const articleMeta = {
 			}
 			<h1 class="post-title" {...post.edit.title}>{post.data.title}</h1>
 			{
-				post.data.excerpt && (
-					<p class="post-dek" {...post.edit.excerpt}>
-						{post.data.excerpt}
-					</p>
-				)
-			}
-			{
 				authors.length > 0 && (
 					<div class="post-byline">
 						<PostByline authors={authors} size="post" />
 					</div>
+				)
+			}
+			{
+				post.data.excerpt && (
+					<p class="post-dek" {...post.edit.excerpt}>
+						{post.data.excerpt}
+					</p>
 				)
 			}
 			{
@@ -272,7 +272,11 @@ const articleMeta = {
 		--byline-muted: var(--post-muted);
 		--byline-accent: var(--post-accent-text);
 
-		margin-top: var(--spacing-xl);
+		margin-top: 1.25rem;
+	}
+
+	.post-byline + .post-dek {
+		margin-top: 1.25rem;
 	}
 
 	.post-tags {
