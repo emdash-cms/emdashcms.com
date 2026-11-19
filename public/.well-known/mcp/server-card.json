@@ -1,0 +1,32 @@
+{
+	"$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
+	"name": "com.emdashcms/docs",
+	"version": "1.0.0",
+	"title": "EmDash Docs MCP",
+	"description": "Search the EmDash CMS documentation. Read-only, and no account is needed.",
+	"websiteUrl": "https://docs.emdashcms.com/docs-mcp/",
+	"repository": {
+		"url": "https://github.com/emdash-cms/emdash",
+		"source": "github",
+		"subfolder": "docs",
+		"id": "1198246700"
+	},
+	"icons": [
+		{
+			"src": "https://emdashcms.com/brand/favicon.svg",
+			"mimeType": "image/svg+xml",
+			"sizes": ["any"]
+		},
+		{
+			"src": "https://emdashcms.com/brand/favicon.png",
+			"mimeType": "image/png",
+			"sizes": ["300x300"]
+		}
+	],
+	"remotes": [
+		{
+			"type": "streamable-http",
+			"url": "https://docs.emdashcms.com/mcp"
+		}
+	]
+}

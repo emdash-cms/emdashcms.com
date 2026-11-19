@@ -224,6 +224,9 @@ importers:
       wrangler:
         specifier: ^4.131.2
         version: 4.131.2(@cloudflare/workers-types@5.20260914.1)(@types/node@26.5.1)
+      yaml:
+        specifier: ^2.9.1
+        version: 2.9.1
 
 packages:
 
