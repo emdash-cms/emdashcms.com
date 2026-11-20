@@ -4,7 +4,7 @@ node_modules/
 # Build output
 dist/
 
-# Agent skills, generated from .agents/skills/ by src/integrations/agent-skills.ts
+# Agent skills, generated from .agents/skills/ by `pnpm agent-skills`
 public/.well-known/agent-skills/
 
 # Astro

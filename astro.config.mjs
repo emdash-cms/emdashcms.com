@@ -6,7 +6,6 @@ import { formsPlugin } from "@emdash-cms/plugin-forms";
 import icon from "astro-iconset";
 import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
-import agentSkills from "./src/integrations/agent-skills";
 
 export default defineConfig({
 	site: "https://emdashcms.com",
@@ -32,8 +31,6 @@ export default defineConfig({
 	},
 	integrations: [
 		react(),
-		// Publishes the EmDash agent skills at /.well-known/agent-skills/.
-		agentSkills(),
 		icon({
 			// Only ship the Phosphor icons actually referenced in templates,
 			// not the full @iconify-json/ph set (which adds megabytes to the
