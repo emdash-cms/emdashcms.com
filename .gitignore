@@ -4,6 +4,9 @@ node_modules/
 # Build output
 dist/
 
+# Agent skills, generated from .agents/skills/ by src/integrations/agent-skills.ts
+public/.well-known/agent-skills/
+
 # Astro
 .astro/
 

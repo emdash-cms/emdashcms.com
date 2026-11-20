@@ -1,0 +1,64 @@
+{
+	"specVersion": "0.9",
+	"host": {
+		"displayName": "EmDash",
+		"identifier": "emdashcms.com",
+		"documentationUrl": "https://docs.emdashcms.com/",
+		"logoUrl": "https://emdashcms.com/brand/favicon.svg"
+	},
+	"entries": [
+		{
+			"identifier": "urn:air:emdashcms.com:docs:mcp",
+			"displayName": "EmDash Docs MCP",
+			"type": "application/mcp-server-card+json",
+			"url": "https://emdashcms.com/.well-known/mcp/server-card.json",
+			"description": "Read-only MCP server for searching the EmDash CMS documentation. No account is needed.",
+			"tags": ["emdash", "cms", "documentation", "mcp"],
+			"representativeQueries": [
+				"How do I query content from an EmDash collection in Astro?",
+				"Which field types can an EmDash schema use?",
+				"How do I build an EmDash plugin with hooks?",
+				"Search the EmDash docs for deploying to Cloudflare"
+			]
+		},
+		{
+			"identifier": "urn:air:emdashcms.com:agent-skills:index",
+			"displayName": "EmDash Agent Skills",
+			"type": "application/agent-skills+json",
+			"url": "https://emdashcms.com/.well-known/agent-skills/index.json",
+			"description": "Agent skills for building EmDash sites, writing plugins, using the CLI, upgrading, and porting WordPress themes and plugins.",
+			"tags": ["emdash", "cms", "agent-skills", "astro", "wordpress"],
+			"representativeQueries": [
+				"What agent skills does EmDash publish?",
+				"Install a skill for building an EmDash site",
+				"Get a skill for porting a WordPress theme to EmDash",
+				"Find a skill for upgrading an EmDash project"
+			]
+		},
+		{
+			"identifier": "urn:air:emdashcms.com:build-a-site:guide",
+			"displayName": "Build a site with EmDash",
+			"type": "text/markdown",
+			"url": "https://emdashcms.com/start.md",
+			"description": "Instructions for an AI coding agent helping someone build their first editable Astro site with EmDash.",
+			"tags": ["emdash", "cms", "astro", "getting-started"],
+			"representativeQueries": [
+				"Help me build a website with EmDash",
+				"How do I start a new EmDash site?",
+				"Add EmDash to my existing Astro project"
+			]
+		},
+		{
+			"identifier": "urn:air:emdashcms.com:docs:llms-txt",
+			"displayName": "EmDash docs index (llms.txt)",
+			"type": "text/plain",
+			"url": "https://docs.emdashcms.com/llms.txt",
+			"description": "Plain-text index of every page in the EmDash documentation, for AI tools.",
+			"tags": ["emdash", "cms", "documentation", "llms.txt"],
+			"representativeQueries": [
+				"List the EmDash documentation pages",
+				"Where is the EmDash docs llms.txt?"
+			]
+		}
+	]
+}
