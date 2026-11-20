@@ -8,7 +8,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "astro build && wrangler deploy",
+    "deploy": "pnpm agent-skills && astro build && wrangler deploy",
+    "agent-skills": "node scripts/agent-skills.mjs",
     "typecheck": "astro check"
   },
   "dependencies": {

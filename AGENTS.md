@@ -5,6 +5,7 @@ This is an EmDash site -- a CMS built on Astro with a full admin UI.
 ```bash
 pnpm dev              # Start dev server (astro dev; runs migrations, seeds, generates types)
 npx emdash types      # Regenerate TypeScript types from schema
+pnpm agent-skills     # Publish .agents/skills/ to /.well-known/agent-skills/ (Workers Builds runs this before deploying)
 ```
 
 The admin UI is at `http://localhost:4321/_emdash/admin`.
@@ -19,7 +20,7 @@ The admin UI is at `http://localhost:4321/_emdash/admin`.
 | `emdash-env.d.ts`        | Generated types for collections (auto-regenerated on dev server start)             |
 | `src/layouts/Base.astro` | Base layout with EmDash wiring (menus, search, page contributions)                 |
 | `src/pages/`             | Astro pages -- all server-rendered                                                 |
-| `public/.well-known/`    | Agent discovery files (`agent-skills/` is built from `.agents/skills/`)            |
+| `public/.well-known/`    | Agent discovery files (`agent-skills/` is built by `pnpm agent-skills`)            |
 
 ## Skills
 
