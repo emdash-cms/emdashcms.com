@@ -95,6 +95,7 @@ const pageCtx = createPublicPageContext({
     <link rel="alternate" type="application/rss+xml" title={`${siteTitle} RSS feed`} href="/rss.xml" />
     <link rel="ai-catalog" type="application/ai-catalog+json" href="/.well-known/ai-catalog.json" />
     <EmDashHead page={pageCtx} />
+    <slot name="head" />
     <Font cssVariable="--font-sans" preload />
     <script is:inline>
       // Apply theme immediately to prevent flash
