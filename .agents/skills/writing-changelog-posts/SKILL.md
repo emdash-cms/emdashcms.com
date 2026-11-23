@@ -11,6 +11,8 @@ First present the complete post draft and evidence list in chat. Do not create a
 
 After that approval, read [references/posting-approved-draft.md](references/posting-approved-draft.md) and use the site's EmDash MCP to create and verify an unpublished draft. Return a review link. Publishing the post live is a separate action that always requires a new, explicit user request.
 
+When the user asks for a Discord announcement of the release, read [references/discord-announcement.md](references/discord-announcement.md).
+
 ## Research the release
 
 Read [references/release-research.md](references/release-research.md) before gathering evidence. Fetch release data and changelog sections from `emdash-cms/emdash` on GitHub at the exact release commit. A local checkout may help navigate, but it is not release truth.
