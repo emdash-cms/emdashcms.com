@@ -7,12 +7,14 @@ interface Props {
 	description: string;
 	/** The id of the page's h1. */
 	labelledBy: string;
+	/** Path of the page's Markdown twin for agents. */
+	markdown?: string;
 }
 
-const { title, description, labelledBy } = Astro.props;
+const { title, description, labelledBy, markdown } = Astro.props;
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} markdown={markdown}>
 	<section class="showcase" aria-labelledby={labelledBy}>
 		<div class="showcase-frame">
 			<div class="showcase-frame-inner">

@@ -11,6 +11,7 @@
  */
 import AgentLogos from "../AgentLogos.astro";
 import { capabilitiesDefaults, portableTextBlocks } from "../../plugins/marketing-blocks/index.ts";
+import { capabilityCards as cards } from "./capabilities-copy.ts";
 // The code windows below read these files at build time, so their text and
 // line numbers can't drift from the source they show.
 import envTypesSource from "../../../emdash-env.d.ts?raw";
@@ -235,11 +236,8 @@ const schemaFields = [
 			{/* 1. Astro foundation: the anchor. */}
 			<div class="cap-card cap-card--anchor">
 				<div class="cap-copy cap-copy--anchor">
-					<h3 class="cap-title cap-title--anchor">The Astro-native CMS</h3>
-					<p class="cap-text">
-						First-class Astro integration. Define content types in the admin, get TypeScript types generated from
-						your schema, and render every entry on the server from structured JSON.
-					</p>
+					<h3 class="cap-title cap-title--anchor">{cards.anchor.title}</h3>
+					<p class="cap-text">{cards.anchor.text}</p>
 				</div>
 
 				<ol class="flow">
@@ -369,11 +367,8 @@ const schemaFields = [
 			{/* 2. Familiar CMS experience. */}
 			<div class="cap-card cap-card--familiar">
 				<div class="cap-copy">
-					<h3 class="cap-title">A spiritual WordPress successor</h3>
-					<p class="cap-text">
-						Everything you love about WordPress in a fast, modern admin. Pages, posts, media, menus, widgets, and
-						taxonomies are where you expect them, and the built-in importer brings your content over.
-					</p>
+					<h3 class="cap-title">{cards.familiar.title}</h3>
+					<p class="cap-text">{cards.familiar.text}</p>
 				</div>
 				<div
 					class="cap-visual visual-familiar"
@@ -444,11 +439,8 @@ const schemaFields = [
 			{/* 3. Editorial workflows. */}
 			<div class="cap-card cap-card--editorial">
 				<div class="cap-copy">
-					<h3 class="cap-title">Drafts, revisions, and scheduling</h3>
-					<p class="cap-text">
-						Edit drafts while the live page stays untouched. Restore earlier revisions, schedule publishing, and
-						share preview links before anything goes live.
-					</p>
+					<h3 class="cap-title">{cards.editorial.title}</h3>
+					<p class="cap-text">{cards.editorial.text}</p>
 				</div>
 				<div
 					class="cap-visual visual-editorial"
@@ -505,12 +497,8 @@ const schemaFields = [
 			{/* 4. Agents. */}
 			<div class="cap-card cap-card--agents">
 				<div class="cap-copy">
-					<h3 class="cap-title">Built with agents in mind</h3>
-					<p class="cap-text">
-						Every site ships with an MCP server. Connect Claude, Codex, Cursor, or any MCP client to draft, edit,
-						search, and schedule content with the same permissions as your team. Scripts get the same through the
-						REST API and CLI.
-					</p>
+					<h3 class="cap-title">{cards.agents.title}</h3>
+					<p class="cap-text">{cards.agents.text}</p>
 				</div>
 				<div
 					class="cap-visual visual-agents"
@@ -567,11 +555,8 @@ const schemaFields = [
 			{/* 5. Extensibility. */}
 			<div class="cap-card cap-card--extend">
 				<div class="cap-copy">
-					<h3 class="cap-title">Extend with plugins</h3>
-					<p class="cap-text">
-						Add your own block types, admin pages, hooks, storage, and API routes in TypeScript. Every section on
-						this page is a block from this site’s own plugin.
-					</p>
+					<h3 class="cap-title">{cards.extend.title}</h3>
+					<p class="cap-text">{cards.extend.text}</p>
 				</div>
 				<div
 					class="cap-visual visual-extend"
@@ -609,11 +594,8 @@ const schemaFields = [
 			{/* 6. Plugin security. */}
 			<div class="cap-card cap-card--secure">
 				<div class="cap-copy">
-					<h3 class="cap-title">Plugins without the security nightmare</h3>
-					<p class="cap-text">
-						Plugins you install from the admin run in their own isolated sandbox. They see no environment variables
-						or filesystem, and get only the capabilities they declare and you approve.
-					</p>
+					<h3 class="cap-title">{cards.secure.title}</h3>
+					<p class="cap-text">{cards.secure.text}</p>
 				</div>
 				<div
 					class="cap-visual visual-secure"

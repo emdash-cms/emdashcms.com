@@ -1,7 +1,8 @@
 ---
-import { getEmDashEntry, type PortableTextBlock } from "emdash";
+import { getEmDashEntry } from "emdash";
 import Base from "../layouts/Base.astro";
 import MarketingBlocks from "../components/MarketingBlocks.astro";
+import { faqItems, withCapabilities } from "../lib/home";
 
 const { entry: page, cacheHint } = await getEmDashEntry("pages", "home");
 
@@ -11,6 +12,8 @@ Astro.response.headers.set(
 	"Link",
 	[
 		'<https://docs.emdashcms.com/>; rel="service-doc"',
+		'</index.md>; rel="alternate"; type="text/markdown"',
+		'</llms.txt>; rel="describedby"; type="text/plain"; title="llms.txt"',
 		'<https://docs.emdashcms.com/llms.txt>; rel="describedby"; type="text/plain"',
 		'</start.md>; rel="describedby"; type="text/markdown"; title="Build a site with EmDash"',
 		'</.well-known/ai-catalog.json>; rel="ai-catalog"; type="application/ai-catalog+json"',
@@ -18,36 +21,54 @@ Astro.response.headers.set(
 );
 
 const pageTitle = page?.data.title;
-
-// The capabilities bento replaces the home page's features grid. Home content
-// created before the capabilities block existed still has the grid and no
-// bento, so render the bento in the first grid's place, keeping the grid's
-// stored headline and introduction so they stay editable in the admin.
-// Content that includes a capabilities block renders exactly as stored.
-//
-// This is a bridge, not a migration: while it exists, a features block can't
-// appear on a home page without a capabilities block. Once production content
-// has the capabilities block in place of the features grid, delete it.
-function withCapabilities(content: PortableTextBlock[] | undefined) {
-	if (!content || content.some((block) => block._type === "marketing.capabilities")) return content;
-	const featuresIndex = content.findIndex((block) => block._type === "marketing.features");
-	if (featuresIndex < 0) return content;
-	const { headline, subheadline } = content[featuresIndex] as { headline?: unknown; subheadline?: unknown };
-	const capabilities: PortableTextBlock = {
-		_type: "marketing.capabilities",
-		_key: "capabilities",
-		...(typeof headline === "string" && { headline }),
-		...(typeof subheadline === "string" && { subheadline }),
-	};
-	return [...content.slice(0, featuresIndex), capabilities, ...content.slice(featuresIndex + 1)];
-}
+const description = "An open source Astro CMS built for humans and agents.";
 
 const pageContent = withCapabilities(page?.data.content);
+
+const siteUrl = new URL("/", Astro.site ?? Astro.url).href;
+const faq = faqItems(pageContent);
+const structuredData: Record<string, unknown>[] = [
+	{
+		"@type": "SoftwareApplication",
+		"@id": `${siteUrl}#software`,
+		name: "EmDash",
+		alternateName: "EmDash CMS",
+		description:
+			"An open source, full-stack TypeScript CMS for Astro and the spiritual successor to WordPress, with an MCP server on every site and sandboxed plugins.",
+		url: siteUrl,
+		applicationCategory: "DeveloperApplication",
+		applicationSubCategory: "Content management system",
+		operatingSystem: "Cloudflare Workers, Node.js",
+		license: "https://opensource.org/licenses/MIT",
+		isAccessibleForFree: true,
+		offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+		downloadUrl: "https://www.npmjs.com/package/emdash",
+		installUrl: "https://docs.emdashcms.com",
+		softwareHelp: { "@type": "CreativeWork", url: "https://docs.emdashcms.com" },
+		sameAs: ["https://github.com/emdash-cms/emdash", "https://www.npmjs.com/package/emdash"],
+		publisher: { "@id": `${siteUrl}#organization` },
+	},
+	...(faq.length > 0
+		? [
+				{
+					"@type": "FAQPage",
+					"@id": `${siteUrl}#faq`,
+					mainEntity: faq.map((item) => ({
+						"@type": "Question",
+						name: item.question,
+						acceptedAnswer: { "@type": "Answer", text: item.answer },
+					})),
+				},
+			]
+		: []),
+];
 ---
 
 <Base
 	title={pageTitle !== "Home" ? pageTitle : undefined}
-	description="An open source Astro CMS built for humans and agents."
+	description={description}
+	markdown="/index.md"
+	structuredData={structuredData}
 >
 	{
 		pageContent ? (

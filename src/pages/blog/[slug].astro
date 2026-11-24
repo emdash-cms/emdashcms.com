@@ -10,6 +10,7 @@ import PostGrid from "../../components/blog/PostGrid.astro";
 import arrowRightSvg from "../../icons/arrow-right.svg?raw";
 import Base from "../../layouts/Base.astro";
 import { ART_VERSION } from "../../lib/post-art";
+import { markdownPath } from "../../lib/markdown";
 import { formatPostDate, postAuthors, readingMinutes } from "../../lib/posts";
 
 let slug: string | undefined;
@@ -64,6 +65,16 @@ const articleMeta = {
 	modifiedTime: post.data.updatedAt.toISOString(),
 	author: authors[0]?.name ?? null,
 };
+
+const siteRoot = new URL("/", Astro.site ?? Astro.url);
+const breadcrumbs = {
+	"@type": "BreadcrumbList",
+	itemListElement: [
+		{ "@type": "ListItem", position: 1, name: "Home", item: siteRoot.href },
+		{ "@type": "ListItem", position: 2, name: "Blog", item: new URL("/blog", siteRoot).href },
+		{ "@type": "ListItem", position: 3, name: post.data.title },
+	],
+};
 ---
 
 <Base
@@ -73,6 +84,8 @@ const articleMeta = {
 	pageType="article"
 	articleMeta={articleMeta}
 	content={{ collection: "posts", id: post.data.id, slug: post.id }}
+	markdown={markdownPath(`/blog/${encodeURIComponent(post.id)}`)}
+	structuredData={[breadcrumbs]}
 >
 	<article class="post">
 		<header class="post-header">
