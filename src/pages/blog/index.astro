@@ -3,6 +3,12 @@ import { getEmDashCollection } from "emdash";
 import PostCard from "../../components/blog/PostCard.astro";
 import PostGrid from "../../components/blog/PostGrid.astro";
 import Base from "../../layouts/Base.astro";
+import { negotiatedMarkdown, varyOnAccept } from "../../lib/markdown";
+
+// Agents that prefer Markdown get the page's twin at this same URL.
+const markdown = await negotiatedMarkdown(Astro.request, Astro.url.pathname, (path) => Astro.rewrite(path));
+if (markdown) return markdown;
+varyOnAccept(Astro.response.headers);
 
 const { entries: posts, error, cacheHint } = await getEmDashCollection("posts", {
 	orderBy: { published_at: "desc" },

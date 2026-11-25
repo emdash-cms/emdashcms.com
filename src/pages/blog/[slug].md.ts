@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
-import { decodeSlug, getEmDashEntry } from "emdash";
-import { markdownResponse, postMarkdown } from "../../lib/markdown";
+import { decodeSlug, getEmDashEntry, getSeoMeta } from "emdash";
+import { isStaging, markdownResponse, postMarkdown, unavailableResponse } from "../../lib/markdown";
 
 export const prerender = false;
 
@@ -15,15 +15,24 @@ export const GET: APIRoute = async ({ cache, params, site, url }) => {
 		slug = undefined;
 	}
 
-	const { entry: post, cacheHint } = slug ? await getEmDashEntry("posts", slug) : { entry: null, cacheHint: null };
+	const result = slug ? await getEmDashEntry("posts", slug) : null;
+	if (result?.error) {
+		console.error(`Failed to load post ${slug}:`, result.error);
+		return unavailableResponse();
+	}
+	const post = result?.entry;
 	if (!post) {
 		return new Response("Not found\n", { status: 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });
 	}
 
-	if (cache?.enabled && cacheHint) cache.set(cacheHint);
+	if (cache?.enabled) cache.set(result.cacheHint);
 
-	return markdownResponse(
-		postMarkdown(post, siteUrl),
-		new URL(`/blog/${encodeURIComponent(post.id)}`, siteUrl).href,
-	);
+	const path = `/blog/${encodeURIComponent(post.id)}`;
+	const seo = getSeoMeta(post, { siteUrl: siteUrl.origin, path });
+	const canonical = seo.canonical ?? new URL(path, siteUrl).href;
+
+	return markdownResponse(postMarkdown(post, siteUrl, canonical), {
+		canonical,
+		noindex: Boolean(seo.robots) || (await isStaging()),
+	});
 };

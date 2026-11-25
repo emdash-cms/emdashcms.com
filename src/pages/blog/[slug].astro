@@ -10,8 +10,13 @@ import PostGrid from "../../components/blog/PostGrid.astro";
 import arrowRightSvg from "../../icons/arrow-right.svg?raw";
 import Base from "../../layouts/Base.astro";
 import { ART_VERSION } from "../../lib/post-art";
-import { markdownPath } from "../../lib/markdown";
+import { markdownPath, negotiatedMarkdown, varyOnAccept } from "../../lib/markdown";
 import { formatPostDate, postAuthors, readingMinutes } from "../../lib/posts";
+
+// Agents that prefer Markdown get the page's twin at this same URL.
+const markdown = await negotiatedMarkdown(Astro.request, Astro.url.pathname, (path) => Astro.rewrite(path));
+if (markdown) return markdown;
+varyOnAccept(Astro.response.headers);
 
 let slug: string | undefined;
 try {
@@ -22,13 +27,13 @@ try {
 }
 
 if (!slug) {
-	return Astro.redirect("/404");
+	return Astro.rewrite("/404");
 }
 
 const { entry: post, cacheHint } = await getEmDashEntry("posts", slug);
 
 if (!post) {
-	return Astro.redirect("/404");
+	return Astro.rewrite("/404");
 }
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);

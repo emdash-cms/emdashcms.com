@@ -5,11 +5,12 @@
  * agents get the words without the interactive figures, faux product UI, and
  * navigation that an HTML-to-Markdown converter would drag along. The twins
  * live at their own URLs (`/index.md`, `/blog.md`, `/blog/<slug>.md`,
- * `/showcase.md`) rather than behind `Accept: text/markdown` on the page URL:
- * the route cache keys on the URL alone, so a Markdown reply there could be
- * served to a browser.
+ * `/showcase.md`), and each page also serves its twin to requests that prefer
+ * `text/markdown`, answering both with `Vary: Accept` so Workers Cache keeps
+ * the two apart. Origin Markdown passes through Cloudflare's own Markdown for
+ * Agents conversion untouched.
  */
-import type { ContentEntry, InferCollectionData, PortableTextBlock } from "emdash";
+import { getSiteSettings, type ContentEntry, type InferCollectionData, type PortableTextBlock } from "emdash";
 import { portableTextToMarkdown } from "emdash/client";
 import { capabilityCards } from "../components/blocks/capabilities-copy";
 import { capabilitiesDefaults } from "../plugins/marketing-blocks/index";
@@ -49,14 +50,81 @@ function sections(...parts: (string | false | null | undefined)[]): string {
 	return `${kept.join("\n\n")}\n`;
 }
 
-export function markdownResponse(body: string, canonical: string): Response {
-	return new Response(body, {
-		headers: {
-			"Content-Type": "text/markdown; charset=utf-8",
-			// Search engines credit the HTML page, not its Markdown twin.
-			Link: `<${canonical}>; rel="canonical"`,
-		},
+interface MarkdownResponseOptions {
+	/** The HTML page search engines should credit, honouring the SEO panel's canonical. */
+	canonical: string;
+	/** Keep the twin out of search results, as its page is (staging, or the SEO panel's noindex). */
+	noindex?: boolean;
+}
+
+export function markdownResponse(body: string, { canonical, noindex = false }: MarkdownResponseOptions): Response {
+	const headers = new Headers({
+		"Content-Type": "text/markdown; charset=utf-8",
+		Link: `<${canonical}>; rel="canonical"`,
 	});
+	if (noindex) headers.set("X-Robots-Tag", "noindex, nofollow");
+	return new Response(body, { headers });
+}
+
+/**
+ * A 503 for when the database fails, so neither a crawler nor the route cache
+ * keeps an empty list as the page's content.
+ */
+export function unavailableResponse(): Response {
+	return new Response("Temporarily unavailable\n", {
+		status: 503,
+		headers: { "Content-Type": "text/plain; charset=utf-8", "Retry-After": "30" },
+	});
+}
+
+/** Whether the site is in staging, where every page asks not to be indexed. */
+export async function isStaging(): Promise<boolean> {
+	return (await getSiteSettings())?.staging === true;
+}
+
+/** The quality a request's Accept header gives a media type, or 0 when it isn't listed. */
+function acceptQuality(accept: string, type: string): number {
+	for (const part of accept.split(",")) {
+		const [name, ...params] = part.split(";").map((piece) => piece.trim().toLowerCase());
+		if (name !== type) continue;
+		const q = params.find((param) => param.startsWith("q="));
+		const value = q ? Number.parseFloat(q.slice(2)) : 1;
+		return Number.isFinite(value) ? value : 0;
+	}
+	return 0;
+}
+
+/**
+ * Whether a request asks for Markdown over HTML. Browsers never list
+ * `text/markdown`; agents that list it at least as high as `text/html` get it.
+ */
+export function prefersMarkdown(request: Request): boolean {
+	const accept = request.headers.get("Accept");
+	if (!accept) return false;
+	const markdown = acceptQuality(accept, "text/markdown");
+	return markdown > 0 && markdown >= acceptQuality(accept, "text/html");
+}
+
+/** Adds `Vary: Accept` to a page that answers HTML or Markdown at the same URL. */
+export function varyOnAccept(headers: Headers): void {
+	const vary = headers.get("Vary") ?? "";
+	if (!vary.split(",").some((value) => value.trim().toLowerCase() === "accept")) headers.append("Vary", "Accept");
+}
+
+/**
+ * The page's Markdown twin, for a page whose request prefers Markdown. Each
+ * page calls this first, before loading anything for its HTML.
+ */
+export async function negotiatedMarkdown(
+	request: Request,
+	pathname: string,
+	rewrite: (path: string) => Promise<Response>,
+): Promise<Response | null> {
+	if (!prefersMarkdown(request)) return null;
+	const twin = await rewrite(markdownPath(pathname));
+	const response = new Response(twin.body, twin);
+	varyOnAccept(response.headers);
+	return response;
 }
 
 /** The Markdown twin's URL for a page path: `/` → `/index.md`, `/blog` → `/blog.md`. */
@@ -162,8 +230,9 @@ function postSummaryLine(post: PostEntry, site: URL): string {
 	return `- [${linkText(line(post.data.title))}](${postUrl(post, site)})${meta ? `: ${meta}` : ""}`;
 }
 
-export function postMarkdown(post: PostEntry, site: URL): string {
-	const url = postUrl(post, site);
+/** `canonical` is the URL to credit, which the SEO panel can point elsewhere. */
+export function postMarkdown(post: PostEntry, site: URL, canonical = postUrl(post, site)): string {
+	const url = canonical;
 	const authors = postAuthors(post.data.bylines).map((author) => author.name);
 	const tags = (post.data.terms?.tag ?? []).map((tag) => tag.label);
 	const published = formatPostDate(post.data.publishedAt, "long");
@@ -232,6 +301,8 @@ interface HomeOptions {
 	title: string;
 	description: string;
 	site: URL;
+	/** The URL to credit, which the SEO panel can point elsewhere. */
+	canonical: string;
 	/** The post the hero's announcement pill links to. */
 	announcement?: { label: string; href: string };
 }
@@ -316,7 +387,7 @@ export function homeMarkdown(content: PortableTextBlock[] | undefined, options: 
 	const { site, announcement } = options;
 	const blocks = (content ?? []) as LooseBlock[];
 	return sections(
-		frontmatter({ title: options.title, description: options.description, url: new URL("/", site).href }),
+		frontmatter({ title: options.title, description: options.description, url: options.canonical }),
 		announcement && `Latest: [${linkText(announcement.label)}](${new URL(announcement.href, site).href})`,
 		...blocks.map((block) =>
 			block._type === "block" ? portableTextBody([block], site) : marketingBlockMarkdown(block, site),

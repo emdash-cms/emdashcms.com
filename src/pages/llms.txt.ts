@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
-import { getEmDashCollection, getSiteSettings } from "emdash";
-import { markdownPath } from "../lib/markdown";
+import { getContentSeo, getEmDashCollection, getEmDashEntry, getSiteSettings } from "emdash";
+import { markdownPath, unavailableResponse } from "../lib/markdown";
 
 export const prerender = false;
 
@@ -12,12 +12,24 @@ export const prerender = false;
 export const GET: APIRoute = async ({ cache, site, url }) => {
 	const siteUrl = site ?? new URL(url.origin);
 	const abs = (path: string) => new URL(path, siteUrl).href;
-	const [{ entries: posts, cacheHint }, settings] = await Promise.all([
+	const [{ entries, error, cacheHint }, settings] = await Promise.all([
 		getEmDashCollection("posts", { status: "published", orderBy: { published_at: "desc" }, limit: 50 }),
 		getSiteSettings(),
 	]);
 
+	if (error) {
+		console.error("Failed to load posts for llms.txt:", error);
+		return unavailableResponse();
+	}
 	if (cache?.enabled) cache.set(cacheHint);
+
+	// A post its editor asked search engines to skip isn't one to point models at either.
+	// Collection queries don't carry the SEO panel, so each post's entry supplies it.
+	const seo = await Promise.all(entries.map((post) => getEmDashEntry("posts", post.id)));
+	const posts = entries.filter((_, index) => {
+		const entry = seo[index]?.entry;
+		return !(entry && getContentSeo(entry)?.noIndex);
+	});
 
 	const title = settings?.title || "EmDash CMS";
 	const postLines = posts.map((post) => {
@@ -56,6 +68,10 @@ ${postLines.length > 0 ? `\n## Blog posts\n\n${postLines.join("\n")}\n` : ""}
 `;
 
 	return new Response(body, {
-		headers: { "Content-Type": "text/plain; charset=utf-8" },
+		headers: {
+			"Content-Type": "text/plain; charset=utf-8",
+			// While the site is in staging, its map stays out of search results too.
+			...(settings?.staging === true && { "X-Robots-Tag": "noindex, nofollow" }),
+		},
 	});
 };

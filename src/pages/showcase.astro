@@ -9,7 +9,13 @@ import ShowcaseLabel from "../components/showcase/ShowcaseLabel.astro";
 import ShowcaseLayout from "../components/showcase/ShowcaseLayout.astro";
 import ShowcaseQuotes from "../components/showcase/ShowcaseQuotes.astro";
 import ShowcaseSlot from "../components/showcase/ShowcaseSlot.astro";
+import { negotiatedMarkdown, varyOnAccept } from "../lib/markdown";
 import { splitFeatured, toShowcaseSite, type ShowcaseSite } from "../lib/showcase";
+
+// Agents that prefer Markdown get the page's twin at this same URL.
+const markdown = await negotiatedMarkdown(Astro.request, Astro.url.pathname, (path) => Astro.rewrite(path));
+if (markdown) return markdown;
+varyOnAccept(Astro.response.headers);
 
 const { entries, error, cacheHint } = await getEmDashCollection("showcase", {
 	orderBy: { published_at: "desc" },

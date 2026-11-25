@@ -3,6 +3,12 @@ import { getEmDashEntry } from "emdash";
 import Base from "../layouts/Base.astro";
 import MarketingBlocks from "../components/MarketingBlocks.astro";
 import { faqItems, withCapabilities } from "../lib/home";
+import { negotiatedMarkdown, varyOnAccept } from "../lib/markdown";
+
+// Agents that prefer Markdown get the page's twin at this same URL.
+const markdown = await negotiatedMarkdown(Astro.request, Astro.url.pathname, (path) => Astro.rewrite(path));
+if (markdown) return markdown;
+varyOnAccept(Astro.response.headers);
 
 const { entry: page, cacheHint } = await getEmDashEntry("pages", "home");
 
@@ -67,6 +73,7 @@ const structuredData: Record<string, unknown>[] = [
 <Base
 	title={pageTitle !== "Home" ? pageTitle : undefined}
 	description={description}
+	content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
 	markdown="/index.md"
 	structuredData={structuredData}
 >

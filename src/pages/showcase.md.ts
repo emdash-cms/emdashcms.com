@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { getEmDashCollection } from "emdash";
-import { markdownResponse, showcaseMarkdown } from "../lib/markdown";
+import { isStaging, markdownResponse, showcaseMarkdown, unavailableResponse } from "../lib/markdown";
 import { toShowcaseSite, type ShowcaseSite } from "../lib/showcase";
 
 export const prerender = false;
@@ -12,10 +12,16 @@ export const GET: APIRoute = async ({ cache, site, url }) => {
 		orderBy: { published_at: "desc" },
 	});
 
-	if (error) console.error("Failed to load showcase sites:", error);
+	if (error) {
+		console.error("Failed to load showcase sites:", error);
+		return unavailableResponse();
+	}
 	if (cache?.enabled) cache.set(cacheHint);
 
-	const sites = error ? [] : entries.map(toShowcaseSite).filter((item): item is ShowcaseSite => item !== null);
+	const sites = entries.map(toShowcaseSite).filter((item): item is ShowcaseSite => item !== null);
 
-	return markdownResponse(showcaseMarkdown(sites, siteUrl), new URL("/showcase", siteUrl).href);
+	return markdownResponse(showcaseMarkdown(sites, siteUrl), {
+		canonical: new URL("/showcase", siteUrl).href,
+		noindex: await isStaging(),
+	});
 };
