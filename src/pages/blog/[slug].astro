@@ -10,7 +10,13 @@ import PostGrid from "../../components/blog/PostGrid.astro";
 import arrowRightSvg from "../../icons/arrow-right.svg?raw";
 import Base from "../../layouts/Base.astro";
 import { ART_VERSION } from "../../lib/post-art";
+import { markdownPath, negotiatedMarkdown, varyOnAccept } from "../../lib/markdown";
 import { formatPostDate, postAuthors, readingMinutes } from "../../lib/posts";
+
+// Agents that prefer Markdown get the page's twin at this same URL.
+const markdown = await negotiatedMarkdown(Astro.request, Astro.url.pathname, (path) => Astro.rewrite(path));
+if (markdown) return markdown;
+varyOnAccept(Astro.response.headers);
 
 let slug: string | undefined;
 try {
@@ -21,13 +27,13 @@ try {
 }
 
 if (!slug) {
-	return Astro.redirect("/404");
+	return Astro.rewrite("/404");
 }
 
 const { entry: post, cacheHint } = await getEmDashEntry("posts", slug);
 
 if (!post) {
-	return Astro.redirect("/404");
+	return Astro.rewrite("/404");
 }
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
@@ -64,6 +70,16 @@ const articleMeta = {
 	modifiedTime: post.data.updatedAt.toISOString(),
 	author: authors[0]?.name ?? null,
 };
+
+const siteRoot = new URL("/", Astro.site ?? Astro.url);
+const breadcrumbs = {
+	"@type": "BreadcrumbList",
+	itemListElement: [
+		{ "@type": "ListItem", position: 1, name: "Home", item: siteRoot.href },
+		{ "@type": "ListItem", position: 2, name: "Blog", item: new URL("/blog", siteRoot).href },
+		{ "@type": "ListItem", position: 3, name: post.data.title },
+	],
+};
 ---
 
 <Base
@@ -73,6 +89,8 @@ const articleMeta = {
 	pageType="article"
 	articleMeta={articleMeta}
 	content={{ collection: "posts", id: post.data.id, slug: post.id }}
+	markdown={markdownPath(`/blog/${encodeURIComponent(post.id)}`)}
+	structuredData={[breadcrumbs]}
 >
 	<article class="post">
 		<header class="post-header">

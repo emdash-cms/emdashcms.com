@@ -21,6 +21,7 @@ The admin UI is at `http://localhost:4321/_emdash/admin`.
 | `src/layouts/Base.astro` | Base layout with EmDash wiring (menus, search, page contributions)                 |
 | `src/pages/`             | Astro pages -- all server-rendered                                                 |
 | `public/.well-known/`    | Agent discovery files (`agent-skills/` is built by `pnpm agent-skills`)            |
+| `src/lib/markdown.ts`    | Markdown twins of pages for agents (`/index.md`, `/blog/<slug>.md`), and `llms.txt` |
 
 ## Skills
 

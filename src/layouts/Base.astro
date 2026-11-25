@@ -1,7 +1,7 @@
 ---
 import { getMenu, getSiteSettings } from "emdash";
 import { EmDashHead } from "emdash/ui";
-import { createPublicPageContext } from "emdash/page";
+import { createPublicPageContext, safeJsonLdSerialize } from "emdash/page";
 import { Font } from "astro:assets";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
@@ -22,9 +22,25 @@ interface Props {
     id: string;
     slug?: string | null;
   };
+  /** Path of this page's Markdown twin for agents, such as "/blog.md". See src/lib/markdown.ts. */
+  markdown?: string;
+  /**
+   * Extra schema.org nodes for this page, added to the site-wide graph next to
+   * the Organization. EmDashHead already emits WebSite or BlogPosting.
+   */
+  structuredData?: Record<string, unknown>[];
 }
 
-const { title, description, image, pageType = "website", articleMeta, content } = Astro.props;
+const {
+  title,
+  description,
+  image,
+  pageType = "website",
+  articleMeta,
+  content,
+  markdown,
+  structuredData = [],
+} = Astro.props;
 const PLAYGROUND_URL = "https://try.emdashcms.com";
 const PUBLIC_SITE_URL = Astro.site?.href ?? "https://emdashcms.com/";
 const canonical = new URL(Astro.url.pathname, PUBLIC_SITE_URL).href;
@@ -62,6 +78,40 @@ const footerColumns = [
 ].flatMap((col) => (col.menu && col.menu.items.length > 0 ? [{ heading: col.heading, menu: col.menu }] : []));
 const footerSocialItems = footerSocial?.items.length ? footerSocial.items : footerCommunity?.items ?? [];
 
+// The Organization that EmDashHead's BlogPosting names as publisher, by the
+// same @id, with the social profiles from the footer so answer engines can tie
+// them to one entity.
+const organizationId = `${siteUrl}/#organization`;
+const sameAs = [
+  ...new Set(
+    footerSocialItems.flatMap((item) => {
+      try {
+        const url = new URL(item.url?.trim() ?? "");
+        return url.protocol === "https:" && url.origin !== siteUrl ? [url.href] : [];
+      } catch {
+        return [];
+      }
+    }),
+  ),
+];
+const jsonLd = safeJsonLdSerialize({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": organizationId,
+      name: siteTitle,
+      url: `${siteUrl}/`,
+      logo: {
+        "@type": "ImageObject",
+        url: new URL(siteLogo?.url ?? "/brand/favicon.png", PUBLIC_SITE_URL).href,
+      },
+      ...(sameAs.length > 0 && { sameAs }),
+    },
+    ...structuredData,
+  ],
+});
+
 const pageCtx = createPublicPageContext({
   Astro,
   kind: "custom",
@@ -93,8 +143,10 @@ const pageCtx = createPublicPageContext({
     <link rel="icon" type="image/png" sizes="any" href="/brand/favicon.png" />
     <link rel="apple-touch-icon" href="/brand/favicon.png" />
     <link rel="alternate" type="application/rss+xml" title={`${siteTitle} RSS feed`} href="/rss.xml" />
+    {markdown && <link rel="alternate" type="text/markdown" title="Markdown version" href={markdown} />}
     <link rel="ai-catalog" type="application/ai-catalog+json" href="/.well-known/ai-catalog.json" />
     <EmDashHead page={pageCtx} />
+    <script type="application/ld+json" set:html={jsonLd} />
     <Font cssVariable="--font-sans" preload />
     <script is:inline>
       // Apply theme immediately to prevent flash
